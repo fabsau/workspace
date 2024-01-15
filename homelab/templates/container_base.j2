@@ -111,6 +111,9 @@ services:
 {% if traefik.https_redirection | default(true) %}
       - "traefik.http.routers.{{ traefik.name }}.middlewares=https-redirect@file"
 {% endif %}
+{% if traefik.insecuretransport | default(true) %}
+      "- traefik.http.services.{{ traefik.name }}.loadBalancer.serversTransport=insecuretransport@file"
+{% endif %}
       - "traefik.http.routers.{{ traefik.name }}-https.entrypoints=https"
       - "traefik.http.routers.{{ traefik.name }}-https.rule={{ traefik.rule | quote }}"
       - "traefik.http.routers.{{ traefik.name }}-https.tls.certresolver=acme"
