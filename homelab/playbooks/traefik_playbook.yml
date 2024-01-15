@@ -11,7 +11,7 @@
         protocol: tcp
         mode: host
       #UNIFI
-      - target: 8080
+      - target: 8081
         published: 8080
         protocol: tcp
         mode: host

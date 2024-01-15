@@ -1,3 +1,4 @@
+# traefik.j2
 {% extends 'container_base.j2' %}
 {% set services = [
   {
@@ -17,7 +18,6 @@
     "traefik": [
       {
         "name": "traefik",
-        "network": "traefik",
         "rule": "Host(`" ~ traefik_host ~ "`)",
         "https_redirection": true,
         "middlewares": "private-chain@file",
@@ -25,7 +25,6 @@
       },
       {
         "name": "traefik-prom",
-        "network": "traefik",
         "rule": "Host(`" ~ traefik_host ~ "`) && Path(`/metrics`)",
         "https_redirection": true,
         "middlewares": "private-chain@file",
@@ -53,4 +52,4 @@
     "watchtower": true
   }
 ] %}
-{% set all_networks = additional_networks %}
+{% set networks = ['traefik'] %}
