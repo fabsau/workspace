@@ -1,0 +1,87 @@
+http:
+  serversTransports:
+    insecuretransport:
+      insecureSkipVerify: true
+  
+  middlewares:     
+    public-chain:
+      chain:
+        middlewares:
+          - "rate-limit"
+          - "secure-headers"
+          - "compression"
+          - "https-redirect"
+          - "www-redirect"
+          
+    private-chain:
+      chain:
+        middlewares:
+          - "public-chain"
+          - "whitelist"
+          # - "oauth"
+
+    oauth-chain:
+      chain:
+        middlewares:
+          - "private-chain"
+          - "oauth"
+
+
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 50
+        
+    secure-headers:
+      headers:
+        # Basic Headers
+        customFrameOptionsValue: "SAMEORIGIN"
+        contentTypeNosniff: true # neu
+        browserXssFilter: true
+        
+        # HSTS
+        stsSeconds: 63072000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        forceSTSHeader: true
+        
+        # Policies
+        referrerPolicy: "same-origin"
+
+        # Hide Server Info
+        customResponseHeaders:
+          server: ""
+          x-powered-by: ""
+          X-Forwarded-Proto: "https"
+
+    compression:
+      compress: {}
+
+    https-redirect:
+      redirectScheme:
+        scheme: "https"
+        permanent: true
+
+    www-redirect:
+      redirectRegex:
+        regex: 'www\.(.*)'
+        replacement: "$1"
+        permanent: true
+
+    whitelist:
+      ipwhitelist:
+        sourceRange: "{{ whitelist_ips }}"
+
+    oauth:
+      forwardAuth:
+        address: "{{ oauth_address }}"
+        trustForwardHeader: true
+        authResponseHeaders:
+          - "Remote-User"
+          - "Remote-Groups"
+          - "Remote-Name"
+          - "Remote-Email"
+{% if oauth_insecureSkipVerify %}
+        tls:
+        insecureSkipVerify: true
+{% endif %}
