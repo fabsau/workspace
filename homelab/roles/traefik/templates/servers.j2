@@ -1,0 +1,24 @@
+http:
+  routers:
+{% for server in servers %}
+    {{ server.name }}:
+      entryPoints: ["{{ server.entrypoint }}"]
+      middlewares: ["{{ server.middleware }}"]
+      service: "service-{{ server.name }}"
+      rule: "Host(`{{ server.url }}`)"
+      tls:
+        certResolver: "acme"
+{% if server.insecuretransport %}
+      serversTransport: insecuretransport@file
+{% endif %}
+{% endfor %}
+  services:
+{% for server in servers %}
+    service-{{ server.name }}:
+      loadBalancer:
+        servers:
+          - url: "{{ server.url }}"
+{% if server.insecuretransport %}
+        serversTransport: insecuretransport@file
+{% endif %}
+{% endfor %}

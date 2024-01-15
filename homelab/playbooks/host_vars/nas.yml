@@ -62,3 +62,31 @@ additional_networks:
   - librespeed
   - czkawka
   - vscode
+entrypoints:
+  - name: portainer
+    address: ":8000"
+  - name: unifi
+    address: ":1900/udp"
+  - name: unifi2
+    address: ":3478/udp"
+  - name: unifi3
+    address: ":5514"
+  - name: unifi4
+    address: ":6789"
+  - name: unifi5
+    address: ":8080"
+  - name: unifi6
+    address: ":8843"
+  - name: unifi7
+    address: ":10001/udp"
+whitelist_ips:
+  - 46.223.56.204/32
+  - 172.187.202.93
+  - 172.31.0.0/12
+  - 192.168.251.0/24
+  - 192.168.50.0/24
+  - 192.168.100.0/24
+  - 195.90.219.248
+oauth_address: https://auth.sauna.re/api/verify
+ca_productive: true
+oauth_insecureSkipVerify: false

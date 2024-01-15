@@ -1,0 +1,88 @@
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: true
+
+entryPoints:
+  http:
+    address: ":80"
+    http:
+      middlewares:
+        - www-redirect@file
+  https:
+    address: ":443"
+    http3: {}
+  metrics:
+    address: ":8082"
+{% for entrypoint in entrypoints %}
+  {{ entrypoint.name }}:
+    address: "{{ entrypoint.address }}"
+{% endfor %}
+
+experimental:
+  http3: true
+
+api:
+  dashboard: true
+
+log:
+  level: "WARN"
+  filepath: "/data/log/traefik.log"
+
+accessLog:
+  filePath: "/data/log/access.log"
+  bufferingSize: 100
+  filters:
+    statusCodes: "204-299,400-499,500-599"
+
+providers:
+  docker:
+    endpoint: 'tcp://dockerproxy:2375'
+    network: traefik-servicenet
+    exposedByDefault: false
+  file:
+    directory: "/data/config"
+    watch: true
+
+certificatesResolvers:
+  acme:
+    acme:
+      email: "admin@sauna.re"
+      storage: "/data/ssl/oiba.json"
+      keyType: "EC256" #https://doc.traefik.io/traefik/https/acme/#keytype
+      caServer: "{% if ca_productive %}https://acme-v02.api.letsencrypt.org/directory{% else %}https://acme-staging-v02.api.letsencrypt.org/directory{% endif %}" # Productive CA / testing CA
+      dnsChallenge:
+        provider: "cloudflare"
+        resolvers:
+          - "1.1.1.1:53"
+          - "1.0.0.1:53"
+        delayBeforeCheck: 20
+
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      curvePreferences:
+        - "X25519"
+        - "CurveP256"
+        - "CurveP384"
+      sniStrict: true
+      cipherSuites:
+        - "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256" #tls1.2 #1
+        - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256" #tls1.2 #2
+        - "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384" #tls1.2 #3
+        - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384" #tls1.2 #4
+        - "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305" #tls1.2 #5
+        - "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305" #tls1.2 #6
+        - "TLS_AES_128_GCM_SHA256" #tls1.3 #1
+        - "TLS_AES_256_GCM_SHA384" #tls1.3 #2
+        - "TLS_CHACHA20_POLY1305_SHA256" #tls1.3 #3
+        - "TLS_FALLBACK_SCSV" #fallback
+#https://golang.org/pkg/crypto/tls/#pkg-constants
+#https://wiki.mozilla.org/Security/Server_Side_TLS#Modern_compatibility
+
+metrics:
+  prometheus:
+    addEntryPointsLabels: true
+    addRoutersLabels: true
+    addServicesLabels: true
+    entryPoint: "metrics"
