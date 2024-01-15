@@ -2,6 +2,9 @@
 traefik_host: proxy.oiba.de
 dockerproxy_allowed_ip: 172.29.13.0/24
 dockerproxy_gid: 993
+oauth_address: https://auth.sauna.re/api/verify
+ca_productive: true
+oauth_insecureSkipVerify: false
 additional_ports: 
   #Portainer
   - target: 8000
@@ -87,6 +90,3 @@ whitelist_ips:
   - 192.168.50.0/24
   - 192.168.100.0/24
   - 195.90.219.248
-oauth_address: https://auth.sauna.re/api/verify
-ca_productive: true
-oauth_insecureSkipVerify: false
