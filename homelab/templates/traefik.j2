@@ -1,0 +1,55 @@
+# traefik.j2
+{% extends 'container_base.j2' %}
+{% set services = [
+  {
+    "name": "traefik",
+    "image": "traefik:latest",
+    "command": ["--configFile=/data/config/traefik.yml"],
+    "depends_on": ["dockerproxy"],
+    "cap_drop": ["ALL"],
+    "cap_add": ["NET_BIND_SERVICE"],
+    "user": "2000:2000",
+    "cpus": 0.75,
+    "mem_limit": "2G",
+    "env_file": ["/docker/common.env", "/docker/traefik.env"],
+    "ports": additional_ports,
+    "networks": additional_networks,
+    "volumes": ["/docker/traefik/config:/data/config:ro", "/docker/traefik:/data"],
+    "traefik": [
+      {
+        "name": "traefik",
+        "rule": "Host(`" ~ traefik_host ~ "`)",
+        "https_redirection": true,
+        "middlewares": "private-chain@file",
+        "service": "api@internal"
+      },
+      {
+        "name": "traefik-prom",
+        "rule": "Host(`" ~ traefik_host ~ "`) && Path(`/metrics`)",
+        "https_redirection": true,
+        "middlewares": "private-chain@file",
+        "service": "prometheus@internal"
+      }
+    ],
+    "watchtower": true,
+    "labels": traefik_domains
+  },
+  {
+    "name": "dockerproxy",
+    "image": "wollomatic/socket-proxy:1",
+    "command": [
+      "--allowfrom=" ~ dockerproxy_allowed_ip,
+      "--listenip=0.0.0.0",
+      "--allowGET=/v1\..{1,2}/(version|containers/.*|events.*)",
+      "--shutdowngracetime=5"
+    ],
+    "read_only": true,
+    "cap_drop": ["ALL"],
+    "user": "65534:" ~ dockerproxy_gid,
+    "mem_limit": "64M",
+    "networks": ["traefik"],
+    "volumes": ["/var/run/docker.sock:/var/run/docker.sock:ro"],
+    "watchtower": true
+  }
+] %}
+{% set networks = ['traefik'] %}
