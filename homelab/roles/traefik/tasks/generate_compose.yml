@@ -1,3 +1,5 @@
+# task/generate_compose.yml
+
 - name: Generate Docker Compose file
   template:
     src: ../templates/traefik_container.j2

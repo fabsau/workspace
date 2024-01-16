@@ -1,19 +1,20 @@
-    - name: Generate traefik.yml
-      template:
-        src: ./config.yml.j2
-        dest: /docker2/traefik/config/traefik.yml
+# task/generate_configs.yml
+- name: Generate traefik.yml
+  template:
+    src: ./config.yml.j2
+    dest: /docker2/traefik/config/traefik.yml
 
-    - name: Generate middlewares
-      template:
-        src: ./middlewares.yml.j2
-        dest: /docker2/traefik/config/middlewares.yml
+- name: Generate middlewares
+  template:
+    src: ./middlewares.yml.j2
+    dest: /docker2/traefik/config/middlewares.yml
 
-    - name: Generate servers
-      template:
-        src: ./servers.yml.j2
-        dest: /docker2/traefik/config/servers.yml
+- name: Generate servers
+  template:
+    src: ./servers.yml.j2
+    dest: /docker2/traefik/config/servers.yml
 
-    - name: Generate traefik.env
-      template:
-        src: ./traefik.env.j2
-        dest: /docker2/traefik/traefik.env
+- name: Generate traefik.env
+  template:
+    src: ./traefik.env.j2
+    dest: /docker2/traefik/traefik.env

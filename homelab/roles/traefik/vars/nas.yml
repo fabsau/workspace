@@ -1,4 +1,4 @@
-# host_vars/nas.yml
+# vars/nas.yml
 traefik_host: proxy.oiba.de
 dockerproxy_allowed_ip: 172.29.13.0/24
 dockerproxy_gid: 993
