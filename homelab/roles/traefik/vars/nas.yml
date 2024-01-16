@@ -90,3 +90,59 @@ whitelist_ips:
   - 192.168.50.0/24
   - 192.168.100.0/24
   - 195.90.219.248
+servers:
+  - name: proxmox
+    entrypoint: https
+    middleware: private-chain@file
+    url: vm.oiba.de
+    insecuretransport: true
+  - name: nas
+    entrypoint: https
+    middleware: private-chain@file
+    url: nas.oiba.de
+    insecuretransport: false
+  - name: opnsense
+    entrypoint: https
+    middleware: private-chain@file
+    url: router.oiba.de
+    insecuretransport: true
+  - name: opnsense_prom
+    entrypoint: https
+    middleware: private-chain@file
+    url: node.opn.oiba.de
+    insecuretransport: false
+  - name: home_prom
+    entrypoint: https
+    middleware: private-chain@file
+    url: node.home.oiba.de
+    insecuretransport: false
+  - name: adguard
+    entrypoint: https
+    middleware: private-chain@file
+    url: dns.oiba.de
+    insecuretransport: false
+  - name: adguard2
+    entrypoint: https
+    middleware: private-chain@file
+    url: dns2.oiba.de
+    insecuretransport: false
+  - name: switch
+    entrypoint: https
+    middleware: private-chain@file
+    url: switch.oiba.de
+    insecuretransport: true
+  - name: vacuum
+    entrypoint: https
+    middleware: private-chain@file
+    url: vacuum.oiba.de
+    insecuretransport: false
+  - name: fritzbox
+    entrypoint: https
+    middleware: private-chain@file
+    url: fritz.oiba.de
+    insecuretransport: true
+  - name: proxbak
+    entrypoint: https
+    middleware: private-chain@file
+    url: bak.oiba.de
+    insecuretransport: true

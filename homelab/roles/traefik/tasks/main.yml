@@ -1,0 +1,10 @@
+- name: Include host-specific vars
+  include_vars: "{{ ansible_hostname }}.yml"
+
+- name: Include secrets
+  include_vars: "secrets.yml"
+  
+- include_tasks: generate_configs.yml
+- include_tasks: generate_compose.yml
+# - include_tasks: create_docker_networks.yml
+# pull latest container_base.j2
