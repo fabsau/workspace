@@ -1,5 +1,19 @@
 # vars/main.yml
 
+# Base configuration
+base_path: /docker2
+base_subnet: 172.29
+
+# Traefik configuration
+traefik:
+  base_folder: "{{ base_path }}/traefik"
+  config_folder: "{{ traefik.base_folder }}/config"
+  compose_file: "{{ traefik.base_folder }}/docker-compose.yml"
+  traefik_yml: "{{ traefik.config_folder }}/traefik.yml"
+  middlewares_yml: "{{ traefik.config_folder }}/middlewares.yml"
+  servers_yml: "{{ traefik.config_folder }}/servers.yml"
+  traefik_env: "{{ traefik.base_folder }}/traefik.env"
+
 default_ports:
   - target: 80
     published: 80

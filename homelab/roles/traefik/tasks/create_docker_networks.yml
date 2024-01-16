@@ -4,7 +4,7 @@
   docker_network:
     name: "{{ item }}"
     ipam_config:
-      - subnet: "172.29.{{ loop.index }}.0/24"
+      - subnet: "{{ base_subnet }}.{{ loop.index }}.0/24"
   loop: "{{ additional_networks }}"
   loop_control:
     index_var: loop
