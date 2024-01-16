@@ -1,3 +1,4 @@
 - hosts: nas
   roles:
     - traefik
+    - cronjobs
