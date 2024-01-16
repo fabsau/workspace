@@ -1,4 +1,5 @@
 # vars/nas.yml
+
 traefik_host: proxy.oiba.de
 dockerproxy_allowed_ip: 172.29.13.0/24
 dockerproxy_gid: 993
@@ -52,7 +53,6 @@ traefik_domains:
     sans:
       - "*.sauna.re"
 additional_networks:
-  - traefik
   - portainer
   - paperless
   - unifi

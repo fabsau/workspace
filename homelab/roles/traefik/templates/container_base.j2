@@ -1,6 +1,9 @@
 version: '3.8'
+
 services:
+
 {% for service in services %}
+### {{ service.name | upper }} ###
   {{ service.name }}:
     image: {{ service.image }}
     container_name: {{ service.name }}
@@ -121,7 +124,11 @@ services:
 {% if service.watchtower | default(true) %}
       - "com.centurylinklabs.watchtower.enable=true"
 {% endif %}
+
 {% endfor %}
+
+
+### NETWORKS ###
 networks:
 {% for network in all_networks %}
   {{ network }}:

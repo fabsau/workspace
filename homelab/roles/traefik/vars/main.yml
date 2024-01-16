@@ -1,0 +1,68 @@
+# vars/main.yml
+
+default_ports:
+  - target: 80
+    published: 80
+    protocol: tcp
+    mode: host
+  - target: 443
+    published: 443
+    protocol: tcp
+    mode: host
+  - target: 443
+    published: 443
+    protocol: udp
+    mode: host
+
+default_networks:
+  - traefik
+
+# Append additional_ports to default_ports
+all_ports: "{{ default_ports + additional_ports }}"
+
+services:
+  - name: "traefik"
+    image: "traefik:latest"
+    command: ["--configFile=/data/config/traefik.yml"]
+    depends_on: ["dockerproxy"]
+    cap_drop: ["ALL"]
+    cap_add: ["NET_BIND_SERVICE"]
+    user: "2000:2000"
+    cpus: 0.75
+    env_file: ["/docker/common.env", "/docker/traefik.env"]
+    ports: "{{ all_ports }}"
+    networks: "{{ all_networks }}"
+    volumes: ["/docker/traefik/config:/data/config:ro", "/docker/traefik:/data"]
+    traefik: 
+      - name: "traefik"
+        network: "traefik"
+        rule: "Host(`{{ traefik_host }}`)"
+        https_redirection: true
+        middlewares: "private-chain@file"
+        service: "api@internal"
+      - name: "traefik-prom"
+        network: "traefik"
+        rule: "Host(`{{ traefik_host }}`) && Path(`/metrics`)"
+        https_redirection: true
+        middlewares: "private-chain@file"
+        service: "prometheus@internal"
+    watchtower: true
+    labels: "{{ traefik_domains }}"
+
+  - name: "dockerproxy2"
+    image: "wollomatic/socket-proxy:1"
+    command:
+      - "--allowfrom={{ dockerproxy_allowed_ip }}"
+      - "--listenip=0.0.0.0"
+      - "--allowGET=/v1\\..{1,2}/(version|containers/.*|events.*)"
+      # - "--allowGET=/v1..{1,2}/(version|containers/.|events.)"
+      - "--shutdowngracetime=5"
+    read_only: true
+    cap_drop: ["ALL"]
+    user: "65534:{{ dockerproxy_gid }}"
+    networks: ["traefik"]
+    volumes: ["/var/run/docker.sock:/var/run/docker.sock:ro"]
+    watchtower: true
+
+# Append additional_networks to default_networks
+all_networks: "{{ default_networks + additional_networks }}"
