@@ -33,9 +33,6 @@ services:
 {% if service.cpus is defined and service.cpus %}
     cpus: {{ service.cpus }}
 {% endif %}
-{% if service.mem_limit is defined and service.mem_limit %}
-    mem_limit: {{ service.mem_limit }}
-{% endif %}
 {% if service.devices is defined and service.devices %}
     devices: 
 {% for device in service.devices %}
