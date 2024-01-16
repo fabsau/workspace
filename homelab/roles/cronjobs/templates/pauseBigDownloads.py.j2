@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import requests
+
+# Check if this is a test event
+if os.environ.get('sonarr_eventtype') == 'Test':
+    print("This is a test event.")
+    sys.exit(0)
+
+# SABnzbd settings
+SABNZBD_API_KEY = '{{ pausebigdownloads_sabnzbd_api_key }}'
+SABNZBD_URL = '{{ pausebigdownloads_sabnzbd_url }}'
+
+try:
+    # Make a request to the SABnzbd API to get the list of downloads
+    response = requests.get(f'{SABNZBD_URL}/api?mode=queue&start=START&limit=LIMIT&output=json&apikey={SABNZBD_API_KEY}')
+    downloads = response.json().get('queue', {}).get('slots', [])
+
+    # Iterate over the downloads
+    for download in downloads:
+        # Extract the numerical part from the size string and convert it to a float
+        size, unit = download.get('size').split()
+
+        size = float(size)
+        # Convert size to GB if it's in different units
+        if unit == 'KB':
+            size /= (1024 * 1024)
+        elif unit == 'MB':
+            size /= 1024
+        elif unit == 'TB':
+            size *= 1024
+
+        # If the download's size is more than 30GB
+        if size > 30:
+
+            # Make a request to the SABnzbd API to pause the download
+            pause_response = requests.get(f'{SABNZBD_URL}/api?mode=queue&name=pause&value={download.get("nzo_id")}&apikey={SABNZBD_API_KEY}')
+
+            if pause_response.status_code == 200:
+                print(f"Paused download '{download.get('filename')}' due to large size ({size} GB).")
+            else:
+                print(f"Failed to pause download '{download.get('filename')}'. Response: {pause_response.text}")
+
+except Exception as e:
+    print(f"Error in pauseBigDownloads script: {str(e)}")

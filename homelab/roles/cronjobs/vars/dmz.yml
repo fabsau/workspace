@@ -1,0 +1,2 @@
+# host_vars/dmz.yml
+uptime_robot_url_photoprism_copy: "https://uptime.oiba.de/api/push/9uOjS4VezL?status=up&msg=OK&ping="

@@ -1,0 +1,31 @@
+# tasks/main.yml
+
+- name: Include secrets
+  include_vars: "secrets.yml"
+
+- name: Schedule regular cron jobs
+  cron:
+    name: "{{ item.key }}"
+    minute: "{{ item.value.minute }}"
+    hour: "{{ item.value.hour }}"
+    job: "{{ scripts_path }}/{{ item.value.script }} && curl {{ curl_options }} {{ hostvars[inventory_hostname]['uptime_robot_url_' + item.key] if hostvars[inventory_hostname]['uptime_robot_url_' + item.key] is defined else '' }}"
+  loop: "{{ cronjobs | dict2items }}"
+  when: inventory_hostname in item.value.hosts and item.key != 'proxmox_backup'
+
+- name: Schedule Proxmox backup cron job
+  cron:
+    name: "proxmox_backup"
+    minute: "{{ cronjobs.proxmox_backup.minute }}"
+    hour: "{{ cronjobs.proxmox_backup.hour | int + (cronjobs.proxmox_backup.hosts.index(inventory_hostname) * cronjobs.proxmox_backup.gap) }}"
+    job: "proxmox-backup-client backup {{ hostvars[inventory_hostname].backup_path }} --repository agent@pbs@{{ proxmox_host }}:NFS && curl {{ curl_options }} {{ hostvars[inventory_hostname].uptime_robot_url_proxmox_backup }}"
+  when: inventory_hostname in cronjobs.proxmox_backup.hosts and hostvars[inventory_hostname].backup_path is defined
+
+- name: Template script files
+  template:
+    src: "{{ item.value.script }}.j2"
+    dest: "{{ scripts_path }}/{{ item.value.script }}"
+    mode: '0755'
+  loop: "{{ cronjobs | dict2items }}"
+  when: 
+    - inventory_hostname in item.value.hosts
+    - item.value.script is defined

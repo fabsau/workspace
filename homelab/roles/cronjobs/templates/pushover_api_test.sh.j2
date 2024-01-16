@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Send a cURL POST request to the Pushover API
+curl -s --request POST "https://api.pushover.net/1/messages.json" \
+    --data-urlencode "token={{ pushover_api_test_token }}" \
+    --data-urlencode "user={{ pushover_api_test_user }}" \
+    --data-urlencode "message=Pushover Test" \
+    --data-urlencode "title=Pushover Test" \
+    --data-urlencode "priority=-2"
+# Check if the request was successful using the curl command's exit status
+if [ $? -eq 0 ]
+then
+  echo "Pushover API is working fine. Sending a health check pulse."
+  
+  # Send a request to Uptime Kuma or to another notification system to indicate that everything is working fine
+  # Replace the URL below with your Uptime Kuma heartbeat URL or another notification system's API
+  curl -s --request GET "https://uptime.oiba.de/api/push/5vMvAVVZnF?status=up&msg=OK&ping="
+else
+  echo "Pushover API seems to be down. No health check pulse was sent."
+fi

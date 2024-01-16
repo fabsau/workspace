@@ -1,0 +1,6 @@
+# host_vars/nas.yml
+proxmox_host: "192.168.100.4"
+uptime_robot_url_photoprism_copy: "https://uptime.oiba.de/api/push/48VHp6HKOu?status=up&msg=OK&ping="
+uptime_robot_url_pushover_api_test: "https://uptime.oiba.de/api/push/FUbCb0ggR8?status=up&msg=OK&ping="
+uptime_robot_url_proxmox_backup: "https://uptime.oiba.de/api/push/FUbCb0ggR8?status=up&msg=OK&ping="
+backup_path: "nas.img:/dev/sda"

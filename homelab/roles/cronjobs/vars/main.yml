@@ -1,0 +1,29 @@
+# vars/main.yml
+scripts_path: "/docker2/0scripts"
+curl_options: "-fsS -m 10 --retry 5 -o /dev/null"
+cronjobs:
+  photoprism_copy:
+    hosts: ['nas']
+    minute: "0"
+    hour: "8"
+    script: "photoprism_copy.sh"
+  photoprism_import:
+    hosts: ['dmz']
+    minute: "0"
+    hour: "9"
+    script: "photoprism_import.sh"
+  pushover_api_test:
+    hosts: ['nas']
+    minute: "*/15"
+    hour: "*"
+    script: "pushover_api_test.sh"
+  proxmox_backup:
+    hosts: ['nas', 'blue']
+    minute: "30"
+    hour: "18"
+    gap: 1
+  pauseBigDownloads:
+    hosts: ['blue']
+    minute: "*"
+    hour: "*"
+    script: "pauseBigDownloads.py"
