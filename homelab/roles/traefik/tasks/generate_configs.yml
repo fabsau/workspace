@@ -3,19 +3,19 @@
 - name: Generate traefik.yml
   template:
     src: config.yml.j2
-    dest: "{{ traefik.traefik_yml }}"
+    dest: "{{ traefik_config_yml }}"
 
 - name: Generate middlewares
   template:
     src: middlewares.yml.j2
-    dest: "{{ traefik.middlewares_yml }}"
+    dest: "{{ traefik_middlewares_yml }}"
 
 - name: Generate servers
   template:
     src: servers.yml.j2
-    dest: "{{ traefik.servers_yml }}"
+    dest: "{{ traefik_servers_yml }}"
 
 - name: Generate traefik.env
   template:
     src: traefik.env.j2
-    dest: "{{ traefik.traefik_env }}"
+    dest: "{{ traefik_env }}"

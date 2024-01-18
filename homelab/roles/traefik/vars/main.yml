@@ -1,18 +1,17 @@
 # vars/main.yml
 
 # Base configuration
-base_path: /docker2
-base_subnet: 172.29
+docker_base_path: /docker2
+docker_network_base_subnet: 172.29
 
 # Traefik configuration
-traefik:
-  base_folder: "{{ base_path }}/traefik"
-  config_folder: "{{ traefik.base_folder }}/config"
-  compose_file: "{{ traefik.base_folder }}/docker-compose.yml"
-  traefik_yml: "{{ traefik.config_folder }}/traefik.yml"
-  middlewares_yml: "{{ traefik.config_folder }}/middlewares.yml"
-  servers_yml: "{{ traefik.config_folder }}/servers.yml"
-  traefik_env: "{{ traefik.base_folder }}/traefik.env"
+traefik_base_folder: "{{ docker_base_path }}/traefik"
+traefik_config_folder: "{{ traefik_base_folder }}/config"
+traefik_compose_file: "{{ traefik_base_folder }}/docker-compose.yml"
+traefik_config_yml: "{{ traefik_config_folder }}/traefik.yml"
+traefik_middlewares_yml: "{{ traefik_config_folder }}/middlewares.yml"
+traefik_servers_yml: "{{ traefik_config_folder }}/servers.yml"
+traefik_env: "{{ traefik_base_folder }}/traefik.env"
 
 # Default ports and networks
 default_ports:
@@ -79,4 +78,4 @@ services:
     watchtower: true
 
 # Append additional_networks to default_networks
-all_networks: "{{ default_networks + additional_networks }}"
+networks: "{{ default_networks + additional_networks }}"
