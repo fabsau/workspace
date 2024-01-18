@@ -2,5 +2,5 @@
 
 - name: Generate Docker Compose file
   template:
-    src: container_base.j2
-    dest: "{{ traefik.compose_file }}"
+    src: ../templates/container_base.j2
+    dest: "{{ traefik_compose_file }}"
