@@ -9,7 +9,12 @@ services:
     container_name: {{ service.name }}
     hostname: {{ service.name }}
     restart: {{ service.restart | default('unless-stopped') }}
-    command: "{{ service.command | default('') }}"
+{% if service.command is defined and service.command %}
+    command:
+{% for cmd in service.command %}
+      - {{ cmd }}
+{% endfor %}
+{% endif %}
 {% if service.depends_on is defined and service.depends_on %}
     depends_on: 
 {% for depend in service.depends_on %}
@@ -130,7 +135,9 @@ services:
 
 ### NETWORKS ###
 networks:
-{% for network in all_networks %}
+{% for service in services %}
+{% for network in service.networks%}
   {{ network }}:
     external: true
+{% endfor %}
 {% endfor %}
