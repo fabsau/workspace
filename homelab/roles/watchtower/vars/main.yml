@@ -1,0 +1,19 @@
+# vars/main.yml
+services:
+  - name: watchtower
+    image: containrrr/watchtower:latest
+    env_file:
+      - /docker/common.env
+      - /docker/watchtower.env
+    networks:
+      - watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    traefik: 
+      - name: watchtower
+        network: watchtower
+        rule: Host(`{{ watchtower_url }}`)
+        https_redirection: true
+        middlewares: private-chain@file
+        service: 8080
+    watchtower: true

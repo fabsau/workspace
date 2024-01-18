@@ -1,0 +1,6 @@
+# task/generate_compose.yml
+
+- name: Generate Docker Compose file
+  template:
+    src: ../templates/container_base.j2
+    dest: /docker2/watchtower/docker-compose.yml
