@@ -1,4 +1,6 @@
 # vars/main.yml
+docker_role_name: watchtower
+
 services:
   - name: watchtower
     image: containrrr/watchtower:latest

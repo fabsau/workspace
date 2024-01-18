@@ -1,5 +1,0 @@
-# task/generate_configs.yml
-- name: Generate Watchtower.env
-  template:
-    src: watchtower.env.j2
-    dest: "/docker2/watchtower/watchtower.env"
