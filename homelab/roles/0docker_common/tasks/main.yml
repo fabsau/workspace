@@ -1,0 +1,51 @@
+- name: Create base path directory
+  file:
+    path: "{{ base_path }}/{{ docker_role_name }}"
+    state: directory
+
+- name: Template Docker Compose file
+  template:
+    src: ../templates/container_base.j2
+    dest: "{{ base_path }}/{{ docker_role_name }}/docker-compose.yml"
+
+- name: Check if any env files exist
+  find:
+    paths: "../roles/{{ docker_role_name }}/templates"
+    patterns: "*.env.j2"
+  delegate_to: localhost
+  register: env_files
+
+- name: Template env files
+  template:
+    src: "{{ item.path }}"
+    dest: "{{ base_path }}/{{ docker_role_name }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
+  with_items: "{{ env_files.files }}"
+  when: env_files.matched > 0
+
+- name: Check if any config files exist
+  find:
+    paths: "../roles/{{ docker_role_name }}/templates"
+    patterns: "*.j2"
+    excludes: "*.env.j2"
+  delegate_to: localhost
+  register: config_files
+
+- name: Create config directory
+  file:
+    path: "{{ base_path }}/{{ docker_role_name }}/{{ docker_service_volume }}"
+    state: directory
+  when: config_files.matched > 0
+
+
+- name: Template config files
+  template:
+    src: "{{ item.path }}"
+    dest: "{{ base_path }}/{{ docker_role_name }}/{{ docker_service_volume }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
+  with_items: "{{ config_files.files }}"
+  when: config_files.matched > 0
+
+- name: Rename files
+  command:
+    cmd: mv "{{ base_path }}/{{ docker_role_name }}/{{ docker_service_volume }}/{{ item.src }}" "{{ base_path }}/{{ docker_role_name }}/{{ docker_service_volume }}/{{ item.dest }}"
+  with_items: "{{ rename_files }}"
+  when: rename_files is defined
