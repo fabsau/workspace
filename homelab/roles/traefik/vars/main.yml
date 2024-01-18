@@ -1,17 +1,10 @@
 # vars/main.yml
 
-# Base configuration
-docker_base_path: /docker2
+docker_role_name: traefik
+rename_files:
+  - src: config.yml
+    dest: traefik.yml
 docker_network_base_subnet: 172.29
-
-# Traefik configuration
-traefik_base_folder: "{{ docker_base_path }}/traefik"
-traefik_config_folder: "{{ traefik_base_folder }}/config"
-traefik_compose_file: "{{ traefik_base_folder }}/docker-compose.yml"
-traefik_config_yml: "{{ traefik_config_folder }}/traefik.yml"
-traefik_middlewares_yml: "{{ traefik_config_folder }}/middlewares.yml"
-traefik_servers_yml: "{{ traefik_config_folder }}/servers.yml"
-traefik_env: "{{ traefik_base_folder }}/traefik.env"
 
 # Default ports and networks
 default_ports:
