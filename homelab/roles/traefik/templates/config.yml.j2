@@ -26,10 +26,10 @@ api:
 
 log:
   level: "WARN"
-  filepath: "/data/log/traefik.log"
+  filepath: "/data/traefik.log"
 
 accessLog:
-  filePath: "/data/log/access.log"
+  filePath: "/data/access.log"
   bufferingSize: 100
   filters:
     statusCodes: "204-299,400-499,500-599"
@@ -40,14 +40,14 @@ providers:
     network: traefik-servicenet
     exposedByDefault: false
   file:
-    directory: "/data/config"
+    directory: "/config"
     watch: true
 
 certificatesResolvers:
   acme:
     acme:
       email: "admin@sauna.re"
-      storage: "/data/ssl/oiba.json"
+      storage: "/data/acme.json"
       keyType: "EC256" #https://doc.traefik.io/traefik/https/acme/#keytype
       caServer: "{% if traefik_ca_productive %}https://acme-v02.api.letsencrypt.org/directory{% else %}https://acme-staging-v02.api.letsencrypt.org/directory{% endif %}"
       dnsChallenge:
