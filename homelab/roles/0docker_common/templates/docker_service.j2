@@ -1,0 +1,147 @@
+version: '3.8'
+
+services:
+
+{% for service in services %}
+### {{ service.name | upper }} ###
+  {{ service.name }}:
+    image: {{ service.image }}
+    container_name: {{ service.name }}
+    hostname: {{ service.name }}
+    restart: {{ service.restart | default('unless-stopped') }}
+{% if service.command is defined and service.command %}
+    command:
+{% for cmd in service.command %}
+      - {{ cmd }}
+{% endfor %}
+{% endif %}
+{% if service.depends_on is defined and service.depends_on %}
+    depends_on: 
+{% for depend in service.depends_on %}
+      - {{ depend }}
+{% endfor %}
+{% endif %}
+    security_opt:
+      - no-new-privileges
+{% if service.cap_drop is defined and service.cap_drop %}
+    cap_drop: 
+{% for cap in service.cap_drop %}
+      - {{ cap }}
+{% endfor %}
+{% endif %}
+{% if service.cap_add is defined and service.cap_add %}
+    cap_add: 
+{% for cap in service.cap_add %}
+      - {{ cap }}
+{% endfor %}
+{% endif %}
+{% if service.user is defined and service.user %}
+    user: {{ service.user }}
+{% endif %}
+{% if service.cpus is defined and service.cpus %}
+    cpus: {{ service.cpus }}
+{% endif %}
+{% if service.devices is defined and service.devices %}
+    devices: 
+{% for device in service.devices %}
+      - {{ device | quote }}
+{% endfor %}
+{% endif %}
+{% if service.sysctls is defined and service.sysctls %}
+    sysctls: 
+{% for sysctl in service.sysctls %}
+      - {{ sysctl | quote }}
+{% endfor %}
+{% endif %}
+{% if service.secrets is defined and service.secrets %}
+    secrets: 
+{% for secret in service.secrets %}
+      - {{ secret }}
+{% endfor %}
+{% endif %}
+{% if service.env_file is defined and service.env_file %}
+    env_file: 
+{% for env_file in service.env_file %}
+      - {{ env_file }}
+{% endfor %}
+{% endif %}
+{% if service.environment is defined and service.environment %}
+    environment:
+{% for env in service.environment %}
+      - {{ env }}
+{% endfor %}
+{% endif %}
+{% if service.ports is defined and service.ports %}
+    ports:
+{% for port in service.ports %}
+{% if port is string %}
+      - {{ port }}
+{% else %}
+      - target: {{ port.target }}
+        published: {{ port.published }}
+        protocol: {{ port.protocol }}
+        mode: {{ port.mode }}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if service.network_mode is defined and service.network_mode %}
+    network_mode: {{ service.network_mode }}
+{% endif %}
+{% if service.networks is defined and service.networks %}
+    networks: 
+{% for network in service.networks %}
+      - {{ network }}
+{% endfor %}
+{% endif %}
+{% if service.dns is defined and service.dns %}
+    dns: 
+{% for dns in service.dns %}
+      - {{ dns }}
+{% endfor %}
+{% endif %}
+{% if service.read_only is defined and service.read_only %}
+    read_only: {{ service.read_only }}
+{% endif %}
+{% if service.volumes is defined and service.volumes %}
+    volumes:
+{% for volume in service.volumes %}
+      - {{ volume }}
+{% endfor %}
+{% endif %}
+    labels:
+{% if service.traefik is defined %}
+      - "traefik.enable=true"
+{% for traefik in service.traefik %}
+      - "traefik.docker.network={{ traefik.network }}"
+      - "traefik.http.routers.{{ traefik.name }}.entrypoints=http"
+      - "traefik.http.routers.{{ traefik.name }}.rule={{ traefik.rule | quote }}"
+{% if traefik.https_redirection | default(true) %}
+      - "traefik.http.routers.{{ traefik.name }}.middlewares=https-redirect@file"
+{% endif %}
+{% if traefik.insecuretransport | default(false) %}
+      - "traefik.http.services.{{ traefik.name }}.loadBalancer.serversTransport=insecuretransport@file"
+{% endif %}
+      - "traefik.http.routers.{{ traefik.name }}-https.entrypoints=https"
+      - "traefik.http.routers.{{ traefik.name }}-https.rule={{ traefik.rule | quote }}"
+      - "traefik.http.routers.{{ traefik.name }}-https.tls.certresolver=acme"
+      - "traefik.http.routers.{{ traefik.name }}-https.middlewares={{ traefik.middlewares }}"
+      - "traefik.http.services.{{ traefik.name }}.loadbalancer.server.port={{ traefik.service }}"
+{% endfor %}
+{% endif %}
+{% if service.watchtower | default(true) %}
+      - "com.centurylinklabs.watchtower.enable=true"
+{% endif %}
+{% endfor %}
+
+
+
+### NETWORKS ###
+{% if services | selectattr("networks", "defined") | list | length > 0 %}
+networks:
+{% for service in services if service.networks is defined %}
+{% for network in service.networks%}
+  {{ network }}:
+    external: true
+{% endfor %}
+{% endfor %}
+{% endif %}

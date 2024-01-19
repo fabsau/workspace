@@ -5,7 +5,7 @@
 
 - name: Template Docker Compose file
   template:
-    src: ../templates/container_base.j2
+    src: docker_service.j2
     dest: "{{ base_path }}/{{ docker_role_name }}/docker-compose.yml"
 
 - name: Check if any env files exist
