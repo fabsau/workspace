@@ -34,16 +34,16 @@ services:
       - ALL
     cap_add:
       - NET_BIND_SERVICE
-    user: 2000:2000
+    user: "{{ common_puid }}:{{ common_pgid }}"
     cpus: 0.75
     env_file:
-      - /docker/common.env
-      - /docker/traefik.env
+      - ../common.env
+      - ./traefik.env
     ports: "{{ traefik_default_ports + traefik_additional_ports }}"
     networks: "{{ traefik_default_networks + traefik_additional_networks }}"
     volumes: 
-      - /docker/traefik/config:/data/config:ro
-      - /docker/traefik:/data
+      - ./config/config:/data/config:ro
+      - ./config:/data
     traefik: 
       - name: traefik
         network: traefik

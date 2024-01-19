@@ -5,8 +5,7 @@ services:
   - name: watchtower
     image: containrrr/watchtower:latest
     env_file:
-      - /docker/common.env
-      - /docker/watchtower.env
+      - ./watchtower.env
     networks:
       - watchtower
     volumes:
