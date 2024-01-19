@@ -13,9 +13,9 @@ entryPoints:
     http3: {}
   metrics:
     address: ":8082"
-{% for entrypoint in entrypoints %}
-  {{ entrypoint.name }}:
-    address: "{{ entrypoint.address }}"
+{% for traefik_entrypoint in traefik_entrypoints %}
+  {{ traefik_entrypoint.name }}:
+    address: "{{ traefik_entrypoint.address }}"
 {% endfor %}
 
 experimental:
@@ -49,7 +49,7 @@ certificatesResolvers:
       email: "admin@sauna.re"
       storage: "/data/ssl/oiba.json"
       keyType: "EC256" #https://doc.traefik.io/traefik/https/acme/#keytype
-      caServer: "{% if ca_productive %}https://acme-v02.api.letsencrypt.org/directory{% else %}https://acme-staging-v02.api.letsencrypt.org/directory{% endif %}"
+      caServer: "{% if traefik_ca_productive %}https://acme-v02.api.letsencrypt.org/directory{% else %}https://acme-staging-v02.api.letsencrypt.org/directory{% endif %}"
       dnsChallenge:
         provider: "cloudflare"
         resolvers:

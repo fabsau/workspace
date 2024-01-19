@@ -1,12 +1,10 @@
 # vars/nas.yml
 
 traefik_host: proxy.oiba.de
-dockerproxy_allowed_ip: 172.29.13.0/24
-dockerproxy_gid: 993
-oauth_address: https://auth.sauna.re/api/verify
-ca_productive: true
-oauth_insecureSkipVerify: false
-additional_ports: 
+traefik_oauth_address: https://auth.sauna.re/api/verify
+traefik_ca_productive: true
+traefik_oauth_insecureSkipVerify: false
+traefik_additional_ports: 
   #Portainer
   - target: 8000
     published: 8000
@@ -52,7 +50,7 @@ traefik_domains:
   - main: sauna.re
     sans:
       - "*.sauna.re"
-additional_networks:
+traefik_additional_networks:
   - portainer
   - paperless
   - unifi
@@ -65,7 +63,7 @@ additional_networks:
   - librespeed
   - czkawka
   - vscode
-entrypoints:
+traefik_entrypoints:
   - name: portainer
     address: ":8000"
   - name: unifi
@@ -82,7 +80,7 @@ entrypoints:
     address: ":8843"
   - name: unifi7
     address: ":10001/udp"
-whitelist_ips:
+traefik_whitelist_ips:
   - 46.223.56.204/32
   - 172.187.202.93
   - 172.31.0.0/12
@@ -90,7 +88,7 @@ whitelist_ips:
   - 192.168.50.0/24
   - 192.168.100.0/24
   - 195.90.219.248
-servers:
+traefik_extra_servers:
   - name: proxmox
     entrypoint: https
     middleware: private-chain@file
@@ -146,3 +144,5 @@ servers:
     middleware: private-chain@file
     url: bak.oiba.de
     insecuretransport: true
+dockerproxy_allowed_ip: 172.29.13.0/24
+dockerproxy_gid: 993

@@ -1,24 +1,24 @@
 http:
   routers:
-{% for server in servers %}
-    {{ server.name }}:
-      entryPoints: ["{{ server.entrypoint }}"]
-      middlewares: ["{{ server.middleware }}"]
-      service: "service-{{ server.name }}"
-      rule: "Host(`{{ server.url }}`)"
+{% for traefik_extra_server in traefik_extra_servers %}
+    {{ traefik_extra_server.name }}:
+      entryPoints: ["{{ traefik_extra_server.entrypoint }}"]
+      middlewares: ["{{ traefik_extra_server.middleware }}"]
+      service: "service-{{ traefik_extra_server.name }}"
+      rule: "Host(`{{ traefik_extra_server.url }}`)"
       tls:
         certResolver: "acme"
-{% if server.insecuretransport %}
+{% if traefik_extra_server.insecuretransport %}
       serversTransport: insecuretransport@file
 {% endif %}
 {% endfor %}
   services:
-{% for server in servers %}
-    service-{{ server.name }}:
+{% for traefik_extra_server in traefik_extra_servers %}
+    service-{{ traefik_extra_server.name }}:
       loadBalancer:
         servers:
-          - url: "{{ server.url }}"
-{% if server.insecuretransport %}
+          - url: "{{ traefik_extra_server.url }}"
+{% if traefik_extra_server.insecuretransport %}
         serversTransport: insecuretransport@file
 {% endif %}
 {% endfor %}

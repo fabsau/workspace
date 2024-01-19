@@ -70,18 +70,18 @@ http:
 
     whitelist:
       ipwhitelist:
-        sourceRange: "{{ whitelist_ips }}"
+        sourceRange: "{{ traefik_whitelist_ips }}"
 
     oauth:
       forwardAuth:
-        address: "{{ oauth_address }}"
+        address: "{{ traefik_oauth_address }}"
         trustForwardHeader: true
         authResponseHeaders:
           - "Remote-User"
           - "Remote-Groups"
           - "Remote-Name"
           - "Remote-Email"
-{% if oauth_insecureSkipVerify %}
+{% if traefik_oauth_insecureSkipVerify %}
         tls:
         insecureSkipVerify: true
 {% endif %}

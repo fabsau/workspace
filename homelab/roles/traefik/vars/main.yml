@@ -7,7 +7,7 @@ rename_files:
 docker_network_base_subnet: 172.29
 
 # Default ports and networks
-default_ports:
+traefik_default_ports:
   - target: 80
     published: 80
     protocol: tcp
@@ -20,7 +20,7 @@ default_ports:
     published: 443
     protocol: udp
     mode: host
-default_networks:
+traefik_default_networks:
   - traefik
 
 services:
@@ -39,8 +39,8 @@ services:
     env_file:
       - /docker/common.env
       - /docker/traefik.env
-    ports: "{{ default_ports + additional_ports }}"
-    networks: "{{ default_networks + additional_networks }}"
+    ports: "{{ traefik_default_ports + traefik_additional_ports }}"
+    networks: "{{ traefik_default_networks + traefik_additional_networks }}"
     volumes: 
       - /docker/traefik/config:/data/config:ro
       - /docker/traefik:/data
