@@ -1,11 +1,11 @@
 - name: Include host-specific vars
-  include_vars: "/config/workspace/homelab/vars/{{ ansible_hostname }}.yml"
+  include_vars: "{{ ansible_home }}/vars/{{ ansible_hostname }}.yml"
 
 - name: Include secrets
-  include_vars: "/config/workspace/homelab/vars/secrets.yml"
+  include_vars: "{{ ansible_home }}/vars/secrets.yml"
 
 - name: Include role-specific vars
-  include_vars: "/config/workspace/homelab/roles/{{ role_specific }}/vars/main.yml"
+  include_vars: "{{ ansible_home }}/roles/{{ role_specific }}/vars/main.yml"
 
 - name: Create base path directory
   become: true
@@ -18,12 +18,12 @@
 
 - name: Template Docker Compose file
   template:
-    src: /config/workspace/homelab/roles/0docker_common/templates/docker_service.j2
+    src: "{{ ansible_home }}/roles/0docker_common/templates/docker_service.j2"
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml"
 
 - name: Find all templates
   find:
-    paths: "/config/workspace/homelab/roles/{{ docker_role_name }}/templates"
+    paths: "{{ ansible_home }}/roles/{{ docker_role_name }}/templates"
     patterns: "*.j2"
   delegate_to: localhost
   register: template_files
