@@ -136,12 +136,18 @@ services:
 
 
 ### NETWORKS ###
+{% set unique_networks = [] %}
 {% if services | selectattr("networks", "defined") | list | length > 0 %}
-networks:
 {% for service in services if service.networks is defined %}
-{% for network in service.networks%}
+{% for network in service.networks %}
+  {% if network not in unique_networks %}
+  {% set _ = unique_networks.append(network) %}
+  {% endif %}
+{% endfor %}
+{% endfor %}
+networks:
+{% for network in unique_networks %}
   {{ network }}:
     external: true
-{% endfor %}
 {% endfor %}
 {% endif %}
