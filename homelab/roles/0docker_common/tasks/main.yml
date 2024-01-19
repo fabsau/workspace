@@ -4,6 +4,9 @@
 - name: Include secrets
   include_vars: "/config/workspace/homelab/vars/secrets.yml"
 
+- name: Include role-specific vars
+  include_vars: "/config/workspace/homelab/roles/{{ role_specific }}/vars/main.yml"
+
 - name: Create base path directory
   become: true
   file:

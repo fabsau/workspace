@@ -1,5 +1,0 @@
-# tasks/main.yml
-
-- name: Include common tasks
-  include_role:
-    name: 0docker_common

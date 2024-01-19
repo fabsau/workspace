@@ -1,8 +1,4 @@
 - hosts: nas
-  roles:
-    - traefik
-    - watchtower
-    # - cronjob
   tasks:
     - name: Include host-specific vars
       include_vars: "/config/workspace/homelab/vars/{{ ansible_hostname }}.yml"
@@ -12,3 +8,13 @@
 
     - name: Perform Docker Setup (Docker Networks, Common.env)
       include_tasks: /config/workspace/homelab/roles/0docker_common/tasks/docker_setup.yml
+    
+    - name: Create Docker Service Files for each defined role
+      include_role:
+        name: wrapper
+      vars:
+        role_specific: "{{ item }}"
+      loop:
+        - traefik
+        - watchtower
+        # - cronjob
