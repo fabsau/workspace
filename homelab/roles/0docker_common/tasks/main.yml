@@ -1,8 +1,6 @@
-- name: Include host-specific vars
-  include_vars: "{{ ansible_home }}/vars/{{ ansible_hostname }}.yml"
-
-- name: Include secrets
-  include_vars: "{{ ansible_home }}/vars/secrets.yml"
+- name: Include all variables from the 'variables' role
+  include_vars:
+    dir: "{{ ansible_home }}/roles/variables/vars"
 
 - name: Include role-specific vars
   include_vars: "{{ ansible_home }}/roles/{{ role_specific }}/vars/main.yml"

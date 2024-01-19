@@ -1,3 +1,5 @@
+ansible_home: "/config/workspace/homelab"
+
 docker_base_path: /docker2
 docker_common_timezone: Europe/Berlin
 docker_common_puid: 2000
