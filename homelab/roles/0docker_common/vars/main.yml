@@ -1,1 +1,4 @@
-base_path: /docker2
+docker_base_path: /docker2
+common_timezone: Europe/Berlin
+common_puid: 2000
+common_pgid: 2000

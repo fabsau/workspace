@@ -1,12 +1,21 @@
 - name: Create base path directory
+  become: true
   file:
-    path: "{{ base_path }}/{{ docker_role_name }}"
+    path: "{{ docker_base_path }}/{{ docker_role_name }}"
     state: directory
+    owner: ansible
+    group: ansible
+    mode: '0755'
+
+- name: Template common.env file
+  template:
+    src: common.env.j2
+    dest: "{{ docker_base_path }}/common.env"
 
 - name: Template Docker Compose file
   template:
     src: docker_service.j2
-    dest: "{{ base_path }}/{{ docker_role_name }}/docker-compose.yml"
+    dest: "{{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml"
 
 - name: Check if any env files exist
   find:
@@ -18,7 +27,7 @@
 - name: Template env files
   template:
     src: "{{ item.path }}"
-    dest: "{{ base_path }}/{{ docker_role_name }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
+    dest: "{{ docker_base_path }}/{{ docker_role_name }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
   with_items: "{{ env_files.files }}"
   when: env_files.matched > 0
 
@@ -32,20 +41,30 @@
 
 - name: Create config directory
   file:
-    path: "{{ base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}"
+    path: "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}"
     state: directory
   when: config_files.matched > 0
-
 
 - name: Template config files
   template:
     src: "{{ item.path }}"
-    dest: "{{ base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
+    dest: "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
   with_items: "{{ config_files.files }}"
   when: config_files.matched > 0
 
+- name: Check if the source file exists
+  stat:
+    path: "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.src }}"
+  register: src_file
+  with_items: "{{ rename_files | default([]) }}"
+  when: rename_files is defined
+
 - name: Rename files
   command:
-    cmd: mv "{{ base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.src }}" "{{ base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.dest }}"
-  with_items: "{{ rename_files }}"
-  when: rename_files is defined
+    cmd: mv "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.0.src }}" "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.0.dest }}"
+  with_together:
+    - "{{ rename_files | default([]) }}"
+    - "{{ src_file.results }}"
+  when: rename_files is defined and item.1.stat.exists
+
+
