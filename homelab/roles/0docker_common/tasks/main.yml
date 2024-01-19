@@ -1,8 +1,8 @@
 - name: Include host-specific vars
-  include_vars: "../../vars/{{ ansible_hostname }}.yml"
+  include_vars: "/config/workspace/homelab/vars/{{ ansible_hostname }}.yml"
 
 - name: Include secrets
-  include_vars: "../../vars/secrets.yml"
+  include_vars: "/config/workspace/homelab/vars/secrets.yml"
 
 - name: Create base path directory
   become: true
@@ -13,72 +13,39 @@
     group: ansible
     mode: '0755'
 
-- name: Create Docker Networks
-  docker_network:
-    name: "{{ item }}"
-    ipam_config:
-      - subnet: "{{ docker_network_base_subnet }}.{{ loop_index+1 }}.0/24"
-        gateway: "{{ docker_network_base_subnet }}.{{ loop_index+1 }}.1"
-  loop: "{{ docker_networks }}"
-  loop_control:
-    index_var: loop_index
-
-- name: Template common.env file
-  template:
-    src: common.env.j2
-    dest: "{{ docker_base_path }}/common.env"
-
 - name: Template Docker Compose file
   template:
-    src: docker_service.j2
+    src: /config/workspace/homelab/roles/0docker_common/templates/docker_service.j2
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml"
 
-- name: Check if any env files exist
+- name: Find all templates
   find:
-    paths: "../roles/{{ docker_role_name }}/templates"
-    patterns: "*.env.j2"
+    paths: "/config/workspace/homelab/roles/{{ docker_role_name }}/templates"
+    patterns: "*.j2"
   delegate_to: localhost
-  register: env_files
+  register: template_files
+
+- name: Separate env and config files
+  set_fact:
+    env_files: "{{ template_files.files | selectattr('path', 'search', '.env.j2$') | list }}"
+    config_files: "{{ template_files.files | selectattr('path', 'search', '.j2$') | rejectattr('path', 'search', '.env.j2$') | list }}"
 
 - name: Template env files
   template:
     src: "{{ item.path }}"
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
-  with_items: "{{ env_files.files }}"
-  when: env_files.matched > 0
-
-- name: Check if any config files exist
-  find:
-    paths: "../roles/{{ docker_role_name }}/templates"
-    patterns: "*.j2"
-    excludes: "*.env.j2"
-  delegate_to: localhost
-  register: config_files
+  loop: "{{ env_files }}"
+  when: env_files | length > 0
 
 - name: Create config directory
   file:
     path: "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}"
     state: directory
-  when: config_files.matched > 0
+  when: config_files | length > 0
 
 - name: Template config files
   template:
     src: "{{ item.path }}"
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
-  with_items: "{{ config_files.files }}"
-  when: config_files.matched > 0
-
-- name: Check if the source file exists
-  stat:
-    path: "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.src }}"
-  register: src_file
-  with_items: "{{ rename_files | default([]) }}"
-  when: rename_files is defined
-
-- name: Rename files
-  command:
-    cmd: mv "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.0.src }}" "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.0.dest }}"
-  with_together:
-    - "{{ rename_files | default([]) }}"
-    - "{{ src_file.results }}"
-  when: rename_files is defined and item.1.stat.exists
+  loop: "{{ config_files }}"
+  when: config_files | length > 0

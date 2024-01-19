@@ -1,0 +1,16 @@
+# tasks/docker_setup.yml
+
+- name: Create Docker Networks
+  docker_network:
+    name: "{{ item }}"
+    ipam_config:
+      - subnet: "{{ docker_network_base_subnet }}.{{ loop_index+1 }}.0/24"
+        gateway: "{{ docker_network_base_subnet }}.{{ loop_index+1 }}.1"
+  loop: "{{ docker_networks }}"
+  loop_control:
+    index_var: loop_index
+
+- name: Template common.env file
+  template:
+    src: /config/workspace/homelab/roles/0docker_common/templates/common.env.j2
+    dest: "{{ docker_base_path }}/common.env"
