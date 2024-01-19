@@ -131,6 +131,7 @@ services:
 {% if service.watchtower | default(true) %}
       - "com.centurylinklabs.watchtower.enable=true"
 {% endif %}
+
 {% endfor %}
 
 
@@ -140,9 +141,9 @@ services:
 {% if services | selectattr("networks", "defined") | list | length > 0 %}
 {% for service in services if service.networks is defined %}
 {% for network in service.networks %}
-  {% if network not in unique_networks %}
-  {% set _ = unique_networks.append(network) %}
-  {% endif %}
+{% if network not in unique_networks %}
+{% set _ = unique_networks.append(network) %}
+{% endif %}
 {% endfor %}
 {% endfor %}
 networks:
