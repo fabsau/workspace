@@ -1,3 +1,9 @@
+- name: Include host-specific vars
+  include_vars: "../../vars/{{ ansible_hostname }}.yml"
+
+- name: Include secrets
+  include_vars: "../../vars/secrets.yml"
+
 - name: Create base path directory
   become: true
   file:
@@ -6,6 +12,15 @@
     owner: ansible
     group: ansible
     mode: '0755'
+
+# - name: Create Docker Networks
+#   docker_network:
+#     name: "{{ item }}"
+#     ipam_config:
+#       - subnet: "{{ docker_network_base_subnet }}.{{ loop.index }}.0/24"
+#   loop: "{{ docker_networks }}"
+#   loop_control:
+#     index_var: loop
 
 - name: Template common.env file
   template:
