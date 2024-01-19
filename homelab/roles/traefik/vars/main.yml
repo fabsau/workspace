@@ -4,9 +4,8 @@ docker_role_name: traefik
 rename_files:
   - src: config.yml
     dest: traefik.yml
-docker_network_base_subnet: 172.29
 
-# Default ports and networks
+# Default ports
 traefik_default_ports:
   - target: 80
     published: 80
@@ -20,30 +19,28 @@ traefik_default_ports:
     published: 443
     protocol: udp
     mode: host
-traefik_default_networks:
-  - traefik
 
 services:
   - name: traefik
     image: traefik:latest
     command:
-      - --configFile=/data/config/traefik.yml
+      - --configFile=/config/traefik.yml
     depends_on:
       - dockerproxy
     cap_drop:
       - ALL
     cap_add:
       - NET_BIND_SERVICE
-    user: "{{ common_puid }}:{{ common_pgid }}"
+    user: "{{ docker_common_puid }}:{{ docker_common_pgid }}"
     cpus: 0.75
     env_file:
       - ../common.env
       - ./traefik.env
     ports: "{{ traefik_default_ports + traefik_additional_ports }}"
-    networks: "{{ traefik_default_networks + traefik_additional_networks }}"
-    volumes: 
-      - ./config/config:/data/config:ro
-      - ./config:/data
+    networks: "{{ docker_networks }}"
+    volumes:
+      - ./config:/config:ro
+      - ./data:/data
     traefik: 
       - name: traefik
         network: traefik

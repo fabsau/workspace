@@ -1,5 +1,20 @@
-# vars/nas.yml
+# host_vars/nas.yml
+docker_networks:
+  - traefik
+  - portainer
+  - paperless
+  - unifi
+  - monitoring
+  - adguard
+  - pyload
+  - valetudo
+  - healthcheck
+  - uptimekuma
+  - librespeed
+  - czkawka
+  - vscode
 
+# TRAEFIK
 traefik_host: proxy.oiba.de
 traefik_oauth_address: https://auth.sauna.re/api/verify
 traefik_ca_productive: true
@@ -50,19 +65,19 @@ traefik_domains:
   - main: sauna.re
     sans:
       - "*.sauna.re"
-traefik_additional_networks:
-  - portainer
-  - paperless
-  - unifi
-  - monitoring
-  - adguard
-  - pyload
-  - valetudo
-  - healthcheck
-  - uptimekuma
-  - librespeed
-  - czkawka
-  - vscode
+# traefik_additional_networks:
+#   - portainer
+#   - paperless
+#   - unifi
+#   - monitoring
+#   - adguard
+#   - pyload
+#   - valetudo
+#   - healthcheck
+#   - uptimekuma
+#   - librespeed
+#   - czkawka
+#   - vscode
 traefik_entrypoints:
   - name: portainer
     address: ":8000"
@@ -144,5 +159,12 @@ traefik_extra_servers:
     middleware: private-chain@file
     url: bak.oiba.de
     insecuretransport: true
+
+# DOCKERPROXY_TRAEFIK
 dockerproxy_allowed_ip: 172.29.13.0/24
 dockerproxy_gid: 993
+
+# WATCHTOWER
+watchtower_schedule: "0 0 * * * *"
+watchtower_url: watchtower.oiba.de
+watchtower_mail_subject_praefix: "NAS: "

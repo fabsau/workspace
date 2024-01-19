@@ -1,4 +1,5 @@
 docker_base_path: /docker2
-common_timezone: Europe/Berlin
-common_puid: 2000
-common_pgid: 2000
+docker_common_timezone: Europe/Berlin
+docker_common_puid: 2000
+docker_common_pgid: 2000
+docker_network_base_subnet: 172.29

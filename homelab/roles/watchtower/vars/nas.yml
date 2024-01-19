@@ -1,5 +1,0 @@
-# vars/nas.yml
-
-watchtower_schedule: "0 0 * * * *"
-watchtower_url: watchtower.oiba.de
-mail_subject_praefix: "NAS: "

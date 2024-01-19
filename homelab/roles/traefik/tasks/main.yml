@@ -1,13 +1,5 @@
 # tasks/main.yml
 
-- name: Include host-specific vars
-  include_vars: "{{ ansible_hostname }}.yml"
-
-- name: Include secrets
-  include_vars: "secrets.yml"
-
 - name: Include common tasks
   include_role:
     name: 0docker_common
-
-# - include_tasks: create_docker_networks.yml
