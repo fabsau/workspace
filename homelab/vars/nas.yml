@@ -1,15 +1,15 @@
-# host_vars/nas.yml
+# vars/nas.yml
 docker_networks:
   - traefik
+  - uptimekuma
+  - monitoring
   - portainer
   - paperless
   - unifi
-  - monitoring
   - adguard
   - pyload
   - valetudo
   - healthcheck
-  - uptimekuma
   - librespeed
   - czkawka
   - vscode

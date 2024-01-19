@@ -13,14 +13,15 @@
     group: ansible
     mode: '0755'
 
-# - name: Create Docker Networks
-#   docker_network:
-#     name: "{{ item }}"
-#     ipam_config:
-#       - subnet: "{{ docker_network_base_subnet }}.{{ loop.index }}.0/24"
-#   loop: "{{ docker_networks }}"
-#   loop_control:
-#     index_var: loop
+- name: Create Docker Networks
+  docker_network:
+    name: "{{ item }}"
+    ipam_config:
+      - subnet: "{{ docker_network_base_subnet }}.{{ loop_index+1 }}.0/24"
+        gateway: "{{ docker_network_base_subnet }}.{{ loop_index+1 }}.1"
+  loop: "{{ docker_networks }}"
+  loop_control:
+    index_var: loop_index
 
 - name: Template common.env file
   template:
@@ -81,5 +82,3 @@
     - "{{ rename_files | default([]) }}"
     - "{{ src_file.results }}"
   when: rename_files is defined and item.1.stat.exists
-
-
