@@ -5,7 +5,7 @@
 - name: Include role-specific vars
   include_vars: "{{ ansible_home }}/roles/{{ role_specific }}/vars/main.yml"
 
-- name: Create base path directory
+- name: Create role directory
   become: true
   file:
     path: "{{ docker_base_path }}/{{ docker_role_name }}"
