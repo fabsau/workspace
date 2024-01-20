@@ -1,0 +1,80 @@
+# vars/main.yml
+docker_role_name: unifi
+
+services:
+  - name: unifi
+    image: lscr.io/linuxserver/unifi-network-application:latest
+    env_file:
+      - ./unifi.env
+      - ../common.env
+    networks:
+      - unifi
+    volumes:
+      - ./data:/config
+    traefik: 
+      - name: unifi
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: Host(`unifi.oiba.de`)
+        middlewares: private-chain@file
+        insecuretransport: true
+        service_port: 8443
+      - name: unifi-1900
+        protocol: udp
+        entrypoint: unifi
+        http_redirection: false
+        enable_tls: false
+        insecuretransport: false
+        service_port: 1900
+      - name: unifi-3478
+        protocol: udp
+        entrypoint: unifi2
+        http_redirection: false
+        enable_tls: false
+        insecuretransport: false
+        service_port: 3478
+      - name: unifi-5514
+        protocol: tcp
+        entrypoint: unifi3
+        http_redirection: false
+        enable_tls: false
+        rule: HostSNI(`*`)
+        insecuretransport: false
+        service_port: 5514
+      - name: unifi-6789
+        protocol: tcp
+        entrypoint: unifi4
+        http_redirection: false
+        enable_tls: false
+        rule: HostSNI(`*`)
+        insecuretransport: false
+        service_port: 6789
+      - name: unifi-8080
+        protocol: tcp
+        entrypoint: unifi5
+        http_redirection: false
+        enable_tls: false
+        rule: HostSNI(`*`)
+        insecuretransport: false
+        service_port: 8080
+      - name: unifi-10001
+        protocol: udp
+        entrypoint: unifi6
+        http_redirection: false
+        enable_tls: false
+        insecuretransport: false
+        service_port: 10001
+    watchtower: true
+
+  - name: unifi_mongodb
+    image: lscr.io/linuxserver/unifi-network-application:latest
+    env_file:
+      - ./unifi_mongodb.env
+    networks:
+      - unifi
+    volumes:
+      - ./db:/data/db
+      - ./config/unifi_mongodb_init.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    watchtower: true
