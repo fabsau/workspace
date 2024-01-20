@@ -1,10 +1,8 @@
 - hosts: nas
   roles:
     - variables
+    - 0docker_setup
   tasks:
-    - name: Perform Docker Setup (Docker Networks, Common.env)
-      include_tasks: "{{ ansible_home }}/roles/0docker_common/tasks/docker_setup.yml"
-    
     - name: Create Docker Compose Files for each defined role
       include_role:
         name: wrapper
