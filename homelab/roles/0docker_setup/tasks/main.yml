@@ -21,5 +21,5 @@
 
 - name: Template common.env file
   template:
-    src: "{{ ansible_home }}/roles/0docker_common/templates/common.env.j2"
+    src: "{{ ansible_home }}/roles/0docker_setup/templates/common.env.j2"
     dest: "{{ docker_base_path }}/common.env"
