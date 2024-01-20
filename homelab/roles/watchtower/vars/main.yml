@@ -12,9 +12,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     traefik: 
       - name: watchtower
-        network: watchtower
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
         rule: Host(`{{ watchtower_url }}`)
-        https_redirection: true
         middlewares: private-chain@file
-        service: 8080
+        insecuretransport: false
+        service_port: 8080
     watchtower: true

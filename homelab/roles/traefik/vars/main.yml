@@ -43,17 +43,23 @@ services:
       - ./data:/data
     traefik: 
       - name: traefik
-        network: traefik
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
         rule: Host(`{{ traefik_host }}`)
-        https_redirection: true
         middlewares: private-chain@file
-        service: api@internal
-      - name: traefik-prom
-        network: traefik
+        insecuretransport: false
+        service_port: api@internal
+      - name: traefik_prom
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
         rule: Host(`{{ traefik_host }}`) && Path(`/metrics`)
-        https_redirection: true
         middlewares: private-chain@file
-        service: prometheus@internal
+        insecuretransport: false
+        service_port: prometheus@internal
     watchtower: true
     labels: "{{ traefik_domains }}"
 
