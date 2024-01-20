@@ -1,7 +1,0 @@
----
-- hosts: docker
-  gather_facts: yes
-  become: yes
-  tasks:
-    - name: Run Docker system prune
-      command: docker system prune -a -f
