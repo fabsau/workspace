@@ -42,10 +42,6 @@ traefik_additional_ports:
     published: 10001
     protocol: udp
     mode: host
-  - target: 8843
-    published: 8843
-    protocol: tcp
-    mode: host
   - target: 6789
     published: 6789
     protocol: tcp
@@ -92,8 +88,6 @@ traefik_entrypoints:
   - name: unifi5
     address: ":8080"
   - name: unifi6
-    address: ":8843"
-  - name: unifi7
     address: ":10001/udp"
 traefik_whitelist_ips:
   - 46.223.56.204/32
