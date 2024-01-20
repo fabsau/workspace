@@ -1,8 +1,0 @@
-# roles/wrapper/tasks/main.yml
-- name: Include common tasks
-  include_role:
-    name: 0docker_common
-
-- name: Include role-specific tasks
-  include_role:
-    name: "{{ role_specific }}"

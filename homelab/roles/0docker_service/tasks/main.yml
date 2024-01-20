@@ -1,0 +1,6 @@
+---
+- name: Iterate over docker_service_roles
+  include_tasks: docker_service_creation.yml
+  vars:
+    role_specific: "{{ item }}"
+  loop: "{{ docker_service_roles }}"
