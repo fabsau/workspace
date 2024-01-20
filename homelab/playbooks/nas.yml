@@ -2,13 +2,9 @@
   roles:
     - variables
     - 0docker_setup
-  tasks:
-    - name: Create Docker Compose Files for each defined role
-      include_role:
-        name: wrapper
+    - role: 0docker_service
       vars:
-        role_specific: "{{ item }}"
-      loop:
-        - traefik
-        - watchtower
-        # - cronjob
+        docker_service_roles:
+          - traefik
+          - watchtower
+          # - cronjob
