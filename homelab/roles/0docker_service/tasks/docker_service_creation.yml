@@ -10,8 +10,8 @@
   file:
     path: "{{ docker_base_path }}/{{ docker_role_name }}"
     state: directory
-    owner: {{ ansible_username }}
-    group: {{ ansible_group }}
+    owner: "{{ ansible_username }}"
+    group: "{{ ansible_group }}"
     mode: '0755'
 
 - name: Template Docker Compose file
