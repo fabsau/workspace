@@ -18,3 +18,14 @@ docker_network_base_subnet: "172.30"
 docker_users:
   - root
   - "{{ ansible_username }}"
+
+logrotate_user: "{{ ansible_username }}"
+logrotate_group: "{{ ansible_group }}"
+logrotate_frequency: weekly
+logrotate_keep: 14
+logrotate_compress: yes
+logrotate_entries:
+  - name: traefik_access_log
+    path: "{{ docker_base_path }}/traefik/data/log/access.log"
+  - name: traefik_app_log
+    path: "{{ docker_base_path }}/traefik/data/log/traefik.log"

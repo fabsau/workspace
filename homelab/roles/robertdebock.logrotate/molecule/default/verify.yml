@@ -1,0 +1,10 @@
+---
+- name: Verify
+  hosts: all
+  become: yes
+  gather_facts: no
+
+  tasks:
+    - name: Run logrotate
+      ansible.builtin.command:
+        cmd: logrotate /etc/logrotate.conf
