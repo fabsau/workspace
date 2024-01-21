@@ -1,0 +1,11 @@
+- hosts: dmz
+  roles:
+    - variables
+    # - 0docker_setup
+    - role: 0docker_service
+      vars:
+        docker_service_roles:
+          - traefik
+          - watchtower
+          # - cronjob
+          - portainer_agent

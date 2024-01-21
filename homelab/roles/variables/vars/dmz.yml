@@ -1,0 +1,71 @@
+# vars/dmz.yml
+docker_networks:
+  - mediaserver
+  - portainer
+  - authelia
+  - vaultwarden
+  - blog
+  - searx
+  - spotify
+  - plausible
+  - adguard
+  - ihatemoney
+  - filebrowser
+  - librespeed
+  - homer
+  - monitoring
+  - mealie
+  - crowdsec
+  - tandoor
+  - calibre
+  - peer2profit
+  - photoprism
+  - signalproxy
+  - wizarr
+  - xbackbone
+  - barassistant
+  - waf
+  - dockerapi
+  - headscale
+  - johanna
+  - linkstack
+
+# TRAEFIK
+traefik_host: proxy.sauna.re
+traefik_oauth_address: https://auth.sauna.re/api/verify
+traefik_ca_productive: true
+traefik_oauth_insecureSkipVerify: false
+traefik_domains:
+  - main: sauna.re
+    sans:
+      - "*.sauna.re"
+      - "*.azure.sauna.re"
+
+traefik_whitelist_ips:
+  - 46.223.56.204/32
+  - 172.187.202.93
+  - 172.31.0.0/12
+  - 192.168.251.0/24
+  - 192.168.50.0/24
+  - 192.168.100.0/24
+  - 195.90.219.248
+traefik_extra_servers:
+  - name: saunaflix_statuspage
+    entrypoint: https
+    middleware: public-chain@file,redirectsaunaflix@file
+    url: uptime.oiba.de
+    insecuretransport: false
+  - name: homeassistant
+    entrypoint: https
+    middleware: public-chain@file
+    url: https://192.168.150.2/
+    insecuretransport: false
+
+# DOCKERPROXY_TRAEFIK
+dockerproxy_allowed_ip: 172.29.13.0/24
+dockerproxy_gid: 993
+
+# WATCHTOWER
+watchtower_schedule: "0 1 * * * *"
+watchtower_url: watchtower.sauna.re
+watchtower_mail_subject_praefix: "DMZ: "
