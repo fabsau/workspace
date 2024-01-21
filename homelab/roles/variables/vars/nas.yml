@@ -61,19 +61,7 @@ traefik_domains:
   - main: sauna.re
     sans:
       - "*.sauna.re"
-# traefik_additional_networks:
-#   - portainer
-#   - paperless
-#   - unifi
-#   - monitoring
-#   - adguard
-#   - pyload
-#   - valetudo
-#   - healthcheck
-#   - uptimekuma
-#   - librespeed
-#   - czkawka
-#   - vscode
+      
 traefik_entrypoints:
   - name: portainer
     address: ":8000"

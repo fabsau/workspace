@@ -1,10 +1,12 @@
 - hosts: nas
   roles:
     - variables
-    - 0docker_setup
+    # - 0docker_setup
     - role: 0docker_service
       vars:
         docker_service_roles:
-          - traefik
-          - watchtower
+          # - traefik
+          # - watchtower
           # - cronjob
+          # - portainer
+          - unifi
