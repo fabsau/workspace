@@ -69,7 +69,7 @@ services:
     watchtower: true
 
   - name: unifi_mongodb
-    image: lscr.io/linuxserver/unifi-network-application:latest
+    image: mongo:latest
     env_file:
       - ./unifi_mongodb.env
     networks:
