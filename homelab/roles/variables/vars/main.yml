@@ -2,7 +2,7 @@
 host_timezone: Europe/Berlin
 docker_base_path: /docker2
 docker_network_base_subnet: "172.30"
-default_file_permission_mode: "0770"
+default_file_permission_mode: "770"
 
 # Base Packages to install
 base_packages:

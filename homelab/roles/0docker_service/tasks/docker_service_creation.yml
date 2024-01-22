@@ -19,6 +19,7 @@
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
     mode: "{{ default_file_permission_mode }}"
+  become: true
 
 - name: "[{{ role_specific }}] Find all templates"
   find:
@@ -39,6 +40,7 @@
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
     mode: "{{ default_file_permission_mode }}"
+  become: true
   loop: "{{ env_files }}"
   when: env_files | length > 0
 
@@ -49,6 +51,7 @@
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
     mode: "{{ default_file_permission_mode }}"
+  become: true
   when: config_files | length > 0
 
 - name: "[{{ role_specific }}] Template config files"
@@ -58,5 +61,6 @@
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
     mode: "{{ default_file_permission_mode }}"
+  become: true
   loop: "{{ config_files }}"
   when: config_files | length > 0
