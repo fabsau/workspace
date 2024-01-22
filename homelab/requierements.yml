@@ -2,3 +2,4 @@
 - src: geerlingguy.docker
 - src: geerlingguy.security
 - src: robertdebock.logrotate
+- src: githubixx.ansible_role_wireguard
