@@ -18,7 +18,7 @@ services:
         entrypoint: http
         http_redirection: false
         enable_tls: false
-        rule: Host(`speed.oiba.de`)
+        rule: "Host(`{{ librespeed_domain }}`)"
         insecuretransport: false
         service_port: 80
       - name: librespeed2
@@ -26,7 +26,7 @@ services:
         entrypoint: https
         http_redirection: false
         enable_tls: true
-        rule: Host(`speed.oiba.de`)
+        rule: "Host(`{{ librespeed_domain }}`)"
         middlewares: public-chain@file
         insecuretransport: false
         service_port: 80
