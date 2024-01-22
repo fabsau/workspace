@@ -10,14 +10,17 @@
   file:
     path: "{{ docker_base_path }}/{{ docker_role_name }}"
     state: directory
-    owner: "{{ ansible_username }}"
-    group: "{{ ansible_group }}"
-    mode: '0755'
+    owner: "{{ common_username }}"
+    group: "{{ common_group_gid }}"
+    mode: '0770'
 
 - name: Template Docker Compose file
   template:
     src: "{{ ansible_home }}/roles/0docker_service/templates/docker_service.j2"
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml"
+    owner: "{{ common_username }}"
+    group: "{{ common_group_gid }}"
+    mode: '0770'
 
 - name: Find all templates
   find:
@@ -35,6 +38,9 @@
   template:
     src: "{{ item.path }}"
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
+    owner: "{{ common_username }}"
+    group: "{{ common_group_gid }}"
+    mode: '0770'
   loop: "{{ env_files }}"
   when: env_files | length > 0
 
@@ -42,11 +48,17 @@
   file:
     path: "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}"
     state: directory
+    owner: "{{ common_username }}"
+    group: "{{ common_group_gid }}"
+    mode: '0770'
   when: config_files | length > 0
 
 - name: Template config files
   template:
     src: "{{ item.path }}"
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
+    owner: "{{ common_username }}"
+    group: "{{ common_group_gid }}"
+    mode: '0770'
   loop: "{{ config_files }}"
   when: config_files | length > 0
