@@ -2,3 +2,7 @@
 enabled = true
 port    = {{ security_ssh_port }}
 filter  = sshd
+bantime  = {{ fail2ban_bantime }}
+findtime = {{ fail2ban_findtime }}
+maxretry = {{ fail2ban_maxretry }}
+ignoreip = {{ traefik_whitelist_ips | join(' ') }}
