@@ -1,9 +1,5 @@
 # /config/workspace/homelab/roles/0docker_service/tasks/main.yml
 
-- name: "Include role-specific tasks"
-  include_tasks: "{{ ansible_home }}/roles/{{ item }}/tasks/main.yml"
-  loop: "{{ docker_service_roles }}"
-
 - name: "Include all variables from the 'variables' role"
   include_vars:
     dir: "{{ ansible_home }}/roles/variables/vars"

@@ -3,6 +3,15 @@
 - name: "[{{ role_specific }}] Include role-specific vars"
   include_vars: "{{ ansible_home }}/roles/{{ role_specific }}/vars/main.yml"
 
+- name: Check if role-specific tasks exist
+  stat:
+    path: "{{ ansible_home }}/roles/{{ item }}/tasks/main.yml"
+  register: role_tasks
+
+- name: "[{{ role_specific }}] Include role-specific tasks"
+  include_tasks: "{{ ansible_home }}/roles/{{ item }}/tasks/main.yml"
+  when: role_tasks.stat.exists
+
 - name: "[{{ role_specific }}] Create role directory"
   become: true
   file:
@@ -64,3 +73,16 @@
   become: true
   loop: "{{ config_files }}"
   when: config_files | length > 0
+
+- name: "[{{ role_specific }}] Execute Docker Compose Up"
+  command: "docker compose -f {{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml up -d"
+  become: true
+  register: docker_compose_up_result
+  changed_when: "'Creating' in docker_compose_up_result.stdout or 'Starting' in docker_compose_up_result.stdout"
+
+- name: "[{{ role_specific }}] Ensure services are running"
+  command: "docker compose -f {{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml ps"
+  become: true
+  register: docker_compose_ps_result
+  changed_when: false
+  failed_when: "'Up' not in docker_compose_ps_result.stdout"
