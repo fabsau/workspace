@@ -1,4 +1,9 @@
 # vars/nas.yml
+is_proxmox_vm: true
+
+nfs_needed: true
+
+
 security_ssh_port: 22
 security_autoupdate_reboot: "true"
 security_autoupdate_reboot_time: "03:00"
