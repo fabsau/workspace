@@ -15,8 +15,8 @@
   file:
     path: "{{ docker_base_path }}"
     state: directory
-    owner: {{ common_username }}
-    group: {{ common_group }}
+    owner: "{{ common_username }}"
+    group: "{{ common_group }}"
     mode: "{{ default_file_permission_mode }}"
 
 - name: Template common.env file
