@@ -1,0 +1,33 @@
+# vars/main.yml
+docker_role_name: librespeed
+
+services:
+  - name: librespeed
+    image: linuxserver/librespeed:latest
+    env_file:
+      - ../common.env
+    ports:
+      - 8090:80
+    networks:
+      - librespeed
+    volumes:
+      - ./data:/config
+    traefik: 
+      - name: librespeed
+        protocol: http
+        entrypoint: http
+        http_redirection: false
+        enable_tls: false
+        rule: Host(`speed.oiba.de`)
+        insecuretransport: false
+        service_port: 80
+      - name: librespeed2
+        protocol: http
+        entrypoint: https
+        http_redirection: false
+        enable_tls: true
+        rule: Host(`speed.oiba.de`)
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 80
+    watchtower: true
