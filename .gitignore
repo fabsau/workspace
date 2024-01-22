@@ -1,3 +1,4 @@
 **/secrets.yml
 **/vault_pass
 **/privatekey
+/config/workspace/homelab/secrets/
