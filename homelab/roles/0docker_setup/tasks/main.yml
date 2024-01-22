@@ -15,9 +15,9 @@
   file:
     path: "{{ docker_base_path }}"
     state: directory
-    owner: {{ ansible_username }}
-    group: {{ ansible_group }}
-    mode: '0755'
+    owner: {{ common_username }}
+    group: {{ common_group }}
+    mode: '0770'
 
 - name: Template common.env file
   template:

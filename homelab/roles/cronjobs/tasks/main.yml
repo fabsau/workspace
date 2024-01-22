@@ -24,7 +24,9 @@
   template:
     src: "{{ item.value.script }}.j2"
     dest: "{{ scripts_path }}/{{ item.value.script }}"
-    mode: '0755'
+    owner: {{ common_username }}
+    group: {{ common_group }}
+    mode: '0770'
   loop: "{{ cronjobs | dict2items }}"
   when: 
     - inventory_hostname in item.value.hosts
