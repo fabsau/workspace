@@ -1,3 +1,4 @@
 ---
 - src: geerlingguy.docker
 - src: geerlingguy.security
+- src: robertdebock.logrotate
