@@ -1,2 +1,3 @@
-secrets/
 **/secrets.yml
+**/vault_pass
+**/privatekey
