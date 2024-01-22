@@ -26,7 +26,7 @@
     dest: "{{ scripts_path }}/{{ item.value.script }}"
     owner: {{ common_username }}
     group: {{ common_group }}
-    mode: '0770'
+    mode: "{{ default_file_permission_mode }}"
   loop: "{{ cronjobs | dict2items }}"
   when: 
     - inventory_hostname in item.value.hosts

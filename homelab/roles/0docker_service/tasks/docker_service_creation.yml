@@ -10,7 +10,7 @@
     state: directory
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
-    mode: '0770'
+    mode: "{{ default_file_permission_mode }}"
 
 - name: "[{{ role_specific }}] Template Docker Compose file"
   template:
@@ -18,7 +18,7 @@
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml"
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
-    mode: '0770'
+    mode: "{{ default_file_permission_mode }}"
 
 - name: "[{{ role_specific }}] Find all templates"
   find:
@@ -38,7 +38,7 @@
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
-    mode: '0770'
+    mode: "{{ default_file_permission_mode }}"
   loop: "{{ env_files }}"
   when: env_files | length > 0
 
@@ -48,7 +48,7 @@
     state: directory
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
-    mode: '0770'
+    mode: "{{ default_file_permission_mode }}"
   when: config_files | length > 0
 
 - name: "[{{ role_specific }}] Template config files"
@@ -57,6 +57,6 @@
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
-    mode: '0770'
+    mode: "{{ default_file_permission_mode }}"
   loop: "{{ config_files }}"
   when: config_files | length > 0
