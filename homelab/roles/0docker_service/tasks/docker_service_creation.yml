@@ -1,11 +1,9 @@
-- name: Include all variables from the 'variables' role
-  include_vars:
-    dir: "{{ ansible_home }}/roles/variables/vars"
+# /config/workspace/homelab/roles/0docker_service/tasks/docker_service_creation.yml
 
-- name: Include role-specific vars
+- name: "[{{ role_specific }}] Include role-specific vars"
   include_vars: "{{ ansible_home }}/roles/{{ role_specific }}/vars/main.yml"
 
-- name: Create role directory
+- name: "[{{ role_specific }}] Create role directory"
   become: true
   file:
     path: "{{ docker_base_path }}/{{ docker_role_name }}"
@@ -14,7 +12,7 @@
     group: "{{ common_group_gid }}"
     mode: '0770'
 
-- name: Template Docker Compose file
+- name: "[{{ role_specific }}] Template Docker Compose file"
   template:
     src: "{{ ansible_home }}/roles/0docker_service/templates/docker_service.j2"
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml"
@@ -22,19 +20,19 @@
     group: "{{ common_group_gid }}"
     mode: '0770'
 
-- name: Find all templates
+- name: "[{{ role_specific }}] Find all templates"
   find:
     paths: "{{ ansible_home }}/roles/{{ docker_role_name }}/templates"
     patterns: "*.j2"
   delegate_to: localhost
   register: template_files
 
-- name: Separate env and config files
+- name: "[{{ role_specific }}] Separate env and config files"
   set_fact:
     env_files: "{{ template_files.files | selectattr('path', 'search', '.env.j2$') | list }}"
     config_files: "{{ template_files.files | selectattr('path', 'search', '.j2$') | rejectattr('path', 'search', '.env.j2$') | list }}"
 
-- name: Template env files
+- name: "[{{ role_specific }}] Template env files"
   template:
     src: "{{ item.path }}"
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
@@ -44,7 +42,7 @@
   loop: "{{ env_files }}"
   when: env_files | length > 0
 
-- name: Create config directory
+- name: "[{{ role_specific }}] Create config directory"
   file:
     path: "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}"
     state: directory
@@ -53,7 +51,7 @@
     mode: '0770'
   when: config_files | length > 0
 
-- name: Template config files
+- name: "[{{ role_specific }}] Template config files"
   template:
     src: "{{ item.path }}"
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
