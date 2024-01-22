@@ -3,13 +3,14 @@
 - name: "[{{ role_specific }}] Include role-specific vars"
   include_vars: "{{ ansible_home }}/roles/{{ role_specific }}/vars/main.yml"
 
-- name: Check if role-specific tasks exist
+- name: "[{{ role_specific }}] Check if role-specific tasks exist"
   stat:
-    path: "{{ ansible_home }}/roles/{{ item }}/tasks/main.yml"
+    path: "/config/workspace/homelab/roles/unifi/tasks/main.yml"
+  delegate_to: localhost
   register: role_tasks
-
+  
 - name: "[{{ role_specific }}] Include role-specific tasks"
-  include_tasks: "{{ ansible_home }}/roles/{{ item }}/tasks/main.yml"
+  include_tasks: "{{ ansible_home }}/roles/{{ role_specific }}/tasks/main.yml"
   when: role_tasks.stat.exists
 
 - name: "[{{ role_specific }}] Create role directory"
