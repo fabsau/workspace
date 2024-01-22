@@ -1,26 +1,109 @@
+# Host Settings
+host_timezone: Europe/Berlin
+
+# Ansible Settings
 ansible_home: "/config/workspace/homelab"
 ansible_username: ansible
-ansible_group: ansible
-ansible_user_pw: "{{ USER_ANSIBLE_PW }}"
 ansible_uid: 1000
-ansible_gid: 1000
 ansible_authorized_keys:
   - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDc6CB3E+pb/QkdPzOwquq+ITHJ/lG4hkkIp6dbWx/fSiQsskcQdFIPUxbHRXB9imsqeUW9G+ckhO6agTgFusxAeRIp8DHwz44g2+kee+QwuZ/9q66FFWMwvjKJRlq5lWa6vQ9zEAQfPh4tAYXsiVgUo/bcaRWpGZkzByUQC+1qqX6VP70P/BbM60Kx7Fpev4U7FrkyOgwfztnC9bYZR7rPYRhNluLjXoKmXJAlyLgy3d3u4+gmGDQZZQIN+J9cvS8B2Z78hV1tijkljZzGZCZW4zd9rH6uwWACnTU= ansible
 
-host_timezone: Europe/Berlin
+# Fabio Settings
+fabio_username: fabio
+fabio_uid: "500"
+fabio_authorized_keys:
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICEgae2MlRld7wI2e9UuDb/AX0NEiH5jRc86D3mX1EgU fabio
+
+# Common ABC User Settings
+common_username: abc
+common_uid: "2000"
+common_gid: "2000"
+common_group: "abc"
+common_group_gid: "2000"
+
+# Admin Group
+admin_group: admin
+admin_gid: 1000
+
+# User Creation Settings
+users_user_create: true
+users_home_create: true
+users_home: /home
+users_home_mode: 700
+users_shell: "/bin/bash"
+users_authorized_keys_exclusive: true
+
+# Creation of Users
+users:
+  - username: "{{ ansible_username }}"
+    password: "{{ USER_ANSIBLE_PW }}"
+    state: present
+    primary_group: "{{ admin_group }}"
+    groups:
+      - "{{ admin_group }}"
+      - docker
+    uid: "{{ ansible_uid }}"
+    expires: -1
+    sudoer: yes
+    authorized_keys: "{{ ansible_authorized_keys }}"
+    lock: no
+  - username: "{{ fabio_username }}"
+    password: "{{ USER_FABIO_PW }}"
+    state: present
+    primary_group: "{{ admin_group }}"
+    groups:
+      - "{{ admin_group }}"
+      - docker
+    uid: "{{ fabio_uid }}"
+    expires: -1
+    sudoer: yes
+    authorized_keys: "{{ fabio_authorized_keys }}"
+    lock: no
+  - username: "{{ common_username }}"
+    password: "{{ USER_COMMON_PW }}"
+    state: present
+    primary_group: "{{ common_group }}"
+    groups:
+      - "{{ common_group }}"
+    uid: "{{ common_uid }}"
+    expires: -1
+    sudoer: no
+    authorized_keys: []
+    lock: no
+
+# Group Creation and User Assignment
+group_management:
+  - name: "{{ admin_group }}"
+    gid: "{{ admin_gid }}"
+    users: 
+      - "root"
+  - name: "{{ common_group }}"
+    gid: "{{ common_group_gid }}"
+    users:
+      - root
+      - "{{ ansible_username }}"
+      - "{{ fabio_username }}"
+
+# Removal of Users and Groups
+users_remove: []
+groups_remove: []
+
+security_ssh_allowed_groups:
+  - "{{ admin_group }}"
+security_ssh_allowed_users:
+  - "{{ ansible_username }}"
+  - "{{ fabio_username }}"
+
+fail2ban_bantime: 600
+fail2ban_findtime: 600
+fail2ban_maxretry: 5
 
 docker_base_path: /docker2
-docker_common_timezone: Europe/Berlin
-docker_common_puid: 2000
-docker_common_pgid: 2000
 docker_network_base_subnet: "172.30"
 
-docker_users:
-  - root
-  - "{{ ansible_username }}"
-
+# Logrotate Settings
 logrotate_user: "{{ ansible_username }}"
-logrotate_group: "{{ ansible_group }}"
+logrotate_group: "{{ admin_group }}"
 logrotate_frequency: weekly
 logrotate_keep: 14
 logrotate_compress: yes

@@ -31,7 +31,7 @@ services:
       - ALL
     cap_add:
       - NET_BIND_SERVICE
-    user: "{{ docker_common_puid }}:{{ docker_common_pgid }}"
+    user: "{{ common_uid }}:{{ common_gid }}"
     cpus: 0.75
     env_file:
       - ../common.env

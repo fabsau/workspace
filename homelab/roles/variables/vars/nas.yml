@@ -1,4 +1,7 @@
 # vars/nas.yml
+security_ssh_port: 22
+security_autoupdate_reboot: "true"
+security_autoupdate_reboot_time: "03:00"
 docker_networks:
   - traefik
   - uptimekuma
