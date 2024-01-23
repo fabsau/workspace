@@ -1,0 +1,21 @@
+# vars/main.yml
+docker_role_name: tulliexporter
+
+services:
+  - name: tulliexporter
+    image: nwalke/tautulli_exporter:latest
+    env_file:
+      - ./tulliexporter.env
+    networks:
+      - monitoring
+    traefik: 
+      - name: tulliexporter
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ tulliexporter_url }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 9487
+    watchtower: true

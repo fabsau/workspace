@@ -1,0 +1,94 @@
+# vars/main.yml
+docker_role_name: exportarrexporter
+
+services:
+  - name: sonarrexporter
+    image: ghcr.io/onedr0p/exportarr:latest
+    command: ["sonarr"]
+    env_file:
+      - ./sonarrexporter.env
+    networks:
+      - monitoring
+    traefik: 
+      - name: sonarrexporter
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ sonarrexporter_url }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 9707
+    watchtower: true
+  - name: radarrexporter
+    image: ghcr.io/onedr0p/exportarr:latest
+    command: ["radarr"]
+    env_file:
+      - ./radarrexporter.env
+    networks:
+      - monitoring
+    traefik: 
+      - name: radarrexporter
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ radarrexporter_url }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 9707
+    watchtower: true
+  - name: bazarrexporter
+    image: ghcr.io/onedr0p/exportarr:latest
+    command: ["bazarr"]
+    env_file:
+      - ./bazarrexporter.env
+    networks:
+      - monitoring
+    traefik: 
+      - name: bazarrexporter
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ bazarrexporter_url }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 9707
+    watchtower: true
+  - name: prowlarrexporter
+    image: ghcr.io/onedr0p/exportarr:latest
+    command: ["prowlarr"]
+    env_file:
+      - ./prowlarrexporter.env
+    networks:
+      - monitoring
+    traefik: 
+      - name: prowlarrexporter
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ prowlarrexporter_url }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 9707
+    watchtower: true
+  - name: sabnzbdexporter
+    image: ghcr.io/onedr0p/exportarr:latest
+    command: ["sabnzbd"]
+    env_file:
+      - ./sabnzbdexporter.env
+    networks:
+      - monitoring
+    traefik: 
+      - name: sabnzbdexporter
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ sabnzbdexporter_url }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 9707
+    watchtower: true

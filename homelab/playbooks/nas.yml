@@ -31,16 +31,12 @@
           - unifiexporter
           - plausibleexporter
           - librespeedexporter
+          - plexexporter
+          - tautilliexporter
+          - qbittorrentexporter
+          - exportarrexporter
+          # - valetudo
+          # - pyload
           # - uptimekuma
           # - czkawka
           # - vscode
-          # - plexexporter
-          # - tautilliexporter
-          # - qbittorrentexporter
-          # - sonarrexporter
-          # - radarrexporter
-          # - sabnzbdexporter
-          # - bazarrexporter
-          # - prowlarrexporter
-          # - valetudo
-          # - pyload

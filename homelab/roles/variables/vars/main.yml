@@ -145,6 +145,13 @@ adguardsync_slaves:
   - "https://dns.azure.sauna.re"
   - "https://dns.blue.sauna.re"
 
-# Central URLS
+# Central URLs
 plausible_url: data.sauna.re
 plex_url: watch.sauna.re
+tulli_url: tulli.sauna.re
+qbittorrent_url: torrent.sauna.re
+sonarr_url: sonarr.sauna.re
+radarr_url: radarr.sauna.re
+bazarr_url: bazarr.sauna.re
+prowlarr_url: prowlarr.sauna.re
+sabnzbd_url: usenet.sauna.re

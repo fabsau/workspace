@@ -18,6 +18,7 @@ services:
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9594
+    watchtower: true
   - name: plexexporter2
     image: ghcr.io/jsclayton/prometheus-plex-exporter:latest
     env_file:
@@ -33,7 +34,8 @@ services:
         rule: "Host(`{{ plexexporter2_url }}`)"
         middlewares: private-chain@file
         insecuretransport: false
-        service_port: 9594
+        service_port: 9000
+    watchtower: true
   - name: plexexporter3
     image: fabsau/plexexporter:latest
     env_file:
