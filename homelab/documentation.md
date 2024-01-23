@@ -5,6 +5,7 @@
 3. Fix Cronjobs not curling ping URL
 4. Create schedule for Docker_prune.yml
 5. Properly include Prometheus for automatic monitoring
+6. Tempalte the LibrespeedExporter Backends
 
 ## Create proper tasks from Linux Documentation
 
