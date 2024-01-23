@@ -5,7 +5,6 @@ services:
   - name: grafana
     image: grafana/grafana:latest
     user: "{{ common_uid }}:{{ common_gid }}"
-    command:
     networks:
       - monitoring
     volumes:

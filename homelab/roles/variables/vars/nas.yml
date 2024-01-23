@@ -184,3 +184,4 @@ librespeed_url: speed.oiba.de
 portainer_url: docker.oiba.de
 unifi_url: unifi.oiba.de
 grafana_url: grafana.oiba.de
+cadvisor_url: cadvisor.nas.oiba.de

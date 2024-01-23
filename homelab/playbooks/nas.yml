@@ -25,3 +25,4 @@
           - nodeexporter
           - alertmanager
           - grafana
+          - cadvisor
