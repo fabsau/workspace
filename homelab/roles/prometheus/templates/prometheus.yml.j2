@@ -1,0 +1,104 @@
+global:
+  scrape_interval: 15s
+  external_labels:
+    monitor: "{{ prometheus_monitor_name }}"
+
+scrape_configs:
+  - job_name: "Exporter"
+    scrape_interval: 60s
+    scrape_timeout: 1m
+    scheme: https
+    static_configs:
+      - targets:
+        - prom.oiba.de
+        - node.nas.oiba.de
+        - node.opn.oiba.de
+        - node.blue.sauna.re
+        - node.azure.sauna.re
+        - node.home.oiba.de
+        - cadvisor.nas.oiba.de
+        - cadvisor.blue.sauna.re
+        - cadvisor.azure.sauna.re
+        - proxy.oiba.de
+        - proxy.blue.sauna.re
+        - proxy.azure.sauna.re
+        # - crowdsec.blue.sauna.re
+        # - crowdsec.azure.sauna.re
+        - unpoller.oiba.de
+        - uptime.oiba.de
+        - sabnzbd.oiba.de
+        - adguardexporter.oiba.de
+        - qbittorrentexporter.oiba.de
+        - plexexporter.oiba.de
+        - sonarrexporter.oiba.de
+        - radarrexporter.oiba.de
+        - prowlarrexporter.oiba.de
+        - auth.sauna.re
+        - plausibleexporter.oiba.de
+        # - ciscoexporter.oiba.de
+    basic_auth: # UptimeKuma 
+      username: admin
+      password: {{ PROMETHEUS_UPTIMEKUMA_PASSWORD }}
+#################HASS#################
+  - job_name: "hass"
+    scrape_interval: 60s
+    scrape_timeout: 1m
+    metrics_path: /api/prometheus
+    # Long-Lived Access Token
+    authorization:
+      credentials: "{{ PROMETHEUS_HASS_TOKEN }}"
+    scheme: https
+    static_configs:
+      - targets:
+        - home.sauna.re
+ 
+  - job_name: watchtower
+    scrape_interval: 60s
+    scrape_timeout: 1m
+    scheme: https
+    metrics_path: /v1/metrics
+    bearer_token: {{ WATCHTOWER_HTTP_API_TOKEN }}
+    static_configs:
+      - targets:
+        - watchtower.oiba.de
+
+  - job_name: 'proxmox'
+    scrape_interval: 60s
+    scrape_timeout: 1m
+    scheme: https
+    static_configs:
+      - targets:
+        - 192.168.100.2
+    metrics_path: /pve
+    params:
+      module: ['default']
+      cluster: ['1']
+      node: ['1']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: saunaprox.oiba.de
+
+  - job_name: "librespeed"
+    scrape_interval: 360m
+    scrape_timeout: 10m
+    metrics_path: /probe
+    scheme: https
+    params:
+      script: [librespeed]
+    static_configs:
+      - targets:
+          - speedexporter.oiba.de
+
+rule_files:
+  - "alerts.yml"
+
+alerting:
+  
+  alertmanagers:
+    - static_configs:
+      - targets:
+        - alertmanager:9093

@@ -1,0 +1,192 @@
+groups:
+  - name: PrometheusAlerts
+    rules:
+      # Alert for any target being down
+      - alert: PrometheusTargetDown
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: "{{ $labels.instance }} {{ $labels.job }}"
+      # Alert for Prometheus configuration reload failure
+      - alert: PrometheusConfigurationReloadFailure
+        expr: prometheus_config_last_reload_successful != 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: "{{ $labels.instance }}"
+      # Alert for Prometheus TSDB reload failures
+      - alert: PrometheusTsdbReloadFailures
+        expr: increase(prometheus_tsdb_reloads_failures_total[1m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          description: "{{ $labels.instance }} {{ $value }} > 0"
+      # Alert for Prometheus AlertManager notification failing
+      - alert: PrometheusAlertmanagerNotificationFailing
+        expr: rate(prometheus_notifications_errors_total[1m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          description: "{{ $labels.instance }} {{ $value }} > 0"
+
+  - name: ProxmoxAlerts
+    rules:
+      # Alert for Proxmox entity being down
+      - alert: ProxmoxVMDown
+        expr: pve_guest_info == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          description: "{{ $labels.name }} OFF."
+      # Alert for high disk usage in Proxmox entity
+      - alert: ProxmoxLowDiskSpace
+        expr: 100/pve_disk_size_bytes{id=~"storage/prox/(NFS|local|local-lvm)", instance="192.168.100.2", job="proxmox"} * pve_disk_usage_bytes{id=~"storage/prox/(NFS|local|local-lvm)", instance="192.168.100.2", job="proxmox"} < 15
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: '{{ $labels.id }} on {{ $labels.instance }} has {{ printf "%.2f" $value }}% left!'
+      # Alert for high memory usage in Proxmox node
+      - alert: ProxmoxLowRAM
+        expr: (pve_memory_usage_bytes{id="node/prox", instance="192.168.100.2"} / pve_memory_size_bytes{id="node/prox", instance="192.168.100.2"}) * 100 > 90
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: '{{ $labels.instance }} has {{ printf "%.2f" $value }}% RAM left!'
+
+  - name: HostAlerts
+    rules:
+      # Alert for host running out of memory
+      - alert: HostLowRam
+        expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: '{{ $labels.instance }} has {{ printf "%.2f" $value }}% RAM left!'
+      # Alert for host running out of disk space
+      - alert: HostLowDiskSpace
+        expr: max without(mountpoint) (node_filesystem_avail_bytes{fstype=~"ext4|ufs"} / node_filesystem_size_bytes{fstype=~"ext4|ufs"} * 100) < 15 and max without(mountpoint) (node_filesystem_size_bytes{fstype=~"ext4|ufs"}) > 5*1024*1024*1024
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          description: '{{ $labels.device }} on {{ $labels.instance }} has {{ printf "%.2f" $value }}% left!'
+      # Alert for host swap filling up
+      - alert: HostSwapLow
+        expr: (node_memory_SwapFree_bytes / node_memory_SwapTotal_bytes) * 100 < 10
+        for: 30m
+        labels:
+          severity: information
+        annotations:
+          description: '{{ $labels.instance }} has {{ printf "%.2f" $value }}% SWAP left!'
+      # Alert for host clock skew
+      - alert: HostClockSkew
+        expr: (node_timex_offset_seconds > 0.05 and deriv(node_timex_offset_seconds[5m]) >= 0) or (node_timex_offset_seconds < -0.05 and deriv(node_timex_offset_seconds[5m]) <= 0)
+        for: 15m
+        labels:
+          severity: information
+        annotations:
+          description: "{{ $labels.instance }} is {{ $value }} seconds skewed."
+
+  - name: SSLAlerts
+    rules:
+      # Alert for SSL certificate about to expire
+      - alert: SSLCertificate7DaysLeft
+        expr: traefik_tls_certs_not_after - time() < 86400 * 7
+        for: 30m
+        labels:
+          severity: critical
+        annotations:
+          description: "SSL for {{ $labels.sans }} expires in {{ $value | humanizeTimestamp }}."
+
+  - name: UptimeKuma Alerts
+    rules:
+      # Alert for a monitor in UptimeKuma with the status "pending"
+      - alert: Monitor Pending
+        expr: monitor_status {monitor_type!="group"} == 2
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: "{{ $labels.monitor_name }} pending for 15 Minutes."
+      # Alert for a monitor in UptimeKuma with the status "pending"
+      - alert: Service Pending
+        expr: monitor_status {monitor_type!="group"} == 0
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          description: "{{ $labels.monitor_name }} down > 15 Minutes."
+
+  - name: AdguardAlerts
+    rules:
+      # Alert for AdGuard not running
+      - alert: AdGuardDisabled
+        expr: adguard_running != 1 or adguard_protection_enabled != 1
+        for: 15m
+        labels:
+          severity: information
+        annotations:
+          description: "Adguard not running or disabled > 15 Minutes."
+
+  - name: DownloaderAlerts
+    rules:
+      - alert: SabnzbdQueueStalled
+        expr: changes(sabnzbd_queue_size[24h]) == 0 and sabnzbd_queue_size > 0
+        for: 24h
+        labels:
+          severity: information
+        annotations:
+          description: "{{ $value }} Downloads stuck for 24 hours."
+      # qBittorrent down/not connected
+      - alert: qBittorrentDown
+        expr: qbittorrent_connected == 0
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: 'qBittorrent not working for > 15 Minutes.'
+      # qBittorrent stalled download queue
+      - alert: qBittorentQueueStalled
+        expr: changes(qbittorrent_torrents_count[72h]) == 0 and qbittorrent_torrents_count > 0
+        for: 72h
+        labels:
+          severity: information
+        annotations:
+          description: "{{ $value }} Downloads stuck for 72 hours."
+
+  - name: RadarrSonarrProwlarrAlerts
+    rules:
+      - alert: ArrsError
+        expr: radarr_system_health_issues{type="error"} > 0
+          or sonarr_system_health_issues{type="error"} > 0
+          or prowlarr_system_health_issues{type="error"} > 0
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: "{{$labels.url}} has error:\n{{$labels.message}}."
+
+      - alert: RadarrDownloadsWarning
+        expr: radarr_queue_total{download_state="downloading", download_status="warning", status="completed"} > 10
+        for: 72h
+        labels:
+          severity: information
+        annotations:
+          description: "{{ $value }} downloads with a warning status at {{$labels.url}}."
+
+      - alert: SonarrDownloadsWarning
+        expr: sonarr_queue_total{download_state="downloading", download_status="warning", status="completed"} > 30
+        for: 72h
+        labels:
+          severity: information
+        annotations:
+          description: "{{ $value }} downloads with a warning status at {{$labels.url}}."

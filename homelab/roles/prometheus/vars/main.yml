@@ -1,0 +1,37 @@
+# vars/main.yml
+docker_role_name: prometheus
+
+services:
+  - name: prometheus
+    image: prom/prometheus:latest
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.external-url={{ prometheus_url }}'
+      - '--storage.tsdb.retention.time=1y'
+      - '--storage.tsdb.wal-compression'
+    networks:
+      - monitoring
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./config/alerts.yml:/etc/prometheus/alerts.yml
+      - /srv/dev-disk-by-uuid-4cf2cd9e-0885-47b9-ada6-6005c3daa474/Multimedia/NFS_Datastore/prometheus/data:/prometheus #chown 65534:65534 /docker/prometheus/data
+      - /etc/localtime:/etc/localtime:ro  
+    traefik: 
+      - name: prometheus
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ prometheus_url }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 9090
+      - name: prometheus_metrics
+        protocol: http
+        entrypoint: https
+        http_redirection: false
+        enable_tls: false
+        rule: "Host(`{{ prometheus_url }}`) && PathPrefix(`/metrics`)"
+        insecuretransport: false
+        service_port: 9090
+    watchtower: true
