@@ -7,7 +7,7 @@ services:
     user: "{{ common_uid }}:{{ common_gid }}"
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--web.external-url={{ prometheus_url }}'
+      - '--web.external-url=https://{{ prometheus_url }}'
       - '--storage.tsdb.retention.time=1y'
       - '--storage.tsdb.wal-compression'
     networks:
