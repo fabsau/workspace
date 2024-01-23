@@ -70,7 +70,10 @@ http:
 
     whitelist:
       ipwhitelist:
-        sourceRange: "{{ traefik_whitelist_ips }}"
+        sourceRange: 
+{% for ip in traefik_whitelist_ips %}
+          - "{{ ip }}"
+{% endfor %}
 
     oauth:
       forwardAuth:
