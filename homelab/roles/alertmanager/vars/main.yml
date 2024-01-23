@@ -3,7 +3,7 @@ docker_role_name: alertmanager
 
 services:
   - name: alertmanager
-    image: homelab/roles/prometheus
+    image: prom/alertmanager:latest
     user: "{{ common_uid }}:{{ common_gid }}"
     command:
     - --config.file=/config/alertmanager.yml
