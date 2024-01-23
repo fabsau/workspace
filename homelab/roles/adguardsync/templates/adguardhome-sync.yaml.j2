@@ -1,0 +1,45 @@
+# cron expression to run in daemon mode. (default; "" = runs only once)
+cron: "{{ adguardsync_schedule }}"
+
+# runs the synchronisation on startup
+runOnStart: true
+
+origin:
+  # url of the origin instance
+  url: {{ adguardsync_master_url }}
+  # apiPath: define an api path if other than "/control"
+  # insecureSkipVerify: true # disable tls check
+  username: {{ adguardsync_user }}
+  password: {{ adguardsync_password }}
+
+# replica instance (optional, if only one)
+replicas:
+{% for url in adguardsync_slaves %}
+  - url: {{ url }}
+    username: {{ adguardsync_user }}
+    password: {{ adguardsync_password }}
+{% endfor %}
+# Configure the sync API server, disabled if api port is 0
+api:
+  # Port, default 8080
+  port: 0
+  # if username and password are defined, basic auth is applied to the sync API 
+  username: username
+  password: password
+  ####
+  
+# Configure sync features; by default all features are enabled.
+features:
+  generalSettings: true
+  queryLogConfig: true
+  statsConfig: true
+  clientSettings: true
+  services: true
+  filters: true
+  dhcp:
+    serverConfig: true
+    staticLeases: true
+  dns:
+    serverConfig: true
+    accessLists: true
+    rewrites: true

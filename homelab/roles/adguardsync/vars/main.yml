@@ -1,0 +1,13 @@
+# vars/main.yml
+docker_role_name: adguardsync
+
+services:
+  - name: adguardsync
+    image: linuxserver/adguardhome-sync:latest
+    env_file:
+      - ../common.env
+    networks:
+      - adguardsync
+    volumes:
+      - ./config:/config
+    watchtower: true
