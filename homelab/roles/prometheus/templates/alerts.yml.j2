@@ -8,7 +8,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          description: "{{ $labels.instance }} {{ $labels.job }}"
+          description: "{% raw %}{{ $labels.instance }} {{ $labels.job }}{% endraw %}"
       # Alert for Prometheus configuration reload failure
       - alert: PrometheusConfigurationReloadFailure
         expr: prometheus_config_last_reload_successful != 1
@@ -16,7 +16,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          description: "{{ $labels.instance }}"
+          description: "{% raw %}{{ $labels.instance }}{% endraw %}"
       # Alert for Prometheus TSDB reload failures
       - alert: PrometheusTsdbReloadFailures
         expr: increase(prometheus_tsdb_reloads_failures_total[1m]) > 0
@@ -24,7 +24,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          description: "{{ $labels.instance }} {{ $value }} > 0"
+          description: "{% raw %}{{ $labels.instance }} {{ $value }} > 0{% endraw %}"
       # Alert for Prometheus AlertManager notification failing
       - alert: PrometheusAlertmanagerNotificationFailing
         expr: rate(prometheus_notifications_errors_total[1m]) > 0
@@ -32,7 +32,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          description: "{{ $labels.instance }} {{ $value }} > 0"
+          description: "{% raw %}{{ $labels.instance }} {{ $value }} > 0{% endraw %}"
 
   - name: ProxmoxAlerts
     rules:
@@ -43,7 +43,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          description: "{{ $labels.name }} OFF."
+          description: "{% raw %}{{ $labels.name }} OFF.{% endraw %}"
       # Alert for high disk usage in Proxmox entity
       - alert: ProxmoxLowDiskSpace
         expr: 100/pve_disk_size_bytes{id=~"storage/prox/(NFS|local|local-lvm)", instance="192.168.100.2", job="proxmox"} * pve_disk_usage_bytes{id=~"storage/prox/(NFS|local|local-lvm)", instance="192.168.100.2", job="proxmox"} < 15
@@ -51,7 +51,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          description: '{{ $labels.id }} on {{ $labels.instance }} has {{ printf "%.2f" $value }}% left!'
+          description: '{% raw %}{{ $labels.id }} on {{ $labels.instance }} has {{ printf "%.2f" $value }}% left!{% endraw %}'
       # Alert for high memory usage in Proxmox node
       - alert: ProxmoxLowRAM
         expr: (pve_memory_usage_bytes{id="node/prox", instance="192.168.100.2"} / pve_memory_size_bytes{id="node/prox", instance="192.168.100.2"}) * 100 > 90
@@ -59,7 +59,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          description: '{{ $labels.instance }} has {{ printf "%.2f" $value }}% RAM left!'
+          description: '{% raw %}{{ $labels.instance }} has {{ printf "%.2f" $value }}% RAM left!{% endraw %}'
 
   - name: HostAlerts
     rules:
@@ -70,7 +70,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          description: '{{ $labels.instance }} has {{ printf "%.2f" $value }}% RAM left!'
+          description: '{% raw %}{{ $labels.instance }} has {{ printf "%.2f" $value }}% RAM left!{% endraw %}'
       # Alert for host running out of disk space
       - alert: HostLowDiskSpace
         expr: max without(mountpoint) (node_filesystem_avail_bytes{fstype=~"ext4|ufs"} / node_filesystem_size_bytes{fstype=~"ext4|ufs"} * 100) < 15 and max without(mountpoint) (node_filesystem_size_bytes{fstype=~"ext4|ufs"}) > 5*1024*1024*1024
@@ -78,7 +78,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          description: '{{ $labels.device }} on {{ $labels.instance }} has {{ printf "%.2f" $value }}% left!'
+          description: '{% raw %}{{ $labels.device }} on {{ $labels.instance }} has {{ printf "%.2f" $value }}% left!{% endraw %}'
       # Alert for host swap filling up
       - alert: HostSwapLow
         expr: (node_memory_SwapFree_bytes / node_memory_SwapTotal_bytes) * 100 < 10
@@ -86,7 +86,7 @@ groups:
         labels:
           severity: information
         annotations:
-          description: '{{ $labels.instance }} has {{ printf "%.2f" $value }}% SWAP left!'
+          description: '{% raw %}{{ $labels.instance }} has {{ printf "%.2f" $value }}% SWAP left!{% endraw %}'
       # Alert for host clock skew
       - alert: HostClockSkew
         expr: (node_timex_offset_seconds > 0.05 and deriv(node_timex_offset_seconds[5m]) >= 0) or (node_timex_offset_seconds < -0.05 and deriv(node_timex_offset_seconds[5m]) <= 0)
@@ -94,7 +94,7 @@ groups:
         labels:
           severity: information
         annotations:
-          description: "{{ $labels.instance }} is {{ $value }} seconds skewed."
+          description: "{% raw %}{{ $labels.instance }} is {{ $value }} seconds skewed.{% endraw %}"
 
   - name: SSLAlerts
     rules:
@@ -105,7 +105,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          description: "SSL for {{ $labels.sans }} expires in {{ $value | humanizeTimestamp }}."
+          description: "{% raw %}SSL for {{ $labels.sans }} expires in {{ $value | humanizeTimestamp }}.{% endraw %}"
 
   - name: UptimeKuma Alerts
     rules:
@@ -116,7 +116,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          description: "{{ $labels.monitor_name }} pending for 15 Minutes."
+          description: "{% raw %}{{ $labels.monitor_name }} pending for 15 Minutes.{% endraw %}"
       # Alert for a monitor in UptimeKuma with the status "pending"
       - alert: Service Pending
         expr: monitor_status {monitor_type!="group"} == 0
@@ -124,7 +124,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          description: "{{ $labels.monitor_name }} down > 15 Minutes."
+          description: "{% raw %}{{ $labels.monitor_name }} down > 15 Minutes.{% endraw %}"
 
   - name: AdguardAlerts
     rules:
@@ -135,7 +135,7 @@ groups:
         labels:
           severity: information
         annotations:
-          description: "Adguard not running or disabled > 15 Minutes."
+          description: "{% raw %}Adguard not running or disabled > 15 Minutes.{% endraw %}"
 
   - name: DownloaderAlerts
     rules:
@@ -145,7 +145,7 @@ groups:
         labels:
           severity: information
         annotations:
-          description: "{{ $value }} Downloads stuck for 24 hours."
+          description: "{% raw %}{{ $value }} Downloads stuck for 24 hours.{% endraw %}"
       # qBittorrent down/not connected
       - alert: qBittorrentDown
         expr: qbittorrent_connected == 0
@@ -153,7 +153,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          description: 'qBittorrent not working for > 15 Minutes.'
+          description: '{% raw %}qBittorrent not working for > 15 Minutes.{% endraw %}'
       # qBittorrent stalled download queue
       - alert: qBittorentQueueStalled
         expr: changes(qbittorrent_torrents_count[72h]) == 0 and qbittorrent_torrents_count > 0
@@ -161,7 +161,7 @@ groups:
         labels:
           severity: information
         annotations:
-          description: "{{ $value }} Downloads stuck for 72 hours."
+          description: "{% raw %}{{ $value }} Downloads stuck for 72 hours.{% endraw %}"
 
   - name: RadarrSonarrProwlarrAlerts
     rules:
@@ -173,7 +173,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          description: "{{$labels.url}} has error:\n{{$labels.message}}."
+          description: "{% raw %}{{$labels.url}} has error:\n{{$labels.message}}.{% endraw %}"
 
       - alert: RadarrDownloadsWarning
         expr: radarr_queue_total{download_state="downloading", download_status="warning", status="completed"} > 10
@@ -181,7 +181,7 @@ groups:
         labels:
           severity: information
         annotations:
-          description: "{{ $value }} downloads with a warning status at {{$labels.url}}."
+          description: "{% raw %}{{ $value }} downloads with a warning status at {{$labels.url}}.{% endraw %}"
 
       - alert: SonarrDownloadsWarning
         expr: sonarr_queue_total{download_state="downloading", download_status="warning", status="completed"} > 30
@@ -189,4 +189,4 @@ groups:
         labels:
           severity: information
         annotations:
-          description: "{{ $value }} downloads with a warning status at {{$labels.url}}."
+          description: "{% raw %}{{ $value }} downloads with a warning status at {{$labels.url}}.{% endraw %}"

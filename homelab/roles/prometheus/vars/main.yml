@@ -4,6 +4,7 @@ docker_role_name: prometheus
 services:
   - name: prometheus
     image: prom/prometheus:latest
+    user: "{{ common_uid }}:{{ common_gid }}"
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--web.external-url={{ prometheus_url }}'
@@ -29,8 +30,8 @@ services:
       - name: prometheus_metrics
         protocol: http
         entrypoint: https
-        http_redirection: false
-        enable_tls: false
+        http_redirection: true
+        enable_tls: true
         rule: "Host(`{{ prometheus_url }}`) && PathPrefix(`/metrics`)"
         insecuretransport: false
         service_port: 9090
