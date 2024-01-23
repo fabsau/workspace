@@ -183,3 +183,4 @@ alertmanager_url: alert.oiba.de
 librespeed_url: speed.oiba.de
 portainer_url: portainer.oiba.de
 unifi_url: unifi.oiba.de
+grafana_url: grafana.oiba.de
