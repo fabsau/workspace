@@ -3,8 +3,6 @@ is_proxmox_vm: true
 
 nfs_needed: true
 
-librespeed_domain: speed.oiba.de
-
 security_ssh_port: 22
 security_autoupdate_reboot: "true"
 security_autoupdate_reboot_time: "03:00"
@@ -27,7 +25,6 @@ docker_networks:
   - adguardsync
 
 # TRAEFIK
-traefik_host: proxy.oiba.de
 traefik_oauth_address: https://auth.sauna.re/api/verify
 traefik_ca_productive: true
 traefik_oauth_insecureSkipVerify: false
@@ -177,8 +174,11 @@ watchtower_mail_subject_praefix: "NAS: "
 # CERTDUMPER
 # certdumper_restart_containers: empty
 
-# PROMETHEUS:
+# URLs:
+traefik_url: proxy.oiba.de
 prometheus_url: prom.oiba.de
 prometheus_monitor_name: Mozart
 nodeexporter_url: node.nas.oiba.de
 alertmanager_url: alert.oiba.de
+librespeed_url: speed.oiba.de
+portainer_url: portainer.oiba.de
