@@ -181,6 +181,6 @@ prometheus_monitor_name: Mozart
 nodeexporter_url: node.nas.oiba.de
 alertmanager_url: alert.oiba.de
 librespeed_url: speed.oiba.de
-portainer_url: portainer.oiba.de
+portainer_url: docker.oiba.de
 unifi_url: unifi.oiba.de
 grafana_url: grafana.oiba.de
