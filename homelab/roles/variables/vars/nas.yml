@@ -181,3 +181,4 @@ watchtower_mail_subject_praefix: "NAS: "
 prometheus_url: prom.oiba.de
 prometheus_monitor_name: Mozart
 nodeexporter_url: node.nas.oiba.de
+alertmanager_url: alert.oiba.de
