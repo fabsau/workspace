@@ -24,7 +24,7 @@
 
 - name: "[{{ role_specific }}] Template Docker Compose file"
   template:
-    src: "{{ ansible_home }}/roles/0docker_service/templates/docker_service.j2"
+    src: "{{ ansible_home }}/roles/0docker_service/templates/docker-compose.yml.j2"
     dest: "{{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml"
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
