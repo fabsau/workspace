@@ -47,7 +47,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: Host(`{{ traefik_url }}`)
+        rule: "Host(`{{ traefik_url }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service: api@internal
@@ -56,7 +56,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: Host(`{{ traefik_url }}`) && Path(`/metrics`)
+        rule: "Host(`{{ traefik_url }}`) && Path(`/metrics`)"
         middlewares: private-chain@file
         insecuretransport: false
         service: prometheus@internal
