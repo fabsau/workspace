@@ -3,12 +3,12 @@ docker_role_name: alertmanager
 
 services:
   - name: alertmanager
-    image: prom/node-exporter:latest
-    user: "{{ common_username }}:{{ common_group }}"
+    image: homelab/roles/prometheus
+    user: "{{ common_uid }}:{{ common_gid }}"
     command:
     - --config.file=/config/alertmanager.yml
     - --storage.path=/data
-    - --web.external-url={{ alertmanager_url }}
+    - --web.external-url=https://{{ alertmanager_url }}
     networks:
       - monitoring
     volumes:
