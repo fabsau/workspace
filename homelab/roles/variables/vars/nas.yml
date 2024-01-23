@@ -90,7 +90,7 @@ traefik_entrypoints:
   - name: unifi6
     address: ":10001/udp"
 traefik_whitelist_ips:
-  - 46.223.56.204/32
+  - 46.223.56.204
   - 172.187.202.93
   - 172.31.0.0/12
   - 192.168.251.0/24
@@ -102,63 +102,81 @@ traefik_extra_servers:
     entrypoint: https
     middleware: private-chain@file
     url: vm.oiba.de
+    backend_url: https://192.168.100.2:8006/
     insecuretransport: true
   - name: nas
     entrypoint: https
     middleware: private-chain@file
     url: nas.oiba.de
+    backend_url: http://192.168.100.3:9090/
     insecuretransport: false
   - name: opnsense
     entrypoint: https
     middleware: private-chain@file
     url: router.oiba.de
+    backend_url: https://192.168.100.1/
     insecuretransport: true
   - name: opnsense_prom
     entrypoint: https
     middleware: private-chain@file
     url: node.opn.oiba.de
+    backend_url: http://192.168.100.1:9100
     insecuretransport: false
   - name: home_prom
     entrypoint: https
     middleware: private-chain@file
     url: node.home.oiba.de
+    backend_url: http://192.168.150.2:9100
     insecuretransport: false
   - name: adguard
     entrypoint: https
     middleware: private-chain@file
     url: dns.oiba.de
+    backend_url: http://192.168.100.20:80
     insecuretransport: false
   - name: adguard2
     entrypoint: https
     middleware: private-chain@file
     url: dns2.oiba.de
+    backend_url: http://192.168.100.21:80
     insecuretransport: false
   - name: switch
     entrypoint: https
     middleware: private-chain@file
     url: switch.oiba.de
     insecuretransport: true
+    backend_url: https://192.168.100.11/
   - name: vacuum
     entrypoint: https
     middleware: private-chain@file
     url: vacuum.oiba.de
+    backend_url: http://192.168.150.9/
     insecuretransport: false
   - name: fritzbox
     entrypoint: https
     middleware: private-chain@file
     url: fritz.oiba.de
+    backend_url: https://192.168.178.1/
     insecuretransport: true
   - name: proxbak
     entrypoint: https
     middleware: private-chain@file
     url: bak.oiba.de
+    backend_url: https://192.168.100.4:8007/
     insecuretransport: true
 
 # DOCKERPROXY_TRAEFIK
-dockerproxy_allowed_ip: 172.29.13.0/24
+dockerproxy_allowed_ip: 172.30.1.0/24
 dockerproxy_gid: 993
 
 # WATCHTOWER
 watchtower_schedule: "0 0 * * * *"
 watchtower_url: watchtower.oiba.de
 watchtower_mail_subject_praefix: "NAS: "
+
+# CERTDUMPER
+certdumper_restart_containers:
+
+# PROMETHEUS:
+prometheus_url: prom.oiba.de
+prometheus_monitor_name: Mozart

@@ -8,17 +8,16 @@ http:
       rule: "Host(`{{ traefik_extra_server.url }}`)"
       tls:
         certResolver: "acme"
-{% if traefik_extra_server.insecuretransport %}
-      serversTransport: insecuretransport@file
-{% endif %}
 {% endfor %}
+
   services:
 {% for traefik_extra_server in traefik_extra_servers %}
     service-{{ traefik_extra_server.name }}:
       loadBalancer:
         servers:
-          - url: "{{ traefik_extra_server.url }}"
+          - url: "{{ traefik_extra_server.backend_url }}"
 {% if traefik_extra_server.insecuretransport %}
+            scheme: "https"
         serversTransport: insecuretransport@file
 {% endif %}
 {% endfor %}
