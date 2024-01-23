@@ -50,7 +50,7 @@ services:
         rule: Host(`{{ traefik_host }}`)
         middlewares: private-chain@file
         insecuretransport: false
-        service_port: api@internal
+        service: api@internal
       - name: traefik_prom
         protocol: http
         entrypoint: https
@@ -59,7 +59,7 @@ services:
         rule: Host(`{{ traefik_host }}`) && Path(`/metrics`)
         middlewares: private-chain@file
         insecuretransport: false
-        service_port: prometheus@internal
+        service: prometheus@internal
     watchtower: true
     labels: "{{ traefik_domains }}"
 
@@ -68,7 +68,7 @@ services:
     command:
       - "--allowfrom={{ dockerproxy_allowed_ip }}"
       - --listenip=0.0.0.0
-      - --allowGET=/v1\\..{1,2}/(version|containers/.*|events.*)
+      - --allowGET=/v1\..{1,2}/(version|containers/.*|events.*)
       - --shutdowngracetime=5
     read_only: true
     cap_drop:

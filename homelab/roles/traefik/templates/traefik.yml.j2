@@ -37,7 +37,7 @@ accessLog:
 providers:
   docker:
     endpoint: 'tcp://dockerproxy:2375'
-    network: traefik-servicenet
+    network: traefik
     exposedByDefault: false
   file:
     directory: "/config"
