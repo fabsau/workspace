@@ -117,7 +117,7 @@ services:
       - "traefik.http.routers.{{ traefik.name }}.entrypoints=http"
       - "traefik.http.routers.{{ traefik.name }}.rule={{ traefik.rule }}"
       - "traefik.http.routers.{{ traefik.name }}.middlewares=https-redirect@file"
-      - "traefik.http.routers.{{ traefik.name }}.service={{ traefik.name }}-{{ traefik.entrypoint }}"
+      - "traefik.http.routers.{{ traefik.name }}.service={{ traefik.service | default(traefik.name ~ '-' ~ traefik.entrypoint) }}"
 {% endif %}
       - "traefik.{{ traefik.protocol }}.routers.{{ traefik.name }}-{{ traefik.entrypoint }}.entrypoints={{ traefik.entrypoint }}"
 {% if traefik.rule is defined and traefik.rule %}
@@ -129,12 +129,14 @@ services:
 {% if traefik.middlewares is defined and traefik.middlewares %}
       - "traefik.{{ traefik.protocol }}.routers.{{ traefik.name }}-{{ traefik.entrypoint }}.middlewares={{ traefik.middlewares }}"
 {% endif %}
-      - "traefik.{{ traefik.protocol }}.routers.{{ traefik.name }}-{{ traefik.entrypoint }}.service={{ traefik.name }}-{{ traefik.entrypoint }}"
+      - "traefik.{{ traefik.protocol }}.routers.{{ traefik.name }}-{{ traefik.entrypoint }}.service={{ traefik.service | default(traefik.name ~ '-' ~ traefik.entrypoint) }}"
 {% if traefik.insecuretransport %}
       - "traefik.{{ traefik.protocol }}.services.{{ traefik.name }}-{{ traefik.entrypoint }}.loadbalancer.server.scheme=https"
       - "traefik.{{ traefik.protocol }}.services.{{ traefik.name }}-{{ traefik.entrypoint }}.loadBalancer.serversTransport=insecuretransport@file"
 {% endif %}
+{% if traefik.service_port is defined %}
       - "traefik.{{ traefik.protocol }}.services.{{ traefik.name }}-{{ traefik.entrypoint }}.loadbalancer.server.port={{ traefik.service_port }}"
+{% endif %}
 {% endfor %}
 {% endif %}
 {% if service.watchtower %}
