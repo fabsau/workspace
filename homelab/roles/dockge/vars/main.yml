@@ -1,0 +1,25 @@
+# vars/main.yml
+docker_role_name: dockge
+
+services:
+  - name: dockge
+    image: louislam/dockge:latest
+    environment:
+      - DOCKGE_STACKS_DIR={{ docker_base_path }}
+    networks:
+      - dockge
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data:/app/data
+      - /{{ docker_base_path }}:/{{ docker_base_path }}
+    traefik: 
+      - name: dockge
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: Host(`dockge.oiba.de`)
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 5001
+    watchtower: true
