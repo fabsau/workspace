@@ -124,8 +124,8 @@ fail2ban_findtime: 600
 fail2ban_maxretry: 5
 
 # Logrotate Settings
-logrotate_user: "{{ ansible_username }}"
-logrotate_group: "{{ admin_group }}"
+logrotate_user: "{{ common_username }}"
+logrotate_group: "{{ common_group }}"
 logrotate_frequency: weekly
 logrotate_keep: 14
 logrotate_compress: yes
