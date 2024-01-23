@@ -4,11 +4,10 @@ docker_role_name: certdumper
 services:
   - name: certdumper
     image: humenius/traefik-certs-dumper:latest
-    command:
-      "- --restart-containers {{ certdumper_restart_containers }}"
+    command: "{{ '--restart-containers ' + certdumper_restart_containers if certdumper_restart_containers | default('') != '' else '' }}"
     network_mode: none
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ../traefik/ssl/acme.json:/traefik/acme.json:ro
+      - ../traefik/data/acme.json:/traefik/acme.json:ro
       - ./ssl:/output:rw
     watchtower: true

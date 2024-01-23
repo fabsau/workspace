@@ -175,7 +175,7 @@ watchtower_url: watchtower.oiba.de
 watchtower_mail_subject_praefix: "NAS: "
 
 # CERTDUMPER
-certdumper_restart_containers:
+# certdumper_restart_containers: empty
 
 # PROMETHEUS:
 prometheus_url: prom.oiba.de
