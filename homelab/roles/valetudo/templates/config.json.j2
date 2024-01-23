@@ -1,0 +1,32 @@
+{
+    "mapSettings": {
+        "drawPath": true,
+        "drawCharger": true,
+        "drawRobot": true,
+        "scale": 2,
+        "crop_top": 120,
+        "crop_bottom": 60,
+        "crop_left": 8,
+        "crop_right": 39,
+		"padding_top": 3,
+		"padding_bottom": 3,
+		"padding_left": 3,
+		"padding_right": 3
+    },
+    "mqtt" : {
+        "identifier": "rockrobo",
+        "topicPrefix": "valetudo",
+        "autoconfPrefix": "homeassistant",
+        "broker_url": "mqtt://device:JoZ7XiAV3Hm6g7bNQEPk22o9R@{{ homeassistant_url }}",
+        "caPath": "",
+        "mapDataTopic": "valetudo/s5/MapData/map-data",
+        "minMillisecondsBetweenMapUpdates": 10000,
+        "publishMapImage": true,
+        "publishAsBase64": false
+    },
+    "webserver": {
+        "enabled": true,
+        "port": 3000
+    }
+}
+

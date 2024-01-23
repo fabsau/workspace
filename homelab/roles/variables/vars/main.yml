@@ -135,6 +135,11 @@ logrotate_entries:
   - name: traefik_app_log
     path: "{{ docker_base_path }}/traefik/data/log/traefik.log"
 
+# DNS Servers
+dns_servers:
+  - 192.168.100.20
+  - 192.168.100.21
+
 # Adguard Sync Settings
 adguardsync_schedule: "*/2 * * * *"
 adguardsync_user: admin
@@ -155,3 +160,5 @@ radarr_url: radarr.sauna.re
 bazarr_url: bazarr.sauna.re
 prowlarr_url: prowlarr.sauna.re
 sabnzbd_url: usenet.sauna.re
+homeassistant_url: home.sauna.re
+uptimekuma_saunaflix_url: status.sauna.re

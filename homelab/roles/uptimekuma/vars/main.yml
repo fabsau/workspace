@@ -1,0 +1,41 @@
+# vars/main.yml
+docker_role_name: uptimekuma
+
+services:
+  - name: uptimekuma
+    image: louislam/uptime-kuma:alpine
+    dns: "{{ dns_servers }}"
+    networks:
+      - monitoring
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./data:/app/data
+    traefik: 
+      - name: uptimekuma
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ uptimekuma_url }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 3001
+      - name: uptimekuma_pushurl
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ uptimekuma_url }}`) && PathPrefix(`/api/push/`)"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 3001
+      - name: uptimekuma_saunaflix
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ uptimekuma_saunaflix_url }}`)"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 3001
+    watchtower: true

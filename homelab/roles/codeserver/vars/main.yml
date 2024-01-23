@@ -1,0 +1,25 @@
+# vars/main.yml
+docker_role_name: codeserver
+
+services:
+  - name: fabsau/vscode:1
+    image: jlesage/czkawka:latest
+    env_file:
+      - ./codeserver.env
+      - ../common.env
+    volumes:
+      - ./data:/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - pyload
+    traefik: 
+      - name: codeserver
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ codeserver_url }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 8443
+    watchtower: true

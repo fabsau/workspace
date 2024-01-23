@@ -187,11 +187,10 @@ portainer_url: docker.oiba.de
 unifi_url: unifi.oiba.de
 grafana_url: grafana.oiba.de
 cadvisor_url: cadvisor.nas.oiba.de
-proxmoxexporter_url: saunaprox.oiba.de
+proxmoxexporter_url: proxmoxexporter.oiba.de
 adguardexporter_url: adguardexporter.oiba.de
-unifiexporter_url: unpoller.oiba.de
+unifiexporter_url: unifiexporter.oiba.de
 plausibleexporter_url: plausibleexporter.oiba.de
-
 valetudo_url: valetudo.oiba.de
 pyload_url: pyload.oiba.de
 uptimekuma_url: uptime.oiba.de
@@ -200,11 +199,12 @@ vscode_url: code.oiba.de
 plexexporter1_url: plexexporter.oiba.de
 plexexporter2_url: plexexporter2.oiba.de
 plexexporter3_url: plexexporter3.oiba.de
-tautilliexporter_url: tulliexporter.oiba.de
+tautulliexporter_url: tautulliexporter.oiba.de
 qbittorrentexporter_url: qbittorrentexporter.oiba.de
 sonarrexporter_url: sonarrexporter.oiba.de
 radarrexporter_url: radarrexporter.oiba.de
 sabnzbdexporter_url: sabnzbdexporter.oiba.de
-# bazarrexporter_url: bazarrexporter.oiba.de
+bazarrexporter_url: bazarrexporter.oiba.de
 prowlarrexporter_url: prowlarrexporter.oiba.de
 librespeedexporter_url: librespeedexporter.oiba.de
+codeserver_url: code.oiba.de

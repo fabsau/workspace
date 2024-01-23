@@ -32,11 +32,11 @@
           - plausibleexporter
           - librespeedexporter
           - plexexporter
-          - tautilliexporter
+          - tautulliexporter
           - qbittorrentexporter
           - exportarrexporter
-          # - valetudo
-          # - pyload
-          # - uptimekuma
-          # - czkawka
-          # - vscode
+          - valetudo
+          - pyload
+          - uptimekuma
+          - czkawka
+          - codeserver

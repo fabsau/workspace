@@ -24,9 +24,9 @@ scrape_configs:
         - proxy.azure.sauna.re
         # - crowdsec.blue.sauna.re
         # - crowdsec.azure.sauna.re
-        - unpoller.oiba.de
+        - unifiexporter.oiba.de
         - uptime.oiba.de
-        - sabnzbd.oiba.de
+        - sabnzbdexporter.oiba.de
         - adguardexporter.oiba.de
         - qbittorrentexporter.oiba.de
         - plexexporter.oiba.de
@@ -80,7 +80,7 @@ scrape_configs:
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: saunaprox.oiba.de
+        replacement: proxmoxexporter.oiba.de
 
   - job_name: "librespeed"
     scrape_interval: 360m
@@ -91,7 +91,7 @@ scrape_configs:
       script: [librespeed]
     static_configs:
       - targets:
-          - speedexporter.oiba.de
+          - librespeedexporter.oiba.de
 
 rule_files:
   - "alerts.yml"
