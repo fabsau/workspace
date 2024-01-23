@@ -1,0 +1,24 @@
+# vars/main.yml
+docker_role_name: librespeedexporter
+
+services:
+  - name: librespeedexporter
+    image: ghcr.io/fabsau/prometheus-librespeed-exporter:latest
+    env_file:
+      - ./librespeedexporter.env
+    volumes:
+      - ./config/librespeed-backends.json:/config/librespeed-backends.json
+      # - ./config/librespeed.sh:/usr/local/bin/librespeed-exporter.sh
+    networks:
+      - monitoring
+    traefik: 
+      - name: librespeedexporter
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ librespeedexporter_url }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 8080
+    watchtower: true

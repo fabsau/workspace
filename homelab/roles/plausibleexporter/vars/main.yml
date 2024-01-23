@@ -1,0 +1,21 @@
+# vars/main.yml
+docker_role_name: plausibleexporter
+
+services:
+  - name: plausibleexporter
+    image: ghcr.io/riesinger/plausible-exporter:latest
+    env_file:
+      - ./plausibleexporter.env
+    networks:
+      - monitoring
+    traefik: 
+      - name: plausibleexporter
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ plausibleexporter_url }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 8080
+    watchtower: true

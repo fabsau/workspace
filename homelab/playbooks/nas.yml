@@ -26,3 +26,21 @@
           - alertmanager
           - grafana
           - cadvisor
+          - proxmoxexporter
+          - adguardexporter
+          - unifiexporter
+          - plausibleexporter
+          - librespeedexporter
+          # - uptimekuma
+          # - czkawka
+          # - vscode
+          # - plexexporter
+          # - tautilliexporter
+          # - qbittorrentexporter
+          # - sonarrexporter
+          # - radarrexporter
+          # - sabnzbdexporter
+          # - bazarrexporter
+          # - prowlarrexporter
+          # - valetudo
+          # - pyload
