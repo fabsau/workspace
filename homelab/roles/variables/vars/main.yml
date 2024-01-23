@@ -144,3 +144,7 @@ adguardsync_slaves:
   - "https://dns2.oiba.de/"
   - "https://dns.azure.sauna.re"
   - "https://dns.blue.sauna.re"
+
+# Central URLS
+plausible_url: data.sauna.re
+plex_url: watch.sauna.re
