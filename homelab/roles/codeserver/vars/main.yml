@@ -2,8 +2,8 @@
 docker_role_name: codeserver
 
 services:
-  - name: fabsau/vscode:1
-    image: jlesage/czkawka:latest
+  - name: codeserver
+    image: fabsau/vscode:1
     env_file:
       - ./codeserver.env
       - ../common.env
