@@ -4,6 +4,8 @@ docker_role_name: unifi
 services:
   - name: unifi
     image: lscr.io/linuxserver/unifi-network-application:latest
+    depends_on:
+      - unifi_mongodb
     env_file:
       - ./unifi.env
       - ../common.env
@@ -70,8 +72,8 @@ services:
 
   - name: unifi_mongodb
     image: mongo:latest
-    env_file:
-      - ./unifi_mongodb.env
+    # env_file:
+      # - ./unifi_mongodb.env
     networks:
       - unifi
     volumes:
