@@ -22,6 +22,9 @@ docker_networks:
   - librespeed
   - czkawka
   - vscode
+  - dockge
+  - watchtower
+  - adguardsync
 
 # TRAEFIK
 traefik_host: proxy.oiba.de

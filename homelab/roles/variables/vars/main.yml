@@ -134,3 +134,13 @@ logrotate_entries:
     path: "{{ docker_base_path }}/traefik/data/log/access.log"
   - name: traefik_app_log
     path: "{{ docker_base_path }}/traefik/data/log/traefik.log"
+
+# Adguard Sync Settings
+adguardsync_schedule: "*/2 * * * *"
+adguardsync_user: admin
+adguardsync_password: "{{ ADGUARD_PW }}"
+adguardsync_master_url: "dns.oiba.de"
+adguardsync_slaves:
+  - "https://dns2.oiba.de/"
+  - "https://dns.azure.sauna.re"
+  - "https://dns.blue.sauna.re"
