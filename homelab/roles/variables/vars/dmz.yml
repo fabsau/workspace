@@ -62,7 +62,7 @@ traefik_extra_servers:
     insecuretransport: false
 
 # DOCKERPROXY_TRAEFIK
-dockerproxy_allowed_ip: 172.29.13.0/24
+dockerproxy_allowed_ip: 172.30.1.0/24
 dockerproxy_gid: 993
 
 # WATCHTOWER
