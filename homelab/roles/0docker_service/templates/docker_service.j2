@@ -117,6 +117,7 @@ services:
       - "traefik.http.routers.{{ traefik.name }}.entrypoints=http"
       - "traefik.http.routers.{{ traefik.name }}.rule={{ traefik.rule }}"
       - "traefik.http.routers.{{ traefik.name }}.middlewares=https-redirect@file"
+      - "traefik.http.routers.{{ traefik.name }}.service={{ traefik.name }}-{{ traefik.entrypoint }}"
 {% endif %}
       - "traefik.{{ traefik.protocol }}.routers.{{ traefik.name }}-{{ traefik.entrypoint }}.entrypoints={{ traefik.entrypoint }}"
 {% if traefik.rule is defined and traefik.rule %}
