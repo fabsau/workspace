@@ -3,16 +3,6 @@
 - name: "[{{ role_specific }}] Include role-specific vars"
   include_vars: "{{ ansible_home }}/roles/{{ role_specific }}/vars/main.yml"
 
-- name: "[{{ role_specific }}] Check if role-specific tasks exist"
-  stat:
-    path: "/config/workspace/homelab/roles/unifi/tasks/main.yml"
-  delegate_to: localhost
-  register: role_tasks
-  
-- name: "[{{ role_specific }}] Include role-specific tasks"
-  include_tasks: "{{ ansible_home }}/roles/{{ role_specific }}/tasks/main.yml"
-  when: role_tasks.stat.exists
-
 - name: "[{{ role_specific }}] Create role directory"
   become: true
   file:
@@ -74,6 +64,16 @@
   become: true
   loop: "{{ config_files }}"
   when: config_files | length > 0
+
+- name: "[{{ role_specific }}] Check if role-specific tasks exist"
+  stat:
+    path: "{{ ansible_home }}/roles/{{ role_specific }}/tasks/main.yml"
+  delegate_to: localhost
+  register: role_tasks
+  
+- name: "[{{ role_specific }}] Include role-specific tasks"
+  include_tasks: "{{ ansible_home }}/roles/{{ role_specific }}/tasks/main.yml"
+  when: role_tasks.stat.exists
 
 - name: "[{{ role_specific }}] Execute Docker Compose Up"
   command: "docker compose -f {{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml up -d"

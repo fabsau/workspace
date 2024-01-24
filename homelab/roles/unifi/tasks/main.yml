@@ -1,0 +1,6 @@
+---
+- name: Change file permissions for unifi_mongodb_init.js
+  file:
+    path: "{{ docker_base_path }}/{{ docker_role_name }}/config/unifi_mongodb_init.js"
+    mode: '0771'
+  become: true
