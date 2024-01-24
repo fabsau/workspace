@@ -4,6 +4,7 @@ docker_role_name: librespeedexporter
 services:
   - name: librespeedexporter
     image: ghcr.io/fabsau/prometheus-librespeed-exporter:latest
+    user: "{{ common_uid }}:{{ common_gid }}"
     env_file:
       - ./librespeedexporter.env
     volumes:
@@ -20,5 +21,5 @@ services:
         rule: "Host(`{{ librespeedexporter_url }}`)"
         middlewares: private-chain@file
         insecuretransport: false
-        service_port: 8080
+        service_port: 9469
     watchtower: true
