@@ -7,7 +7,7 @@ services:
     env_file:
       - ../common.env
     volumes:
-      - ./data:/app/config
+      - ./data:/config
       - /srv/dev-disk-by-uuid-4cf2cd9e-0885-47b9-ada6-6005c3daa474/Multimedia/Downloads:/downloads
     networks:
       - pyload

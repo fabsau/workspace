@@ -7,13 +7,12 @@ services:
     user: "{{ common_uid }}:{{ common_gid }}"
     command:
     - --config.file=/config/alertmanager.yml
-    - --storage.path=/data
     - --web.external-url=https://{{ alertmanager_url }}
     networks:
       - monitoring
     volumes:
       - ./config:/config
-      - ./data:/data
+      - ./data:/alertmanager
     traefik: 
       - name: alertmanager
         protocol: http
