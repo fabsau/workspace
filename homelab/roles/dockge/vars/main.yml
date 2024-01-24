@@ -4,6 +4,8 @@ docker_role_name: dockge
 services:
   - name: dockge
     image: louislam/dockge:latest
+    env_file:
+      - ./dockge.env
     networks:
       - dockge
     volumes:
