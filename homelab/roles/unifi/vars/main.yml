@@ -38,11 +38,10 @@ services:
         insecuretransport: false
         service_port: 3478
       - name: unifi-5514
-        protocol: tcp
+        protocol: udp
         entrypoint: unifi3
         http_redirection: false
         enable_tls: false
-        rule: HostSNI(`*`)
         insecuretransport: false
         service_port: 5514
       - name: unifi-6789
@@ -61,9 +60,25 @@ services:
         rule: HostSNI(`*`)
         insecuretransport: false
         service_port: 8080
+      - name: unifi-8843
+        protocol: tcp
+        entrypoint: unifi6
+        http_redirection: false
+        enable_tls: false
+        rule: HostSNI(`*`)
+        insecuretransport: false
+        service_port: 8843
+      - name: unifi-8880
+        protocol: tcp
+        entrypoint: unifi7
+        http_redirection: false
+        enable_tls: false
+        rule: HostSNI(`*`)
+        insecuretransport: false
+        service_port: 8880
       - name: unifi-10001
         protocol: udp
-        entrypoint: unifi6
+        entrypoint: unifi8
         http_redirection: false
         enable_tls: false
         insecuretransport: false
@@ -72,11 +87,10 @@ services:
 
   - name: unifi_mongodb
     image: mongo:latest
-    # env_file:
-      # - ./unifi_mongodb.env
     networks:
       - unifi
     volumes:
-      - ./db:/data/db
+      - ./db/db:/data/db # both needed like this
+      - ./db/configdb:/data/configdb # both needed like this
       - ./config/unifi_mongodb_init.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     watchtower: true

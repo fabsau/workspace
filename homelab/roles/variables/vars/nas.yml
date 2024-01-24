@@ -29,16 +29,12 @@ traefik_oauth_address: https://auth.sauna.re/api/verify
 traefik_ca_productive: true
 traefik_oauth_insecureSkipVerify: false
 traefik_additional_ports: 
-  #Portainer
-  - target: 8000
-    published: 8000
-    protocol: tcp
-    mode: host
-  #UNIFI
-  - target: 8081
+  # Portainer
+  - target: 8080
     published: 8080
     protocol: tcp
     mode: host
+  # Unifi
   - target: 1900
     published: 1900
     protocol: udp
@@ -47,17 +43,29 @@ traefik_additional_ports:
     published: 3478
     protocol: udp
     mode: host
-  - target: 10001
-    published: 10001
+  - target: 5514
+    published: 5514
     protocol: udp
     mode: host
   - target: 6789
     published: 6789
     protocol: tcp
     mode: host
-  - target: 5514
-    published: 5514
+  - target: 8000
+    published: 8000
     protocol: tcp
+    mode: host
+  - target: 8843
+    published: 8843
+    protocol: tcp
+    mode: host
+  - target: 8880
+    published: 8880
+    protocol: tcp
+    mode: host
+  - target: 10001
+    published: 10001
+    protocol: udp
     mode: host
 traefik_domains:
   - main: oiba.de
@@ -79,12 +87,16 @@ traefik_entrypoints:
   - name: unifi2
     address: ":3478/udp"
   - name: unifi3
-    address: ":5514"
+    address: ":5514/udp"
   - name: unifi4
     address: ":6789"
   - name: unifi5
     address: ":8080"
   - name: unifi6
+    address: ":8843"
+  - name: unifi7
+    address: ":8880"
+  - name: unifi8
     address: ":10001/udp"
 traefik_whitelist_ips:
   - 46.223.56.204
