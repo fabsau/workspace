@@ -2,7 +2,7 @@ global:
   scrape_interval: {{ prometheus_global.scrape_interval}}
   scrape_timeout: {{ prometheus_global.scrape_timeout}}
   external_labels:
-    monitor: "{{ prometheus_external_labels.monitor }}"
+    monitor: "{{ prometheus_monitor_name }}"
 
 
 scrape_configs:

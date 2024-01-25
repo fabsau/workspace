@@ -13,6 +13,7 @@
       vars:
         docker_service_roles:
           - traefik
+          - prometheus
           - watchtower
           # - cronjob
           - portainer
@@ -20,7 +21,6 @@
           - librespeed
           - dockge
           - adguardsync
-          - prometheus
           - certdumper
           - nodeexporter
           - alertmanager

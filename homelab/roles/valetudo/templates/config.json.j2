@@ -17,7 +17,7 @@
         "identifier": "rockrobo",
         "topicPrefix": "valetudo",
         "autoconfPrefix": "homeassistant",
-        "broker_url": "mqtt://device:JoZ7XiAV3Hm6g7bNQEPk22o9R@{{ homeassistant_url }}",
+        "broker_url": "mqtt://device:JoZ7XiAV3Hm6g7bNQEPk22o9R@{{ (endpoints.homeassistant | dict2items)[0].value }}",
         "caPath": "",
         "mapDataTopic": "valetudo/s5/MapData/map-data",
         "minMillisecondsBetweenMapUpdates": 10000,

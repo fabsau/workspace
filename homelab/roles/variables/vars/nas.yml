@@ -174,7 +174,7 @@ watchtower_mail_subject_praefix: "NAS: "
 # CERTDUMPER
 # certdumper_restart_containers: empty
 
-# PROMETHEUS NAS
+# PROMETHEUS
 prometheus_monitor_name: Mozart
 prometheus_alertmanager_targets:
   - "alert.oiba.de"
