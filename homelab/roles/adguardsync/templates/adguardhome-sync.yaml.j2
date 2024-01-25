@@ -4,11 +4,11 @@ cron: "{{ adguardsync_schedule }}"
 # runs the synchronisation on startup
 runOnStart: true
 {% set endpoints_list = endpoints.adguard|dict2items %}
-{% set master_url = endpoints_list[0].value %}
-{% set slave_urls = endpoints_list[1:] %}
+{% set adguard_master_url = endpoints_list[0].value %}
+{% set adguard_slave_urls = endpoints_list[1:] %}
 origin:
   # url of the origin instance
-  url: {{ master_url }}
+  url: {{ adguard_master_url }}
   # apiPath: define an api path if other than "/control"
   # insecureSkipVerify: true # disable tls check
   username: {{ adguardsync_user }}
@@ -16,7 +16,7 @@ origin:
 
 # replica instance (optional, if only one)
 replicas:
-{% for slave in slave_urls %}
+{% for slave in adguard_slave_urls %}
   - url: {{ slave.value }}
     username: {{ adguardsync_user }}
     password: {{ adguardsync_password }}
