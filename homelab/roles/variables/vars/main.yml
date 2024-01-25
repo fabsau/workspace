@@ -144,11 +144,6 @@ dns_servers:
 adguardsync_schedule: "*/2 * * * *"
 adguardsync_user: admin
 adguardsync_password: "{{ ADGUARD_PW }}"
-adguardsync_master_url: "dns.oiba.de"
-adguardsync_slaves:
-  - "https://dns2.oiba.de/"
-  - "https://dns.azure.sauna.re"
-  - "https://dns.blue.sauna.re"
 
 # Prometheus Settings
 prometheus_global:
@@ -185,21 +180,18 @@ endpoints:
     prometheus_exporter: true
   alertmanager:
     nas: "alert.oiba.de"
-    prometheus_exporter: false
+    dmz: "alert.sauna.re"
+    prometheus_exporter: true
   librespeed:
     nas: "speed.nas.oiba.de"
     dmz: "speed.azure.sauna.re"
     blue: "speed.blue.sauna.re"
-    prometheus_exporter: false
   portainer:
     nas: "docker.oiba.de"
-    prometheus_exporter: false
   unifi:
     nas: "unifi.oiba.de"
-    prometheus_exporter: false
   grafana:
     nas: "grafana.oiba.de"
-    prometheus_exporter: false
   cadvisor:
     nas: "cadvisor.nas.oiba.de"
     dmz: "cadvisor.azure.sauna.re"
@@ -229,10 +221,8 @@ endpoints:
     prometheus_exporter: true
   valetudo:
     nas: "valetudo.oiba.de"
-    prometheus_exporter: false
   pyload:
     nas: "pyload.oiba.de"
-    prometheus_exporter: false
   uptimekuma:
     nas: "uptime.oiba.de"
     dmz: "status.sauna.re"
@@ -243,10 +233,8 @@ endpoints:
         password: "{{ PROMETHEUS_UPTIMEKUMA_PASSWORD }}"
   czkawka:
     nas: "files.oiba.de"
-    prometheus_exporter: false
   vscode:
     nas: "code.oiba.de"
-    prometheus_exporter: false
   plexexporter:
     nas:
       - "plexexporter.oiba.de"
@@ -270,7 +258,6 @@ endpoints:
     prometheus_exporter: true
   bazarrexporter:
     nas: "bazarrexporter.oiba.de"
-    prometheus_exporter: false
   prowlarrexporter:
     nas: "prowlarrexporter.oiba.de"
     prometheus_exporter: true
@@ -285,34 +272,65 @@ endpoints:
         script: "librespeed"
   codeserver:
     nas: "code.oiba.de"
-    prometheus_exporter: false
   plausible:
     dmz: "data.sauna.re"
-    prometheus_exporter: false
   plex:
     blue: "watch.sauna.re"
-    prometheus_exporter: false
   tautulli:
     dmz: "tulli.sauna.re"
-    prometheus_exporter: false
   qbittorrent:
     blue: "torrent.sauna.re"
-    prometheus_exporter: false
   sonarr:
     dmz: "sonarr.sauna.re"
-    prometheus_exporter: false
   radarr:
     dmz: "radarr.sauna.re"
-    prometheus_exporter: false
   prowlarr:
     dmz: "prowlarr.sauna.re"
-    prometheus_exporter: false
   bazarr:
     dmz: "bazarr.sauna.re"
-    prometheus_exporter: false
   sabnzbd:
     blue: "usenet.sauna.re"
-    prometheus_exporter: false
   homeassistant:
     home: "home.sauna.re"
-    prometheus_exporter: false
+  bitwarden:
+    dmz:
+      - "bitwarden.sauna.re"
+      - "bitwarden2.sauna.re"
+  chat:
+    dmz: "chat.sauna.re"
+  demo-dhbwgpt:
+    dmz: "demo-dhbwgpt.sauna.re"
+  ghost:
+    dmz: "fabio.sauna.re"
+  filebrowser:
+    dmz: "files.sauna.re"
+  headscale:
+    dmz: "headscale.sauna.re"
+  johanna-liebt-fabio:
+    dmz: "johanna-liebt-fabio.sauna.re"
+  ihatemoney:
+    dmz: "money.sauna.re"
+  photoprism:
+    dmz: "photo.sauna.re"
+  phpmyadmin:
+    dmz: "pma.sauna.re"
+  linkhub:
+    dmz: "portal.sauna.re"
+  calibre_web:
+    dmz: "read.sauna.re"
+  overseerr:
+    dmz: "request.sauna.re"
+  xbackbone:
+    dmz: "screen.sauna.re"
+  searx:
+    dmz: "searx.sauna.re"
+  wizarr:
+    dmz: "setup.sauna.re"
+  adguard:
+    lxc1: "dns.oiba.de"
+    lxc2: "dns2.oiba.de"
+    blue: "dns.blue.sauna.re"
+  rclone:
+    blue: "rclone.blue.sauna.re"
+  xteve:
+    blue: "xteve-de.sauna.re"

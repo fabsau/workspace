@@ -6,6 +6,7 @@ global:
 
 
 scrape_configs:
+{% if endpoint.prometheus_exporter is defined %}
 {% for name, endpoint in endpoints.items() if endpoint.prometheus_exporter %}
   - job_name: "{{ name }}"
 {% if endpoint.prometheus_settings.scrape_interval is defined %}
@@ -71,7 +72,7 @@ scrape_configs:
 {% endif %}
 
 {% endfor %}
-
+{% endif %}
 
 {% if prometheus_alert_rules_files is defined %}
 rule_files:
