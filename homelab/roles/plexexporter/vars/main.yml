@@ -2,19 +2,19 @@
 docker_role_name: plexexporter
 
 services:
-  - name: plexexporter1
+  - name: plexexporter
     image: ghcr.io/axsuul/plex-media-server-exporter:latest
     env_file:
       - ./plexexporter.env
     networks:
       - monitoring
     traefik: 
-      - name: plexexporter1
+      - name: plexexporter
         protocol: http
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ plexexporter1_url }}`)"
+        rule: "Host(`{{ endpoints.plexexporter[ansible_facts['hostname']][0] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9594
@@ -31,7 +31,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ plexexporter2_url }}`)"
+        rule: "Host(`{{ endpoints.plexexporter[ansible_facts['hostname']][1] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9000
@@ -48,7 +48,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ plexexporter3_url }}`)"
+        rule: "Host(`{{ endpoints.plexexporter[ansible_facts['hostname']][2] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9594

@@ -15,7 +15,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ sonarrexporter_url }}`)"
+        rule: "Host(`{{ endpoints.sonarr[ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9707
@@ -33,7 +33,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ radarrexporter_url }}`)"
+        rule: "Host(`{{ endpoints.radarr[ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9707
@@ -51,7 +51,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ bazarrexporter_url }}`)"
+        rule: "Host(`{{ endpoints.bazarr[ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9707
@@ -69,7 +69,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ prowlarrexporter_url }}`)"
+        rule: "Host(`{{ endpoints.prowlarr[ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9707
@@ -87,7 +87,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ sabnzbdexporter_url }}`)"
+        rule: "Host(`{{ endpoints.sabnzbd[ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9707

@@ -7,7 +7,7 @@ services:
     user: "{{ common_uid }}:{{ common_gid }}"
     command:
     - --config.file=/config/alertmanager.yml
-    - --web.external-url=https://{{ alertmanager_url }}
+    - --web.external-url=https://{{ endpoints.alertmanager[ansible_facts['hostname']] }}
     networks:
       - monitoring
     volumes:
@@ -19,7 +19,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ alertmanager_url }}`)"
+        rule: "Host(`{{ endpoints.alertmanager[ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9093

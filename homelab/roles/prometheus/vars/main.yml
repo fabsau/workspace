@@ -7,7 +7,7 @@ services:
     user: "{{ common_uid }}:{{ common_gid }}"
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--web.external-url=https://{{ prometheus_url }}'
+      - '--web.external-url=https://{{ endpoints.prometheus[ansible_facts["hostname"]] }}'
       - '--storage.tsdb.retention.time=1y'
       - '--storage.tsdb.wal-compression'
     networks:
@@ -23,7 +23,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ prometheus_url }}`)"
+        rule: "Host(`{{ endpoints.prometheus[ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9090
@@ -32,7 +32,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ prometheus_url }}`) && PathPrefix(`/metrics`)"
+        rule: "Host(`{{ endpoints.prometheus[ansible_facts['hostname']] }}`) && PathPrefix(`/metrics`)"
         insecuretransport: false
         service_port: 9090
     watchtower: true

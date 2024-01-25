@@ -1,104 +1,92 @@
 global:
-  scrape_interval: 15s
+  scrape_interval: {{ prometheus_global.scrape_interval}}
+  scrape_timeout: {{ prometheus_global.scrape_timeout}}
   external_labels:
-    monitor: "{{ prometheus_monitor_name }}"
+    monitor: "{{ prometheus_external_labels.monitor }}"
+
 
 scrape_configs:
-  - job_name: "Exporter"
-    scrape_interval: 60s
-    scrape_timeout: 1m
-    scheme: https
-    static_configs:
-      - targets:
-        - prom.oiba.de
-        - node.nas.oiba.de
-        - node.opn.oiba.de
-        - node.blue.sauna.re
-        - node.azure.sauna.re
-        - node.home.oiba.de
-        - cadvisor.nas.oiba.de
-        - cadvisor.blue.sauna.re
-        - cadvisor.azure.sauna.re
-        - proxy.oiba.de
-        - proxy.blue.sauna.re
-        - proxy.azure.sauna.re
-        # - crowdsec.blue.sauna.re
-        # - crowdsec.azure.sauna.re
-        - unifiexporter.oiba.de
-        - uptime.oiba.de
-        - sabnzbdexporter.oiba.de
-        - adguardexporter.oiba.de
-        - qbittorrentexporter.oiba.de
-        - plexexporter.oiba.de
-        - sonarrexporter.oiba.de
-        - radarrexporter.oiba.de
-        - prowlarrexporter.oiba.de
-        - auth.sauna.re
-        - plausibleexporter.oiba.de
-        # - ciscoexporter.oiba.de
-    basic_auth: # UptimeKuma 
-      username: admin
-      password: {{ PROMETHEUS_UPTIMEKUMA_PASSWORD }}
-#################HASS#################
-  - job_name: "hass"
-    scrape_interval: 60s
-    scrape_timeout: 1m
-    metrics_path: /api/prometheus
-    # Long-Lived Access Token
-    authorization:
-      credentials: "{{ PROMETHEUS_HASS_TOKEN }}"
-    scheme: https
-    static_configs:
-      - targets:
-        - home.sauna.re
- 
-  - job_name: watchtower
-    scrape_interval: 60s
-    scrape_timeout: 1m
-    scheme: https
-    metrics_path: /v1/metrics
-    bearer_token: {{ WATCHTOWER_HTTP_API_TOKEN }}
-    static_configs:
-      - targets:
-        - watchtower.oiba.de
-
-  - job_name: 'proxmox'
-    scrape_interval: 60s
-    scrape_timeout: 1m
-    scheme: https
-    static_configs:
-      - targets:
-        - vm.oiba.de:443
-    metrics_path: /pve
+{% for name, endpoint in endpoints.items() if endpoint.prometheus_exporter %}
+  - job_name: "{{ name }}"
+{% if endpoint.prometheus_settings.scrape_interval is defined %}
+    scrape_interval: "{{ endpoint.prometheus_settings.scrape_interval }}"
+{% endif %}
+{% if endpoint.prometheus_settings.scrape_timeout is defined %}
+    scrape_timeout: "{{ endpoint.prometheus_settings.scrape_timeout }}"
+{% endif %}
+    scheme: "{{ endpoint.prometheus_settings.scheme | default("https") }}"
+{% if endpoint.prometheus_settings.metrics_path is defined %}
+    metrics_path: "{{ endpoint.prometheus_settings.metrics_path }}"
+{% endif %}
+{% if endpoint.prometheus_settings.params is defined %}
     params:
-      module: ['default']
-      cluster: ['1']
-      node: ['1']
+{% for key, value in endpoint.prometheus_settings.params.items() %}
+      {{ key }}: ["{{ value }}"]
+{% endfor %}
+{% endif %}
+{% if endpoint.prometheus_settings.script is defined %}
+    script: ["{{ endpoint.prometheus_settings.script }}"]
+{% endif %}
+{% if endpoint.prometheus_settings.basic_auth is defined %}
+    basic_auth:
+      username: "{{ endpoint.prometheus_settings.basic_auth.username }}"
+      password: "{{ endpoint.prometheus_settings.basic_auth.password }}"
+{% endif %}
+{% if endpoint.prometheus_settings.authorization is defined %}
+    authorization:
+      credentials: "{{ endpoint.prometheus_settings.authorization.credentials }}"
+{% endif %}
+{% if endpoint.prometheus_settings.bearer_token is defined %}
+    bearer_token: "{{ endpoint.prometheus_settings.bearer_token }}"
+{% endif %}
+    static_configs:
+      - targets:
+{% if endpoint.target_replacement_url is defined %}
+{% for url in endpoint.target_replacement_url %}
+        - "{{ url }}"
+{% endfor %}
+{% else %}
+{% for location, url in endpoint.items() %}
+{% if location not in ['prometheus_exporter', 'prometheus_settings', 'target_replacement_url'] %}
+{% if url is string %}
+        - "{{ url }}"
+{% else %}
+{% for u in url %}
+        - "{{ u }}"
+{% endfor %}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if endpoint.prometheus_settings.relabel_configs is defined %}
     relabel_configs:
+{% for relabel_config in endpoint.prometheus_settings.relabel_configs %}
       - source_labels: [__address__]
         target_label: __param_target
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: proxmoxexporter.oiba.de
+        replacement: "{{ relabel_config.replacement }}"
+{% endfor %}
+{% endif %}
 
-  - job_name: "librespeed"
-    scrape_interval: 360m
-    scrape_timeout: 10m
-    metrics_path: /probe
-    scheme: https
-    params:
-      script: [librespeed]
-    static_configs:
-      - targets:
-          - librespeedexporter.oiba.de
+{% endfor %}
 
+
+{% if prometheus_alert_rules_files is defined %}
 rule_files:
-  - "alerts.yml"
+{% for rule_file in prometheus_alert_rules_files %}
+  - "{{ rule_file }}"
+{% endfor %}
+{% endif %}
 
+
+{% if prometheus_alertmanager_targets is defined %}
 alerting:
-  
   alertmanagers:
     - static_configs:
       - targets:
-        - alertmanager:9093
+{% for target in prometheus_alertmanager_targets %}
+        - "{{ target }}"
+{% endfor %}
+{% endif %}

@@ -150,7 +150,7 @@ adguardsync_slaves:
   - "https://dns.azure.sauna.re"
   - "https://dns.blue.sauna.re"
 
-# Central URLs
+# Central URLs TODO
 plausible_url: data.sauna.re
 plex_url: watch.sauna.re
 tulli_url: tulli.sauna.re
@@ -162,3 +162,139 @@ prowlarr_url: prowlarr.sauna.re
 sabnzbd_url: usenet.sauna.re
 homeassistant_url: home.sauna.re
 uptimekuma_saunaflix_url: status.sauna.re
+
+# Prometheus Settings
+prometheus_global:
+  scrape_interval: '1m'
+  scrape_timeout: "1m"
+prometheus_alert_rules_files:
+  - "alerts.yml"
+
+# Endpoints
+endpoints:
+  traefik:
+    nas: "proxy.oiba.de"
+    dmz: "proxy.azure.sauna.re"
+    blue: "proxy.blue.sauna.re"
+    prometheus_exporter: true
+  watchtower:
+    nas: "watchtower.oiba.de"
+    dmz: "watchtower.azure.sauna.re"
+    blue: "watchtower.blue.sauna.re"
+    prometheus_exporter: true
+    prometheus_settings:
+      metrics_path: "/v1/metrics"
+      bearer_token: "{{ WATCHTOWER_HTTP_API_TOKEN }}"
+  prometheus:
+    nas: "prom.oiba.de"
+    dmz: "prom.sauna.re"
+    prometheus_exporter: true
+  nodeexporter:
+    nas: "node.nas.oiba.de"
+    dmz: "node.azure.sauna.re"
+    blue: "node.blue.sauna.re"
+    opn: "node.opn.oiba.de"
+    home: "node.home.oiba.de"
+    prometheus_exporter: true
+  alertmanager:
+    nas: "alert.oiba.de"
+    prometheus_exporter: false
+  librespeed:
+    nas: "speed.nas.oiba.de"
+    dmz: "speed.azure.sauna.re"
+    blue: "speed.blue.sauna.re"
+    prometheus_exporter: false
+  portainer:
+    nas: "docker.oiba.de"
+    prometheus_exporter: false
+  unifi:
+    nas: "unifi.oiba.de"
+    prometheus_exporter: false
+  grafana:
+    nas: "grafana.oiba.de"
+    prometheus_exporter: false
+  cadvisor:
+    nas: "cadvisor.nas.oiba.de"
+    dmz: "cadvisor.azure.sauna.re"
+    blue: "cadvisor.blue.sauna.re"
+    prometheus_exporter: true
+  proxmoxexporter:
+    nas: "proxmoxexporter.oiba.de"
+    target_replacement_url:
+      - "vm.oiba.de:443"
+    prometheus_exporter: true
+    prometheus_settings:
+      metrics_path: "/pve"
+      params:
+        module: "default"
+        cluster: "1"
+        node: "1"
+      relabel_configs:
+        - replacement: proxmoxexporter.oiba.de
+  adguardexporter:
+    nas: "adguardexporter.oiba.de"
+    prometheus_exporter: true
+  unifiexporter:
+    nas: "unifiexporter.oiba.de"
+    prometheus_exporter: true
+  plausibleexporter:
+    nas: "plausibleexporter.oiba.de"
+    prometheus_exporter: true
+  valetudo:
+    nas: "valetudo.oiba.de"
+    prometheus_exporter: false
+  pyload:
+    nas: "pyload.oiba.de"
+    prometheus_exporter: false
+  uptimekuma:
+    nas: "uptime.oiba.de"
+    prometheus_exporter: true
+    prometheus_settings:
+      basic_auth:
+        username: "admin"
+        password: "{{ PROMETHEUS_UPTIMEKUMA_PASSWORD }}"
+  czkawka:
+    nas: "files.oiba.de"
+    prometheus_exporter: false
+  vscode:
+    nas: "code.oiba.de"
+    prometheus_exporter: false
+  plexexporter:
+    nas:
+      - "plexexporter.oiba.de"
+      - "plexexporter2.oiba.de"
+      - "plexexporter3.oiba.de"
+    prometheus_exporter: true
+  tautulliexporter:
+    nas: "tautulliexporter.oiba.de"
+    prometheus_exporter: true
+  qbittorrentexporter:
+    nas: "qbittorrentexporter.oiba.de"
+    prometheus_exporter: true
+  sonarrexporter:
+    nas: "sonarrexporter.oiba.de"
+    prometheus_exporter: true
+  radarrexporter:
+    nas: "radarrexporter.oiba.de"
+    prometheus_exporter: true
+  sabnzbdexporter:
+    nas: "sabnzbdexporter.oiba.de"
+    prometheus_exporter: true
+  bazarrexporter:
+    nas: "bazarrexporter.oiba.de"
+    prometheus_exporter: false
+  prowlarrrexporter:
+    nas: "prowlarrexporter.oiba.de"
+    prometheus_exporter: true
+  librespeedexporter:
+    nas: "librespeedexporter.oiba.de"
+    prometheus_exporter: true
+    prometheus_settings:
+      scrape_interval: "6h"
+      scrape_timeout: "10m"
+      metrics_path: "/probe"
+      params:
+        script: "librespeed"
+  codeserver:
+    nas: "code.oiba.de"
+    prometheus_exporter: false

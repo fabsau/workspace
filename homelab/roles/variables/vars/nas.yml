@@ -28,45 +28,6 @@ docker_networks:
 traefik_oauth_address: https://auth.sauna.re/api/verify
 traefik_ca_productive: true
 traefik_oauth_insecureSkipVerify: false
-traefik_additional_ports: 
-  # Portainer
-  - target: 8080
-    published: 8080
-    protocol: tcp
-    mode: host
-  # Unifi
-  - target: 1900
-    published: 1900
-    protocol: udp
-    mode: host
-  - target: 3478
-    published: 3478
-    protocol: udp
-    mode: host
-  - target: 5514
-    published: 5514
-    protocol: udp
-    mode: host
-  - target: 6789
-    published: 6789
-    protocol: tcp
-    mode: host
-  - target: 8000
-    published: 8000
-    protocol: tcp
-    mode: host
-  - target: 8843
-    published: 8843
-    protocol: tcp
-    mode: host
-  - target: 8880
-    published: 8880
-    protocol: tcp
-    mode: host
-  - target: 10001
-    published: 10001
-    protocol: udp
-    mode: host
 traefik_domains:
   - main: oiba.de
     sans:
@@ -78,26 +39,54 @@ traefik_domains:
   - main: sauna.re
     sans:
       - "*.sauna.re"
-      
-traefik_entrypoints:
+
+traefik_additional_ports:
   - name: portainer
-    address: ":8000"
+    target: 8080
+    published: 8080
+    protocol: tcp
+    mode: host
   - name: unifi
-    address: ":1900/udp"
+    target: 1900
+    published: 1900
+    protocol: udp
+    mode: host
   - name: unifi2
-    address: ":3478/udp"
+    target: 3478
+    published: 3478
+    protocol: udp
+    mode: host
   - name: unifi3
-    address: ":5514/udp"
+    target: 5514
+    published: 5514
+    protocol: udp
+    mode: host
   - name: unifi4
-    address: ":6789"
+    target: 6789
+    published: 6789
+    protocol: tcp
+    mode: host
   - name: unifi5
-    address: ":8080"
+    target: 8000
+    published: 8000
+    protocol: tcp
+    mode: host
   - name: unifi6
-    address: ":8843"
+    target: 8843
+    published: 8843
+    protocol: tcp
+    mode: host
   - name: unifi7
-    address: ":8880"
+    target: 8880
+    published: 8880
+    protocol: tcp
+    mode: host
   - name: unifi8
-    address: ":10001/udp"
+    target: 10001
+    published: 10001
+    protocol: udp
+    mode: host
+
 traefik_whitelist_ips:
   - 46.223.56.204
   - 172.187.202.93
@@ -180,43 +169,12 @@ dockerproxy_gid: 993
 
 # WATCHTOWER
 watchtower_schedule: "0 0 * * * *"
-watchtower_url: watchtower.oiba.de
 watchtower_mail_subject_praefix: "NAS: "
 
 # CERTDUMPER
 # certdumper_restart_containers: empty
 
-# PROMETHEUS
+# PROMETHEUS NAS
 prometheus_monitor_name: Mozart
-
-# URLs:
-traefik_url: proxy.oiba.de
-prometheus_url: prom.oiba.de
-nodeexporter_url: node.nas.oiba.de
-alertmanager_url: alert.oiba.de
-librespeed_url: speed.oiba.de
-portainer_url: docker.oiba.de
-unifi_url: unifi.oiba.de
-grafana_url: grafana.oiba.de
-cadvisor_url: cadvisor.nas.oiba.de
-proxmoxexporter_url: proxmoxexporter.oiba.de
-adguardexporter_url: adguardexporter.oiba.de
-unifiexporter_url: unifiexporter.oiba.de
-plausibleexporter_url: plausibleexporter.oiba.de
-valetudo_url: valetudo.oiba.de
-pyload_url: pyload.oiba.de
-uptimekuma_url: uptime.oiba.de
-czkawka_url: files.oiba.de
-vscode_url: code.oiba.de
-plexexporter1_url: plexexporter.oiba.de
-plexexporter2_url: plexexporter2.oiba.de
-plexexporter3_url: plexexporter3.oiba.de
-tautulliexporter_url: tautulliexporter.oiba.de
-qbittorrentexporter_url: qbittorrentexporter.oiba.de
-sonarrexporter_url: sonarrexporter.oiba.de
-radarrexporter_url: radarrexporter.oiba.de
-sabnzbdexporter_url: sabnzbdexporter.oiba.de
-bazarrexporter_url: bazarrexporter.oiba.de
-prowlarrexporter_url: prowlarrexporter.oiba.de
-librespeedexporter_url: librespeedexporter.oiba.de
-codeserver_url: code.oiba.de
+prometheus_alertmanager_targets:
+  - "alert.oiba.de"

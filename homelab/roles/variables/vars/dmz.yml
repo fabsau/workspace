@@ -67,5 +67,4 @@ dockerproxy_gid: 993
 
 # WATCHTOWER
 watchtower_schedule: "0 1 * * * *"
-watchtower_url: watchtower.sauna.re
 watchtower_mail_subject_praefix: "DMZ: "

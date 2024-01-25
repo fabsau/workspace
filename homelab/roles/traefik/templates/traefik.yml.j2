@@ -13,9 +13,9 @@ entryPoints:
     http3: {}
   metrics:
     address: ":8082"
-{% for traefik_entrypoint in traefik_entrypoints %}
-  {{ traefik_entrypoint.name }}:
-    address: "{{ traefik_entrypoint.address }}"
+{% for port in traefik_additional_ports %}
+  {{ port.name }}:
+    address: ":{{ port.published }}{% if port.protocol == 'udp' %}/udp{% endif %}"
 {% endfor %}
 
 experimental:
