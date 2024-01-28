@@ -23,6 +23,7 @@ docker_networks:
   - dockge
   - watchtower
   - adguardsync
+  - changedetection
 
 # TRAEFIK
 traefik_oauth_address: https://auth.sauna.re/api/verify
@@ -102,7 +103,7 @@ traefik_extra_servers:
     url: vm.oiba.de
     backend_url: https://192.168.100.2:8006/
     insecuretransport: true
-  - name: nas
+  - name: openmediavault
     entrypoint: https
     middleware: private-chain@file
     url: nas.oiba.de
@@ -138,7 +139,7 @@ traefik_extra_servers:
     url: dns2.oiba.de
     backend_url: http://192.168.100.21:80
     insecuretransport: false
-  - name: switch
+  - name: ciscoswitch
     entrypoint: https
     middleware: private-chain@file
     url: switch.oiba.de
