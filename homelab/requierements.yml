@@ -3,3 +3,4 @@
 - src: geerlingguy.security
 - src: robertdebock.logrotate
 - src: githubixx.ansible_role_wireguard
+- src: lucasheld.uptime_kuma
