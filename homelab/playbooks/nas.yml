@@ -12,31 +12,32 @@
     - role: 0docker_service
       vars:
         docker_service_roles:
-          - traefik
-          - prometheus
-          - watchtower
+          # - traefik
+          # - prometheus
+          # - changedetection
+          # - watchtower
           # - cronjob
-          - portainer
-          - unifi
-          - librespeed
-          - dockge
-          - adguardsync
-          - certdumper
-          - nodeexporter
+          # - portainer
+          # - unifi
+          # - librespeed
+          # - dockge
+          # - adguardsync
+          # - certdumper
+          # - nodeexporter
           - alertmanager
-          - grafana
-          - cadvisor
-          - proxmoxexporter
-          - adguardexporter
-          - unifiexporter
-          - plausibleexporter
-          - librespeedexporter
-          - plexexporter
-          - tautulliexporter
-          - qbittorrentexporter
-          - exportarrexporter
-          - valetudo
-          - pyload
-          - uptimekuma
-          - czkawka
-          - codeserver
+          # - grafana
+          # - cadvisor
+          # - proxmoxexporter
+          # - adguardexporter
+          # - unifiexporter
+          # - plausibleexporter
+          # - librespeedexporter
+          # - plexexporter
+          # - tautulliexporter
+          # - qbittorrentexporter
+          # - exportarrexporter
+          # - valetudo
+          # - pyload
+          # - uptimekuma
+          # - czkawka
+          # - codeserver

@@ -155,17 +155,27 @@ prometheus_alert_rules_files:
 # Endpoints
 endpoint_hosts:
   nas:
-    ip:
-      - "192.168.100.3"
-      - "192.168.100.4"
+    ip: "192.168.100.3"
     open_ports:
       - 22
-      - 80
-      - 443
+      # - 80
+      # - 443
+    docker_connection:
+      type: "socket"
+      path: "/var/run/docker.sock"
+      id: 1
   dmz:
-    ip: "192.168.200.3"
-  # blue:
-  #   ip: "195.90.219.248"
+    ip: "192.168.200.2"
+    docker_connection:
+      type: "tcp"
+      path: "http://192.168.200.2:2375"
+      id: 2
+  blue:
+    ip: "195.90.219.248"
+    docker_connection:
+      type: "tcp"
+      path: "http://100.64.0.1:2375"
+      id: 3
   # azure:
   #   ip: "192.168.100.3"
   # lxc1:
@@ -175,17 +185,22 @@ endpoint_hosts:
 
 
 endpoints:
-  adguard:
-    lxc1: "dns2.oiba.de"
-    lxc2: "dns2.oiba.de"
-    blue: "dns.blue.sauna.re"
+  # adguard:
+  #   lxc1: "dns2.oiba.de"
+  #   lxc2: "dns2.oiba.de"
+  #   blue: "dns.blue.sauna.re"
   adguardexporter:
     nas: "adguardexporter.oiba.de"
     prometheus_exporter: true
+    uptimekuma_monitoring: false
   alertmanager:
     nas: "alert.oiba.de"
     dmz: "alert.sauna.re"
-    uptimekuma: false
+    uptimekuma_container:
+        unifi_mariadb:
+          docker_connection_host: "nas"
+        unifi:
+          docker_connection_host: "dmz"
     prometheus_exporter: true
   # bazarrexporter:
   #   nas: "bazarrexporter.oiba.de"
@@ -346,6 +361,8 @@ endpoints:
   #   prometheus_exporter: true
   # unifi:
   #   nas: "unifi.oiba.de"
+  #   uptimekuma_container:
+  #       - "unifi_mariadb"
   # unifiexporter:
   #   nas: "unifiexporter.oiba.de"
   #   prometheus_exporter: true

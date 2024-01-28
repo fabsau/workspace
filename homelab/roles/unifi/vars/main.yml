@@ -94,3 +94,4 @@ services:
       - ./db/configdb:/data/configdb # both needed like this
       - ./config/unifi_mongodb_init.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     watchtower: true
+    uptimekuma_container_monitor: true

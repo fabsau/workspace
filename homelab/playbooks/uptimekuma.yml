@@ -53,9 +53,19 @@
                     {% endif %}
                   {% endif %}
                 {% endfor %}
+                {% if details.uptimekuma_container is defined %}
+                  {% for container, container_details in details.uptimekuma_container.items() %}
+                    {"name": "{{ container | capitalize }} CONTAINER ({{ container_details.docker_connection_host | upper }})", "parent_host": "{{ container_details.docker_connection_host | upper }}", "docker_container": "{{ container }}", "docker_host_name": "{{ container_details.docker_connection_host | upper }}", "type": "docker"},
+                  {% endfor %}
+                {% endif %}
               {% endif %}
             {% endfor %}
           ]
+
+
+    - name: Debug defined_monitor_list
+      debug:
+        var: defined_monitor_list
 
 
     - name: Get all monitors setup in UptimeKuma
@@ -63,9 +73,9 @@
         api_url: "{{ uptime_kuma_api_url }}"
       register: existing_monitors
 
-    # - name: Debug existing_monitors
-    #   debug:
-    #     var: existing_monitors
+    - name: Debug existing_monitors
+      debug:
+        var: existing_monitors
 
     - name: Find common entries in monitor_list and existing_monitors
       set_fact:
@@ -80,7 +90,10 @@
                 {%- if new_monitor.type == 'ping' and new_monitor.ip == existing_monitor.hostname -%}
                   {%- set _ = result.append(new_monitor) -%}
                 {%- endif -%}
-                {%- if new_monitor.type == 'port' and new_monitor.ip == existing_monitor.hostname and new_monitor.port == existing_monitor.port -%}
+                {%- if new_monitor.type == 'port' and new_monitor.ip == existing_monitor.hostname and new_monitor.port | string == existing_monitor.port | string -%}
+                  {%- set _ = result.append(new_monitor) -%}
+                {%- endif -%}
+                {%- if new_monitor.type == 'docker' and new_monitor.docker_container == existing_monitor.docker_container -%}
                   {%- set _ = result.append(new_monitor) -%}
                 {%- endif -%}
                 {%- if new_monitor.type == 'group' -%}
@@ -91,6 +104,10 @@
           {%- endfor -%}
           {{ result }}
 
+    - name: Debug common_entries
+      debug:
+        var: common_entries
+
     - name: Create missing monitors
       lucasheld.uptime_kuma.monitor:
         api_url: "{{ uptime_kuma_api_url }}"
@@ -100,6 +117,8 @@
         hostname: "{{ item.ip | default(omit) }}"
         port: "{{ item.port | default(omit) }}"
         url: "{{ item.url | default(omit) }}"
+        docker_container: "{{ item.docker_container if item.docker_container is defined else omit }}"
+        docker_host_name: "{{ item.docker_host_name if item.docker_host_name is defined else omit }}"
         state: present
       loop: "{{ defined_monitor_list }}"
       when: "item not in common_entries"

@@ -8,7 +8,6 @@
 6. Template the LibrespeedExporter Backends
 7. Add tags to the roles
 8. Do docker-compose up -d --force-recreate if files from templates have been changed
-9. Fix broken Unifi install
 10. Add www rule to the http entrypoint
 11. Fix Ansible Lint errors
 12. In nodeexporter add the hostname as part of the url
@@ -16,6 +15,10 @@
 14. Split up the monitoring network, maybe role name to be the automatic network name
 15. Setup blue host
 16. variable for host lang? LANG=en_US.UTF-8 czwawka
+17. Removal of docker networks is broken
+
+home.sauna.re
+auth.sauna.re
 
 ## Create proper tasks from Linux Documentation
 
