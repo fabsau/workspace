@@ -6,12 +6,30 @@
     uptime_kuma_api_url: "https://uptime.sauna.re"
     monitor_type: "HTTP"
   tasks:
+
+    - name: Add docker host for {{ item.key }}
+      lucasheld.uptime_kuma.docker_host:
+        api_url: "{{ uptime_kuma_api_url }}"
+        name: "{{ item.key | upper }}"
+        dockerType: "{{ item.value.docker_connection.type }}"
+        dockerDaemon: "{{ item.value.docker_connection.path }}"
+      loop: "{{ lookup('dict', endpoint_hosts) }}"
+      when: item.value.docker_connection is defined
+    
+    - name: Remove docker host for {{ item.key }}
+      lucasheld.uptime_kuma.docker_host:
+        api_url: "{{ uptime_kuma_api_url }}"
+        name: "{{ item.key | upper }}"
+        state: absent
+      loop: "{{ lookup('dict', endpoint_hosts) }}"
+      when: item.value.docker_connection is not defined
+    
     - name: Generate the monitor list from the endpoints
       set_fact:
         defined_monitor_list: >-
           [
             {% for host, details in endpoint_hosts.items() %}
-              {% if details.uptimekuma is not defined or details.uptimekuma != false %}
+              {% if details.uptimekuma_monitoring is not defined or details.uptimekuma_monitoring != false %}
                 {"name": "{{ host | upper }}", "type": "group"},
                 {"name": "{{ host | upper }} PING", "parent_host": "{{ host | upper }}", "ip": "{{ details.ip }}", "type": "ping"},
                 {% if details.open_ports is defined %}
@@ -23,7 +41,7 @@
             {% endfor %}
             
             {% for service, details in endpoints.items() %}
-              {% if details.uptimekuma is not defined or details.uptimekuma != false %}
+              {% if details.uptimekuma_monitoring is not defined or details.uptimekuma_monitoring != false %}
                 {% for host, url in details.items() %}
                   {% if host in endpoint_hosts %}
                     {% if url is string %}
@@ -44,6 +62,10 @@
       lucasheld.uptime_kuma.monitor_info:
         api_url: "{{ uptime_kuma_api_url }}"
       register: existing_monitors
+
+    # - name: Debug existing_monitors
+    #   debug:
+    #     var: existing_monitors
 
     - name: Find common entries in monitor_list and existing_monitors
       set_fact:
@@ -82,12 +104,21 @@
       loop: "{{ defined_monitor_list }}"
       when: "item not in common_entries"
 
-    - name: Delete undefined monitors
+    # - name: Delete undefined monitors
+    #   lucasheld.uptime_kuma.monitor:
+    #     api_url: "{{ uptime_kuma_api_url }}"
+    #     name: "{{ item.name }}"
+    #     type: "{{ item.type }}"
+    #     state: absent
+    #   loop: "{{ existing_monitors.monitors }}"
+    #   when: >-
+    #     defined_monitor_list | selectattr('name', 'equalto', item.name) | selectattr('type', 'equalto', item.type) | list | length == 0
+
+    - name: Test Container Monitor
       lucasheld.uptime_kuma.monitor:
         api_url: "{{ uptime_kuma_api_url }}"
-        name: "{{ item.name }}"
-        type: "{{ item.type }}"
-        state: absent
-      loop: "{{ existing_monitors.monitors }}"
-      when: >-
-        defined_monitor_list | selectattr('name', 'equalto', item.name) | selectattr('type', 'equalto', item.type) | list | length == 0
+        name: "Container 123 Test"
+        type: "docker"
+        docker_container: "test"
+        docker_host_name: NAS
+        state: present
