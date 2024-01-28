@@ -156,8 +156,8 @@ prometheus_alert_rules_files:
 endpoint_hosts:
   nas:
     ip: "192.168.100.3"
-    open_ports:
-      - 22
+    # open_ports:
+      # - 22
       # - 80
       # - 443
     docker_connection:
@@ -178,10 +178,12 @@ endpoint_hosts:
       id: 3
   # azure:
   #   ip: "192.168.100.3"
-  # lxc1:
-  #   ip: "192.168.100.20"
-  # lxc2:
-  #   ip: "192.168.100.21"
+  lxc1:
+    ip: "192.168.100.20"
+    dns: true
+  lxc2:
+    ip: "192.168.100.21"
+    dns: true
 
 
 endpoints:
@@ -193,15 +195,15 @@ endpoints:
     nas: "adguardexporter.oiba.de"
     prometheus_exporter: true
     uptimekuma_monitoring: false
-  alertmanager:
-    nas: "alert.oiba.de"
-    dmz: "alert.sauna.re"
-    uptimekuma_container:
-        unifi_mariadb:
-          docker_connection_host: "nas"
-        unifi:
-          docker_connection_host: "dmz"
-    prometheus_exporter: true
+  # alertmanager:
+  #   nas: "alert.oiba.de"
+  #   dmz: "alert.sauna.re"
+  #   uptimekuma_container:
+  #       unifi_mariadb:
+  #         docker_connection_host: "nas"
+  #       unifi:
+  #         docker_connection_host: "dmz"
+  #   prometheus_exporter: true
   # bazarrexporter:
   #   nas: "bazarrexporter.oiba.de"
   # bazarr:

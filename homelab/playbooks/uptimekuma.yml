@@ -7,23 +7,36 @@
     monitor_type: "HTTP"
   tasks:
 
-    - name: Add docker host for {{ item.key }}
+    - name: Gather information about all docker hosts
+      lucasheld.uptime_kuma.docker_host_info:
+        api_url: "{{ uptime_kuma_api_url }}"
+      register: existing_docker_hosts
+
+    - name: Generate list of existing docker host names
+      set_fact:
+        existing_docker_host_names: "{{ existing_docker_hosts.docker_hosts | map(attribute='name') | list }}"
+
+    - name: Add docker host
       lucasheld.uptime_kuma.docker_host:
         api_url: "{{ uptime_kuma_api_url }}"
         name: "{{ item.key | upper }}"
         dockerType: "{{ item.value.docker_connection.type }}"
         dockerDaemon: "{{ item.value.docker_connection.path }}"
       loop: "{{ lookup('dict', endpoint_hosts) }}"
-      when: item.value.docker_connection is defined
-    
-    - name: Remove docker host for {{ item.key }}
+      when: 
+        - item.value.docker_connection is defined
+        - item.key | upper not in existing_docker_host_names
+
+    - name: Remove docker host
       lucasheld.uptime_kuma.docker_host:
         api_url: "{{ uptime_kuma_api_url }}"
         name: "{{ item.key | upper }}"
         state: absent
       loop: "{{ lookup('dict', endpoint_hosts) }}"
-      when: item.value.docker_connection is not defined
-    
+      when: 
+        - item.value.docker_connection is not defined
+        - item.key | upper in existing_docker_host_names
+
     - name: Generate the monitor list from the endpoints
       set_fact:
         defined_monitor_list: >-
@@ -31,11 +44,14 @@
             {% for host, details in endpoint_hosts.items() %}
               {% if details.uptimekuma_monitoring is not defined or details.uptimekuma_monitoring != false %}
                 {"name": "{{ host | upper }}", "type": "group"},
-                {"name": "{{ host | upper }} PING", "parent_host": "{{ host | upper }}", "ip": "{{ details.ip }}", "type": "ping"},
+                {"name": "0 {{ host | upper }} PING", "parent_host": "{{ host | upper }}", "ip": "{{ details.ip }}", "type": "ping"},
                 {% if details.open_ports is defined %}
                   {% for port in details.open_ports %}
-                    {"name": "{{ host | upper }} PORT {{ port }}", "parent_host": "{{ host | upper }}", "ip": "{{ details.ip }}", "port": "{{ port }}", "type": "port"},
+                    {"name": "0 {{ host | upper }} PORT {{ port }}", "parent_host": "{{ host | upper }}", "ip": "{{ details.ip }}", "port": "{{ port }}", "type": "port"},
                   {% endfor %}
+                {% endif %}
+                {% if details.dns is defined and details.dns == true %}
+                  {"name": "{{ host | upper }} DNS", "parent_host": "{{ host | upper }}", "dns_resolve_server": "{{ details.ip }}", "ip": "google.com", "type": "dns"},
                 {% endif %}
               {% endif %}
             {% endfor %}
@@ -63,9 +79,9 @@
           ]
 
 
-    - name: Debug defined_monitor_list
-      debug:
-        var: defined_monitor_list
+    # - name: Debug defined_monitor_list
+    #   debug:
+    #     var: defined_monitor_list
 
 
     - name: Get all monitors setup in UptimeKuma
@@ -99,14 +115,17 @@
                 {%- if new_monitor.type == 'group' -%}
                   {%- set _ = result.append(new_monitor) -%}
                 {%- endif -%}
+                {%- if new_monitor.type == 'dns' and new_monitor.ip == existing_monitor.hostname and new_monitor.dns_resolve_server == existing_monitor.dns_resolve_server -%}
+                  {%- set _ = result.append(new_monitor) -%}
+                {%- endif -%}
               {%- endif -%}
             {%- endfor -%}
           {%- endfor -%}
           {{ result }}
 
-    - name: Debug common_entries
-      debug:
-        var: common_entries
+    # - name: Debug common_entries
+    #   debug:
+    #     var: common_entries
 
     - name: Create missing monitors
       lucasheld.uptime_kuma.monitor:
@@ -117,27 +136,60 @@
         hostname: "{{ item.ip | default(omit) }}"
         port: "{{ item.port | default(omit) }}"
         url: "{{ item.url | default(omit) }}"
+        dns_resolve_server: "{{ item.dns_resolve_server if item.type == 'dns' else omit }}"
         docker_container: "{{ item.docker_container if item.docker_container is defined else omit }}"
         docker_host_name: "{{ item.docker_host_name if item.docker_host_name is defined else omit }}"
+        interval: "60"
+        maxretries: "5"
         state: present
       loop: "{{ defined_monitor_list }}"
       when: "item not in common_entries"
 
-    # - name: Delete undefined monitors
-    #   lucasheld.uptime_kuma.monitor:
-    #     api_url: "{{ uptime_kuma_api_url }}"
-    #     name: "{{ item.name }}"
-    #     type: "{{ item.type }}"
-    #     state: absent
-    #   loop: "{{ existing_monitors.monitors }}"
-    #   when: >-
-    #     defined_monitor_list | selectattr('name', 'equalto', item.name) | selectattr('type', 'equalto', item.type) | list | length == 0
-
-    - name: Test Container Monitor
+    - name: Add a DNS monitor
       lucasheld.uptime_kuma.monitor:
         api_url: "{{ uptime_kuma_api_url }}"
-        name: "Container 123 Test"
-        type: "docker"
-        docker_container: "test"
-        docker_host_name: NAS
+        type: dns
+        name: DNS Test entry
+        hostname: "google.com"
+        dns_resolve_server: "192.168.100.20"
+        notification_names: "Homeassistant"
         state: present
+
+    - name: Delete undefined monitors
+      lucasheld.uptime_kuma.monitor:
+        api_url: "{{ uptime_kuma_api_url }}"
+        name: "{{ item.name }}"
+        type: "{{ item.type }}"
+        state: absent
+      loop: "{{ existing_monitors.monitors }}"
+      when: >-
+        defined_monitor_list | selectattr('name', 'equalto', item.name) | selectattr('type', 'equalto', item.type) | list | length == 0 and
+        'manual' not in item.tags|map(attribute='name')|list
+
+    # - name: Add a push monitor
+    #   lucasheld.uptime_kuma.monitor:
+    #     api_url: "{{ uptime_kuma_api_url }}"
+    #     type: push
+    #     name: Push
+    #     state: present
+
+    - name: Add notification
+      lucasheld.uptime_kuma.notification:
+        api_url: "{{ uptime_kuma_api_url }}"
+        name: "Homeassistant"
+        type: "HomeAssistant"
+        isDefault: false
+        applyExisting: false
+        homeAssistantUrl: "https://home.sauna.re"
+        longLivedAccessToken: "dwadwa"
+        state: present
+
+    # - name: Get all monitors setup in UptimeKuma
+    #   lucasheld.uptime_kuma.monitor_info:
+    #     api_url: "{{ uptime_kuma_api_url }}"
+    #     name: "push"
+    #   register: pushmonitor
+
+    # - name: Debug pushmonitor
+    #   debug:
+    #     var: pushmonitor
