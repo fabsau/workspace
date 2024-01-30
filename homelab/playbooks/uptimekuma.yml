@@ -44,25 +44,26 @@
             {% for host, details in endpoint_hosts.items() %}
               {% if details.uptimekuma_monitoring is not defined or details.uptimekuma_monitoring != false %}
                 {"name": "{{ host | upper }}", "type": "group"},
-                {"name": "0 {{ host | upper }} PING", "parent_host": "{{ host | upper }}", "ip": "{{ details.ip }}", "type": "ping"},
-                {% if details.open_ports is defined %}
-                  {% for port in details.open_ports %}
-                    {"name": "0 {{ host | upper }} PORT {{ port }}", "parent_host": "{{ host | upper }}", "ip": "{{ details.ip }}", "port": "{{ port }}", "type": "port"},
-                  {% endfor %}
-                {% endif %}
-                {% if details.dns is defined and details.dns == true %}
-                  {"name": "{{ host | upper }} DNS", "parent_host": "{{ host | upper }}", "dns_resolve_server": "{{ details.ip }}", "ip": "google.com", "type": "dns"},
-                {% endif %}
+                {% for ip in details.ip %}
+                  {"name": "0 PING ({{ ip }})", "parent_host": "{{ host | upper }}", "ip": "{{ ip }}", "type": "ping"},
+                  {% if details.open_ports is defined %}
+                    {% for port in details.open_ports %}
+                      {"name": "0 PORT {{ port }} ({{ ip }})", "parent_host": "{{ host | upper }}", "ip": "{{ ip }}", "port": "{{ port }}", "type": "port"},
+                    {% endfor %}
+                  {% endif %}
+                  {% if details.dns is defined and details.dns == true %}
+                    {"name": "{{ host | upper }} DNS", "parent_host": "{{ host | upper }}", "dns_resolve_server": "{{ ip }}", "ip": "google.com", "type": "dns"},
+                  {% endif %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
-            
             {% for service, details in endpoints.items() %}
               {% if details.uptimekuma_monitoring is not defined or details.uptimekuma_monitoring != false %}
-                {% for host, url in details.items() %}
+                {% for host, url in details.items() if details is mapping %}
                   {% if host in endpoint_hosts %}
                     {% if url is string %}
                       {"name": "{{ service | capitalize }} HTTP ({{ host | upper }})", "parent_host": "{{ host | upper }}", "url": "https://{{ url }}", "type": "http"},
-                    {% else %}
+                    {% elif url is iterable %}
                       {% for u in url %}
                         {"name": "{{ service | capitalize }}{% if loop.index > 1 %} {{ loop.index }}{% endif %} HTTP ({{ host | upper }})", "parent_host": "{{ host | upper }}", "url": "https://{{ u }}", "type": "http"},
                       {% endfor %}
@@ -79,19 +80,18 @@
           ]
 
 
-    # - name: Debug defined_monitor_list
-    #   debug:
-    #     var: defined_monitor_list
-
+    - name: Debug defined_monitor_list
+      debug:
+        var: defined_monitor_list
 
     - name: Get all monitors setup in UptimeKuma
       lucasheld.uptime_kuma.monitor_info:
         api_url: "{{ uptime_kuma_api_url }}"
       register: existing_monitors
 
-    - name: Debug existing_monitors
-      debug:
-        var: existing_monitors
+    # - name: Debug existing_monitors
+    #   debug:
+    #     var: existing_monitors
 
     - name: Find common entries in monitor_list and existing_monitors
       set_fact:

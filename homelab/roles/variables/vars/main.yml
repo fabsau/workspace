@@ -155,247 +155,269 @@ prometheus_alert_rules_files:
 # Endpoints
 endpoint_hosts:
   nas:
-    ip: "192.168.100.3"
-    # open_ports:
-      # - 22
-      # - 80
-      # - 443
+    ip:
+      - "192.168.100.3"
+      - "100.64.0.3"
+    open_ports:
+      - 22
+      - 80
+      - 443
     docker_connection:
       type: "socket"
       path: "/var/run/docker.sock"
       id: 1
   dmz:
-    ip: "192.168.200.2"
+    ip:
+      - "192.168.200.2"
     docker_connection:
       type: "tcp"
       path: "http://192.168.200.2:2375"
       id: 2
   blue:
-    ip: "195.90.219.248"
+    ip:
+      - "195.90.219.248"
+      - "192.168.251.4"
+      - "100.64.0.1"
+    open_ports:
+      - 22
+      - 80
+      - 443
+      - 1080 # Proxy
+      - 2375 # Dockerproxy
+      - 32400 # Plex
+      - 34400 # Xteve-de
+      - 8080 # Sabnzbd
+      - 8090 # Librespeed
+      - 5572 # Rclone
+      - 9001 # Portainer
     docker_connection:
       type: "tcp"
       path: "http://100.64.0.1:2375"
       id: 3
   # azure:
-  #   ip: "192.168.100.3"
+  #   ip:
+  #       - "172.187.202.93"
+  #       - "192.168.251.6"
   lxc1:
-    ip: "192.168.100.20"
+    ip:
+      - "192.168.100.20"
     dns: true
   lxc2:
-    ip: "192.168.100.21"
+    ip:
+      - "192.168.100.21"
     dns: true
 
 
 endpoints:
-  # adguard:
-  #   lxc1: "dns2.oiba.de"
-  #   lxc2: "dns2.oiba.de"
-  #   blue: "dns.blue.sauna.re"
+  adguard:
+    lxc1: "dns2.oiba.de"
+    lxc2: "dns2.oiba.de"
+    blue: "dns.blue.sauna.re"
   adguardexporter:
     nas: "adguardexporter.oiba.de"
     prometheus_exporter: true
     uptimekuma_monitoring: false
-  # alertmanager:
-  #   nas: "alert.oiba.de"
-  #   dmz: "alert.sauna.re"
-  #   uptimekuma_container:
-  #       unifi_mariadb:
-  #         docker_connection_host: "nas"
-  #       unifi:
-  #         docker_connection_host: "dmz"
-  #   prometheus_exporter: true
-  # bazarrexporter:
-  #   nas: "bazarrexporter.oiba.de"
-  # bazarr:
-  #   dmz: "bazarr.sauna.re"
-  # bitwarden:
-  #   dmz:
-  #     - "bitwarden.sauna.re"
-  #     - "bitwarden2.sauna.re"
-  # cadvisor:
-  #   nas: "cadvisor.nas.oiba.de"
-  #   dmz: "cadvisor.azure.sauna.re"
-  #   blue: "cadvisor.blue.sauna.re"
-  #   prometheus_exporter: true
-  # calibre_web:
-  #   dmz: "read.sauna.re"
-  # changedetection:
-  #   nas: "change.oiba.de"
-  # chat:
-  #   dmz: "chat.sauna.re"
-  # ciscoswitch:
-  #   nas: "switch.oiba.de"
-  #   traefik_extra_server: true
-  # codeserver:
-  #   nas: "code.oiba.de"
-  # czkawka:
-  #   nas: "files.oiba.de"
-  # demo-dhbwgpt:
-  #   dmz: "demo-dhbwgpt.sauna.re"
-  # filebrowser:
-  #   dmz: "files.sauna.re"
-  # fritzbox:
-  #   nas: "fritz.oiba.de"
-  #   traefik_extra_server: true
-  # ghost:
-  #   dmz: "fabio.sauna.re"
-  # grafana:
-  #   nas: "grafana.oiba.de"
-  # headscale:
-  #   dmz: "headscale.sauna.re"
-  # homeassistant:
-  #   dmz: "home.sauna.re"
-  #   traefik_extra_server: true
-  # ihatemoney:
-  #   dmz: "money.sauna.re"
-  # johanna-liebt-fabio:
-  #   dmz: "johanna-liebt-fabio.sauna.re"
-  # librespeed:
-  #   nas: "speed.nas.oiba.de"
-  #   dmz: "speed.azure.sauna.re"
-  #   blue: "speed.blue.sauna.re"
-  # librespeedexporter:
-  #   nas: "librespeedexporter.oiba.de"
-  #   prometheus_exporter: true
-  #   prometheus_settings:
-  #     scrape_interval: "6h"
-  #     scrape_timeout: "10m"
-  #     metrics_path: "/probe"
-  #     params:
-  #       script: "librespeed"
-  # linkhub:
-  #   dmz: "portal.sauna.re"
-  # nodeexporter:
-  #   nas: "node.nas.oiba.de"
-  #   dmz: "node.azure.sauna.re"
-  #   blue: "node.blue.sauna.re"
-  #   opn: "node.opn.oiba.de"
-  #   home: "node.home.oiba.de"
-  #   prometheus_exporter: true
-  # openmediavault:
-  #   nas: "nas.oiba.de"
-  #   traefik_extra_server: true
-  # opnsense:
-  #   nas: "opn.oiba.de"
-  #   traefik_extra_server: true
-  # overseerr:
-  #   dmz: "request.sauna.re"
-  # photoprism:
-  #   dmz: "photo.sauna.re"
-  # plausible:
-  #   dmz: "data.sauna.re"
-  # plausibleexporter:
-  #   nas: "plausibleexporter.oiba.de"
-  #   prometheus_exporter: true
-  # plex:
-  #   blue: "watch.sauna.re"
-  # plexexporter:
-  #   nas:
-  #     - "plexexporter.oiba.de"
-  #     - "plexexporter2.oiba.de"
-  #     - "plexexporter3.oiba.de"
-  #   prometheus_exporter: true
-  # portainer:
-  #   nas: "docker.oiba.de"
-  # prowlarr:
-  #   dmz: "prowlarr.sauna.re"
-  # prowlarrexporter:
-  #   nas: "prowlarrexporter.oiba.de"
-  #   prometheus_exporter: true
-  # prometheus:
-  #   nas: "prom.oiba.de"
-  #   dmz: "prom.sauna.re"
-  #   prometheus_exporter: true
-  # proxmox:
-  #   nas: "vm.oiba.de"
-  #   traefik_extra_server: true
-  # proxbak:
-  #   nas: "backup.oiba.de"
-  #   traefik_extra_server: true
-  # proxmoxexporter:
-  #   nas: "proxmoxexporter.oiba.de"
-  #   target_replacement_url:
-  #     - "vm.oiba.de:443"
-  #   prometheus_exporter: true
-  #   prometheus_settings:
-  #     metrics_path: "/pve"
-  #     params:
-  #       module: "default"
-  #       cluster: "1"
-  #       node: "1"
-  #     relabel_configs:
-  #       - replacement: proxmoxexporter.oiba.de
-  # pyload:
-  #   nas: "pyload.oiba.de"
-  # qbittorrent:
-  #   blue: "torrent.sauna.re"
-  # qbittorrentexporter:
-  #   nas: "qbittorrentexporter.oiba.de"
-  #   prometheus_exporter: true
-  # radarr:
-  #   dmz: "radarr.sauna.re"
-  # radarrexporter:
-  #   nas: "radarrexporter.oiba.de"
-  #   prometheus_exporter: true
-  # rclone:
-  #   blue: "rclone.blue.sauna.re"
-  # sabnzbd:
-  #   blue: "usenet.sauna.re"
-  # sabnzbdexporter:
-  #   nas: "sabnzbdexporter.oiba.de"
-  #   prometheus_exporter: true
-  # searx:
-  #   dmz: "searx.sauna.re"
-  # sonarr:
-  #   dmz: "sonarr.sauna.re"
-  # sonarrexporter:
-  #   nas: "sonarrexporter.oiba.de"
-  #   prometheus_exporter: true
-  # tautulli:
-  #   dmz: "tulli.sauna.re"
-  # tautulliexporter:
-  #   nas: "tautulliexporter.oiba.de"
-  #   prometheus_exporter: true
-  # traefik:
-  #   nas: "proxy.oiba.de"
-  #   dmz: "proxy.azure.sauna.re"
-  #   blue: "proxy.blue.sauna.re"
-  #   prometheus_exporter: true
-  # unifi:
-  #   nas: "unifi.oiba.de"
-  #   uptimekuma_container:
-  #       - "unifi_mariadb"
-  # unifiexporter:
-  #   nas: "unifiexporter.oiba.de"
-  #   prometheus_exporter: true
-  # uptimekuma:
-  #   nas: "uptime.oiba.de"
-  #   dmz: "status.sauna.re"
-  #   prometheus_exporter: true
-  #   prometheus_settings:
-  #     basic_auth:
-  #       username: "admin"
-  #       password: "{{ PROMETHEUS_UPTIMEKUMA_PASSWORD }}"
-  # vacuum:
-  #   nas: "vacuum.oiba.de"
-  #   uptimekuma_monitor: false
-  #   traefik_extra_server: true
-  # valetudo:
-  #   nas: "valetudo.oiba.de"
-  #   uptimekuma_monitor: false
-  # vscode:
-  #   nas: "code.oiba.de"
-  # watchtower:
-  #   nas: "watchtower.oiba.de"
-  #   dmz: "watchtower.azure.sauna.re"
-  #   blue: "watchtower.blue.sauna.re"
-  #   prometheus_exporter: true
-  #   prometheus_settings:
-  #     metrics_path: "/v1/metrics"
-  #     bearer_token: "{{ WATCHTOWER_HTTP_API_TOKEN }}"
-  # wizarr:
-  #   dmz: "setup.sauna.re"
-  # xbackbone:
-  #   dmz: "screen.sauna.re"
-  # xteve:
-  #   blue: "xteve-de.sauna.re"
+  alertmanager:
+    nas: "alert.oiba.de"
+    dmz: "alert.sauna.re"
+    prometheus_exporter: true
+  bazarrexporter:
+    nas: "bazarrexporter.oiba.de"
+  bazarr:
+    dmz: "bazarr.sauna.re"
+  bitwarden:
+    dmz:
+      - "bitwarden.sauna.re"
+      - "bitwarden2.sauna.re"
+  cadvisor:
+    nas: "cadvisor.nas.oiba.de"
+    dmz: "cadvisor.azure.sauna.re"
+    blue: "cadvisor.blue.sauna.re"
+    prometheus_exporter: true
+  calibre_web:
+    dmz: "read.sauna.re"
+  changedetection:
+    nas: "change.oiba.de"
+  chat:
+    dmz: "chat.sauna.re"
+  ciscoswitch:
+    nas: "switch.oiba.de"
+    traefik_extra_server: true
+  codeserver:
+    nas: "code.oiba.de"
+  czkawka:
+    nas: "files.oiba.de"
+  demo-dhbwgpt:
+    dmz: "demo-dhbwgpt.sauna.re"
+  filebrowser:
+    dmz: "files.sauna.re"
+  fritzbox:
+    nas: "fritz.oiba.de"
+    traefik_extra_server: true
+  ghost:
+    dmz: "fabio.sauna.re"
+  grafana:
+    nas: "grafana.oiba.de"
+  headscale:
+    dmz: "headscale.sauna.re"
+  homeassistant:
+    dmz: "home.sauna.re"
+    traefik_extra_server: true
+  ihatemoney:
+    dmz: "money.sauna.re"
+  johanna-liebt-fabio:
+    dmz: "johanna-liebt-fabio.sauna.re"
+  librespeed:
+    nas: "speed.nas.oiba.de"
+    dmz: "speed.azure.sauna.re"
+    blue: "speed.blue.sauna.re"
+  librespeedexporter:
+    nas: "librespeedexporter.oiba.de"
+    prometheus_exporter: true
+    prometheus_settings:
+      scrape_interval: "6h"
+      scrape_timeout: "10m"
+      metrics_path: "/probe"
+      params:
+        script: "librespeed"
+  linkhub:
+    dmz: "portal.sauna.re"
+  nodeexporter:
+    nas: "node.nas.oiba.de"
+    dmz: "node.azure.sauna.re"
+    blue: "node.blue.sauna.re"
+    opn: "node.opn.oiba.de"
+    home: "node.home.oiba.de"
+    prometheus_exporter: true
+  openmediavault:
+    nas: "nas.oiba.de"
+    traefik_extra_server: true
+  opnsense:
+    nas: "opn.oiba.de"
+    traefik_extra_server: true
+  overseerr:
+    dmz: "request.sauna.re"
+  photoprism:
+    dmz: "photo.sauna.re"
+  plausible:
+    dmz: "data.sauna.re"
+  plausibleexporter:
+    nas: "plausibleexporter.oiba.de"
+    prometheus_exporter: true
+  plex:
+    blue: "watch.sauna.re"
+  plexexporter:
+    nas:
+      - "plexexporter.oiba.de"
+      - "plexexporter2.oiba.de"
+      - "plexexporter3.oiba.de"
+    prometheus_exporter: true
+  portainer:
+    nas: "docker.oiba.de"
+  prowlarr:
+    dmz: "prowlarr.sauna.re"
+  prowlarrexporter:
+    nas: "prowlarrexporter.oiba.de"
+    prometheus_exporter: true
+  prometheus:
+    nas: "prom.oiba.de"
+    dmz: "prom.sauna.re"
+    prometheus_exporter: true
+  proxmox:
+    nas: "vm.oiba.de"
+    traefik_extra_server: true
+  proxbak:
+    nas: "backup.oiba.de"
+    traefik_extra_server: true
+  proxmoxexporter:
+    nas: "proxmoxexporter.oiba.de"
+    target_replacement_url:
+      - "vm.oiba.de:443"
+    prometheus_exporter: true
+    prometheus_settings:
+      metrics_path: "/pve"
+      params:
+        module: "default"
+        cluster: "1"
+        node: "1"
+      relabel_configs:
+        - replacement: proxmoxexporter.oiba.de
+  pyload:
+    nas: "pyload.oiba.de"
+  qbittorrent:
+    blue: "torrent.sauna.re"
+  qbittorrentexporter:
+    nas: "qbittorrentexporter.oiba.de"
+    prometheus_exporter: true
+  radarr:
+    dmz: "radarr.sauna.re"
+  radarrexporter:
+    nas: "radarrexporter.oiba.de"
+    prometheus_exporter: true
+  rclone:
+    blue: "rclone.blue.sauna.re"
+  sabnzbd:
+    blue: "usenet.sauna.re"
+  sabnzbdexporter:
+    nas: "sabnzbdexporter.oiba.de"
+    prometheus_exporter: true
+  searx:
+    dmz: "searx.sauna.re"
+  sonarr:
+    dmz: "sonarr.sauna.re"
+  sonarrexporter:
+    nas: "sonarrexporter.oiba.de"
+    prometheus_exporter: true
+  tautulli:
+    dmz: "tulli.sauna.re"
+  tautulliexporter:
+    nas: "tautulliexporter.oiba.de"
+    prometheus_exporter: true
+  traefik:
+    nas: "proxy.oiba.de"
+    dmz: "proxy.azure.sauna.re"
+    blue: "proxy.blue.sauna.re"
+    prometheus_exporter: true
+  unifi:
+    nas: "unifi.oiba.de"
+    uptimekuma_container:
+        unifi_mariadb:
+          docker_connection_host: "nas"
+  unifi2:
+    uptimekuma_container:
+        unifi_mariadb2:
+          docker_connection_host: "nas"
+  unifiexporter:
+    nas: "unifiexporter.oiba.de"
+    prometheus_exporter: true
+  uptimekuma:
+    nas: "uptime.oiba.de"
+    dmz: "status.sauna.re"
+    prometheus_exporter: true
+    prometheus_settings:
+      basic_auth:
+        username: "admin"
+        password: "{{ PROMETHEUS_UPTIMEKUMA_PASSWORD }}"
+  vacuum:
+    nas: "vacuum.oiba.de"
+    uptimekuma_monitor: false
+    traefik_extra_server: true
+  valetudo:
+    nas: "valetudo.oiba.de"
+    uptimekuma_monitor: false
+  vscode:
+    nas: "code.oiba.de"
+  watchtower:
+    nas: "watchtower.oiba.de"
+    dmz: "watchtower.azure.sauna.re"
+    blue: "watchtower.blue.sauna.re"
+    prometheus_exporter: true
+    prometheus_settings:
+      metrics_path: "/v1/metrics"
+      bearer_token: "{{ WATCHTOWER_HTTP_API_TOKEN }}"
+  wizarr:
+    dmz: "setup.sauna.re"
+  xbackbone:
+    dmz: "screen.sauna.re"
+  xteve:
+    blue: "xteve-de.sauna.re"
