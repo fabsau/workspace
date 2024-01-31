@@ -17,9 +17,26 @@
 16. variable for host lang? LANG=en_US.UTF-8 czwawka
 17. Removal of docker networks is broken
 
+Fehlende URLs/Container
 home.sauna.re
 auth.sauna.re
-
+Authelia-Redis Container
+Autoscan Container
+Certdumper AZURE Container
+Flareresolverr Container
+Geoip Container
+Ghost-DB Container
+Plausible-DB Container
+Plausible-Events Container
+Rclone AZURE Container
+Recyclarr Container
+Searxng-Redis Container
+Spotify-DB Container
+Vaultwarden-DB Container
+WAF AZURE Container
+Cloudplow Container
+AdguardSync Container
+Certdumper NAS Container
 ## Create proper tasks from Linux Documentation
 
 ### Plex optimizations

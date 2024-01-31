@@ -79,7 +79,6 @@
             {% endfor %}
           ]
 
-
     - name: Debug defined_monitor_list
       debug:
         var: defined_monitor_list
@@ -145,16 +144,6 @@
       loop: "{{ defined_monitor_list }}"
       when: "item not in common_entries"
 
-    - name: Add a DNS monitor
-      lucasheld.uptime_kuma.monitor:
-        api_url: "{{ uptime_kuma_api_url }}"
-        type: dns
-        name: DNS Test entry
-        hostname: "google.com"
-        dns_resolve_server: "192.168.100.20"
-        notification_names: "Homeassistant"
-        state: present
-
     - name: Delete undefined monitors
       lucasheld.uptime_kuma.monitor:
         api_url: "{{ uptime_kuma_api_url }}"
@@ -165,13 +154,6 @@
       when: >-
         defined_monitor_list | selectattr('name', 'equalto', item.name) | selectattr('type', 'equalto', item.type) | list | length == 0 and
         'manual' not in item.tags|map(attribute='name')|list
-
-    # - name: Add a push monitor
-    #   lucasheld.uptime_kuma.monitor:
-    #     api_url: "{{ uptime_kuma_api_url }}"
-    #     type: push
-    #     name: Push
-    #     state: present
 
     - name: Add notification
       lucasheld.uptime_kuma.notification:
@@ -193,3 +175,10 @@
     # - name: Debug pushmonitor
     #   debug:
     #     var: pushmonitor
+
+    # - name: Add a push monitor
+    #   lucasheld.uptime_kuma.monitor:
+    #     api_url: "{{ uptime_kuma_api_url }}"
+    #     type: push
+    #     name: Push
+    #     state: present
