@@ -95,6 +95,7 @@ traefik_whitelist_ips:
   - 192.168.251.0/24
   - 192.168.50.0/24
   - 192.168.100.0/24
+  - 192.168.150.2
   - 195.90.219.248
 traefik_extra_servers:
   - name: proxmox
