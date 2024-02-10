@@ -4,6 +4,7 @@ docker_role_name: codeserver
 services:
   - name: codeserver
     image: fabsau/vscode:1
+    security_opt: default
     env_file:
       - ./codeserver.env
       - ../common.env

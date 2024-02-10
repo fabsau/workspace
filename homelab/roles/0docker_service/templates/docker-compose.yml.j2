@@ -21,8 +21,15 @@ services:
       - {{ depend }}
 {% endfor %}
 {% endif %}
+{% if service.security_opt is not defined %}
     security_opt:
       - no-new-privileges
+{% elif service.security_opt != 'default' %}
+    security_opt:
+{% for opt in service.security_opt %}
+      - {{ opt }}
+{% endfor %}
+{% endif %}
 {% if service.cap_drop is defined and service.cap_drop %}
     cap_drop: 
 {% for cap in service.cap_drop %}
