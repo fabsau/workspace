@@ -42,11 +42,6 @@ traefik_domains:
       - "*.sauna.re"
 
 traefik_additional_ports:
-  - name: portainer
-    target: 8080
-    published: 8080
-    protocol: tcp
-    mode: host
   - name: unifi
     target: 1900
     published: 1900
@@ -68,8 +63,8 @@ traefik_additional_ports:
     protocol: tcp
     mode: host
   - name: unifi5
-    target: 8000
-    published: 8000
+    target: 8080
+    published: 8080
     protocol: tcp
     mode: host
   - name: unifi6
