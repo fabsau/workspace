@@ -24,6 +24,7 @@ docker_networks:
   - watchtower
   - adguardsync
   - changedetection
+  - tandoorrecipes
 
 # TRAEFIK
 traefik_oauth_address: https://auth.sauna.re/api/verify

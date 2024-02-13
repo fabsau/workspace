@@ -1,0 +1,50 @@
+# vars/main.yml
+docker_role_name: tandoorrecipes
+
+services:
+  - name: tandoorrecipes-frontend
+    image: nginx:mainline-alpine
+    depends_on:
+      - tandoorrecipes-api
+    env_file:
+      - ./tandoorrecipes.env
+    volumes:
+      - ./config:/etc/nginx/conf.d
+      - ./data/app:/opt/recipes:ro
+    networks:
+      - tandoorrecipes
+    traefik:
+      - name: tandoorrecipes
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints.tandoorrecipes[ansible_facts['hostname']] }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 80
+    watchtower: true
+
+  - name: tandoorrecipes-api
+    image: vabene1111/recipes:latest
+    depends_on:
+      - tandoorrecipes-postgresdb
+    env_file:
+      - ./tandoorrecipes.env
+    volumes:
+      - ./config:/opt/recipes/nginx/conf.d
+      - ./data/app/staticfiles:/opt/recipes/staticfiles
+      - ./data/app/mediafiles:/opt/recipes/mediafiles
+    networks:
+      - tandoorrecipes
+    watchtower: true
+
+  - name: tandoorrecipes-postgresdb
+    image: postgres:alpine
+    env_file:
+      - ./tandoorrecipes.env
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    networks:
+      - tandoorrecipes
+    watchtower: true

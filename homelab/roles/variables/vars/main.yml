@@ -368,6 +368,9 @@ endpoints:
   sonarrexporter:
     nas: "sonarrexporter.oiba.de"
     prometheus_exporter: true
+  tandoorrecipes:
+    nas: "recipes.oiba.de"
+    prometheus_exporter: true
   tautulli:
     dmz: "tulli.sauna.re"
   tautulliexporter:
