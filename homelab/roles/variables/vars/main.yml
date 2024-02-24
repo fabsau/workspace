@@ -60,7 +60,7 @@ users_authorized_keys_exclusive: true
 # Creation of Users
 users:
   - username: "{{ ansible_username }}"
-    password: "{{ USER_ANSIBLE_PW }}"
+    password: "{{ USER_ANSIBLE_PASSWORD }}"
     state: present
     primary_group: "{{ admin_group }}"
     groups:
@@ -72,7 +72,7 @@ users:
     authorized_keys: "{{ ansible_authorized_keys }}"
     lock: no
   - username: "{{ fabio_username }}"
-    password: "{{ USER_FABIO_PW }}"
+    password: "{{ USER_FABIO_PASSWORD }}"
     state: present
     primary_group: "{{ admin_group }}"
     groups:
@@ -84,7 +84,7 @@ users:
     authorized_keys: "{{ fabio_authorized_keys }}"
     lock: no
   - username: "{{ common_username }}"
-    password: "{{ USER_COMMON_PW }}"
+    password: "{{ USER_COMMON_PASSWORD }}"
     state: present
     primary_group: "{{ common_group }}"
     groups:
@@ -142,8 +142,8 @@ dns_servers:
 
 # Adguard Sync Settings
 adguardsync_schedule: "*/2 * * * *"
-adguardsync_user: admin
-adguardsync_password: "{{ ADGUARD_PW }}"
+adguardsync_user: "{{ ADGUARD_USER }}"
+adguardsync_password: "{{ ADGUARD_PASSWORD }}"
 
 # Prometheus Settings
 prometheus_global:
@@ -399,7 +399,7 @@ endpoints:
     prometheus_exporter: true
     prometheus_settings:
       basic_auth:
-        username: "admin"
+        username: "{{ PROMETHEUS_UPTIMEKUMA_USER }}"
         password: "{{ PROMETHEUS_UPTIMEKUMA_PASSWORD }}"
   vacuum:
     nas: "vacuum.oiba.de"

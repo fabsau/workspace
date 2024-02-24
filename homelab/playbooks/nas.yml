@@ -12,7 +12,8 @@
     - role: 0docker_service
       vars:
         docker_service_roles:
-          # - traefik
+          - traefik
+          - tandoorrecipes
           # - prometheus
           # - changedetection
           # - watchtower
@@ -24,7 +25,7 @@
           # - adguardsync
           # - certdumper
           # - nodeexporter
-          - alertmanager
+          # - alertmanager
           # - grafana
           # - cadvisor
           # - proxmoxexporter
