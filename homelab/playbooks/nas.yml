@@ -8,16 +8,17 @@
     # - name: geerlingguy.security
       # become: true
     # - geerlingguy.docker
-    - 0docker_setup
+    # - 0docker_setup
     - role: 0docker_service
       vars:
         docker_service_roles:
-          - traefik
-          - tandoorrecipes
+          # - rancher
+          # - traefik
+          # - tandoorrecipes
           # - prometheus
           # - changedetection
           # - watchtower
-          # - cronjob
+          # # - cronjob
           # - portainer
           # - unifi
           # - librespeed

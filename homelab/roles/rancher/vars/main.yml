@@ -1,0 +1,23 @@
+# vars/main.yml
+docker_role_name: rancher
+
+services:
+  - name: rancher
+    image: rancher/rancher:latest
+    security_opt: default
+    privileged: true
+    networks:
+      - monitoring
+    volumes:
+      - ./data:/var/lib/rancher
+    traefik: 
+      - name: rancher
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints.rancher[ansible_facts['hostname']] }}`)"
+        middlewares: private-chain@file
+        insecuretransport: true
+        service_port: 443
+    watchtower: true

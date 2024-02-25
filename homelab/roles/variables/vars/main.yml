@@ -354,6 +354,8 @@ endpoints:
   radarrexporter:
     nas: "radarrexporter.oiba.de"
     prometheus_exporter: true
+  rancher:
+    nas: "rancher.oiba.de"
   rclone:
     blue: "rclone.blue.sauna.re"
   sabnzbd:
