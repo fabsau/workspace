@@ -30,6 +30,9 @@ services:
       - {{ opt }}
 {% endfor %}
 {% endif %}
+{% if service.privileged is defined and service.privileged == true %}
+    privileged: true
+{% endif %}
 {% if service.cap_drop is defined and service.cap_drop %}
     cap_drop: 
 {% for cap in service.cap_drop %}
