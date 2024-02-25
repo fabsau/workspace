@@ -27,7 +27,7 @@ docker_networks:
   - tandoorrecipes
 
 # TRAEFIK
-traefik_oauth_address: https://auth.sauna.re/api/verify
+traefik_oauth_address: auth.sauna.re
 traefik_ca_productive: true
 traefik_oauth_insecureSkipVerify: false
 traefik_domains:

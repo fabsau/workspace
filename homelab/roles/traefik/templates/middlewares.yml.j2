@@ -77,7 +77,7 @@ http:
 
     oauth:
       forwardAuth:
-        address: "{{ traefik_oauth_address }}"
+        address: "https://{{ traefik_oauth_address }}/api/verify"
         trustForwardHeader: true
         authResponseHeaders:
           - "Remote-User"
