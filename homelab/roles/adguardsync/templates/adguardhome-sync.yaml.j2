@@ -8,7 +8,7 @@ runOnStart: true
 {% set adguard_slave_urls = endpoints_list[1:] %}
 origin:
   # url of the origin instance
-  url: {{ adguard_master_url }}
+  url: https://{{ adguard_master_url }}
   # apiPath: define an api path if other than "/control"
   # insecureSkipVerify: true # disable tls check
   username: {{ ADGUARD_USER }}
@@ -17,7 +17,7 @@ origin:
 # replica instance (optional, if only one)
 replicas:
 {% for slave in adguard_slave_urls %}
-  - url: {{ slave.value }}
+  - url: https://{{ slave.value }}
     username: {{ ADGUARD_USER }}
     password: {{ ADGUARD_PASSWORD }}
 {% endfor %}
