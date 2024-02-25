@@ -6,52 +6,53 @@ global:
 
 
 scrape_configs:
-{% if endpoint.prometheus_exporter is defined %}
-{% for name, endpoint in endpoints.items() if endpoint.prometheus_exporter %}
+{% if endpoints is defined %}
+{% for name, ep in endpoints.items() %}
+{% if ep.prometheus_exporter is defined and ep.prometheus_exporter %}
   - job_name: "{{ name }}"
-{% if endpoint.prometheus_settings.scrape_interval is defined %}
-    scrape_interval: "{{ endpoint.prometheus_settings.scrape_interval }}"
+{% if ep.prometheus_settings.scrape_interval is defined %}
+    scrape_interval: "{{ ep.prometheus_settings.scrape_interval }}"
 {% endif %}
-{% if endpoint.prometheus_settings.scrape_timeout is defined %}
-    scrape_timeout: "{{ endpoint.prometheus_settings.scrape_timeout }}"
+{% if ep.prometheus_settings.scrape_timeout is defined %}
+    scrape_timeout: "{{ ep.prometheus_settings.scrape_timeout }}"
 {% endif %}
-    scheme: "{{ endpoint.prometheus_settings.scheme | default("https") }}"
-{% if endpoint.prometheus_settings.metrics_path is defined %}
-    metrics_path: "{{ endpoint.prometheus_settings.metrics_path }}"
+    scheme: "{{ ep.prometheus_settings.scheme | default("https") }}"
+{% if ep.prometheus_settings.metrics_path is defined %}
+    metrics_path: "{{ ep.prometheus_settings.metrics_path }}"
 {% endif %}
-{% if endpoint.prometheus_settings.params is defined %}
+{% if ep.prometheus_settings.params is defined %}
     params:
-{% for key, value in endpoint.prometheus_settings.params.items() %}
+{% for key, value in ep.prometheus_settings.params.items() %}
       {{ key }}: ["{{ value }}"]
 {% endfor %}
 {% endif %}
-{% if endpoint.prometheus_settings.script is defined %}
-    script: ["{{ endpoint.prometheus_settings.script }}"]
+{% if ep.prometheus_settings.script is defined %}
+    script: ["{{ ep.prometheus_settings.script }}"]
 {% endif %}
-{% if endpoint.prometheus_settings.basic_auth is defined %}
+{% if ep.prometheus_settings.basic_auth is defined %}
     basic_auth:
-      username: "{{ endpoint.prometheus_settings.basic_auth.username }}"
-      password: "{{ endpoint.prometheus_settings.basic_auth.password }}"
+      username: "{{ ep.prometheus_settings.basic_auth.username }}"
+      password: "{{ ep.prometheus_settings.basic_auth.password }}"
 {% endif %}
-{% if endpoint.prometheus_settings.authorization is defined %}
+{% if ep.prometheus_settings.authorization is defined %}
     authorization:
-      credentials: "{{ endpoint.prometheus_settings.authorization.credentials }}"
+      credentials: "{{ ep.prometheus_settings.authorization.credentials }}"
 {% endif %}
-{% if endpoint.prometheus_settings.bearer_token is defined %}
-    bearer_token: "{{ endpoint.prometheus_settings.bearer_token }}"
+{% if ep.prometheus_settings.bearer_token is defined %}
+    bearer_token: "{{ ep.prometheus_settings.bearer_token }}"
 {% endif %}
     static_configs:
       - targets:
-{% if endpoint.target_replacement_url is defined %}
-{% for url in endpoint.target_replacement_url %}
+{% if ep.target_replacement_url is defined %}
+{% for url in ep.target_replacement_url %}
         - "{{ url }}"
 {% endfor %}
 {% else %}
-{% for location, url in endpoint.items() %}
+{% for location, url in ep.items() %}
 {% if location not in ['prometheus_exporter', 'prometheus_settings', 'target_replacement_url'] %}
 {% if url is string %}
         - "{{ url }}"
-{% else %}
+{% elif url is sequence and url is not string %}
 {% for u in url %}
         - "{{ u }}"
 {% endfor %}
@@ -59,9 +60,9 @@ scrape_configs:
 {% endif %}
 {% endfor %}
 {% endif %}
-{% if endpoint.prometheus_settings.relabel_configs is defined %}
+{% if ep.prometheus_settings.relabel_configs is defined %}
     relabel_configs:
-{% for relabel_config in endpoint.prometheus_settings.relabel_configs %}
+{% for relabel_config in ep.prometheus_settings.relabel_configs %}
       - source_labels: [__address__]
         target_label: __param_target
       - source_labels: [__param_target]
@@ -71,6 +72,7 @@ scrape_configs:
 {% endfor %}
 {% endif %}
 
+{% endif %}
 {% endfor %}
 {% endif %}
 
