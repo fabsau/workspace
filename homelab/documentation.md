@@ -16,6 +16,16 @@
 16. variable for host lang? LANG=en_US.UTF-8 czwawka
 17. Removal of docker networks is broken
 
+
+Setup Repo Windows:
+1. Import secrets privatekey and vault_pass
+2. Remove Permission on vault_pass and just put read/write
+3. Export the env variables EDITOR=nano UND ANSIBLE_CONFIG=/config/workspace/homelab/ansible.cfg
+4. Git Info hinterlegen
+git config --global user.name "Your Name"
+git config --global user.email "youremail@domain.com"
+
+
 Fehlende URLs/Container
 home.sauna.re
 auth.sauna.re
