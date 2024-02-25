@@ -26,7 +26,7 @@ nfs_mounts:
     options: auto,nofail,noatime,nolock,intr,tcp,actimeo=1800
 
 # Ansible Settings
-ansible_home: "/config/workspace/homelab"
+ansible_home: "/mnt/c/Users/Fabio/Documents/VScode/workspace/homelab"
 ansible_username: ansible
 ansible_uid: "1000"
 ansible_authorized_keys:
@@ -210,7 +210,7 @@ endpoint_hosts:
 
 endpoints:
   adguard:
-    lxc1: "dns2.oiba.de"
+    lxc1: "dns.oiba.de"
     lxc2: "dns2.oiba.de"
     blue: "dns.blue.sauna.re"
   adguardexporter:
