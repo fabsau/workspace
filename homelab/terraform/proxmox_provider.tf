@@ -14,21 +14,20 @@ terraform {
   }
 }
 
-# Define variables for the Proxmox API URL, token ID, and token secret.
+# Define variables for the Proxmox API URL, user and password.
 variable "proxmox_api_url" {
   type        = string
   description = "The Proxmox API URL."
 }
 
-variable "proxmox_api_token_id" {
+variable "proxmox_user" {
   type        = string
-  description = "The Proxmox API token ID."
-  sensitive   = true
+  description = "The Proxmox username."
 }
 
-variable "proxmox_api_token_secret" {
+variable "proxmox_password" {
   type        = string
-  description = "The Proxmox API token secret."
+  description = "The Proxmox password."
   sensitive   = true
 }
 
@@ -40,8 +39,8 @@ variable "pm_tls_insecure" {
 
 # Configure the Proxmox provider.
 provider "proxmox" {
-  pm_api_url            = var.proxmox_api_url
-  pm_api_token_id       = var.proxmox_api_token_id
-  pm_api_token_secret   = var.proxmox_api_token_secret
-  pm_tls_insecure       = var.pm_tls_insecure
+  pm_api_url       = var.proxmox_api_url
+  pm_user          = var.proxmox_user
+  pm_password      = var.proxmox_password
+  pm_tls_insecure  = var.pm_tls_insecure
 }
