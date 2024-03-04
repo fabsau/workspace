@@ -1,4 +1,7 @@
+**/secrets
+**/.terraform/
 **/secrets.yml
-**/vault_pass
-**/privatekey
-/config/workspace/homelab/secrets/
+**/terraform.tfvars
+**/terraform.tfstate
+**/terraform.tfstate.backup
+**/.terraform.lock
