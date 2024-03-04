@@ -1,0 +1,227 @@
+- hosts: localhost
+  gather_facts: no
+  remote_user: ansible
+  # roles:
+    # - variables
+
+  module_defaults:
+    group/ansibleguy.opnsense.all:
+      firewall: 'router.oiba.de'
+      api_key: "pk4iE+uKEIAHfupl8/jRUNoNvA+uhb6AZZuKjORTkGzE5P6VBcwtn6NwbYaUby77AgJWSpJI2NTyGKEv"
+      api_secret: "ob6ckOpZSU3svPelp/6xRDb7wwT6ae8iaJn8aBGN4yHrfi6W8UHHpv6NQSFHc5Gmqw1nF9P8D6/xr1CS"
+      ssl_verify: true
+
+      # api_key: "{{ OPNSENSE_API_KEY }}"
+      # api_secret: "{{ OPNSENSE_API_SECRET }}"
+
+  tasks:
+    - name: Pulling aliases
+      ansibleguy.opnsense.list:
+        target: 'alias'
+      register: existing_aliases
+
+    - name: Add Aliases
+      ansible.builtin.opnsense.alias:
+        name: "{{ item.name }}"
+        description: "{{ item.description }}"
+        content: "{{ item.content }}"
+        type: "{{ item.type }}"
+        state: present
+        loop:
+          - { name: "H_DMZ", content: "192.168.200.2", type: "host" }
+          - { name: "H_NAS", content: "192.168.100.3", type: "host" }
+          - { name: "H_MGT", content: "192.168.50.20, 192.168.50.21, 192.168.50.22", type: "host" }
+          - { name: "H_HOME", content: "192.168.150.2", type: "host" }
+          - { name: "H_CISCO", content: "192.168.100.20", type: "host" }
+          - { name: "H_NAK", content: "192.168.100.44", type: "host" }
+          - { name: "H_ESX", content: "192.168.100.2", type: "host" }
+          - { name: "H_VAC", content: "192.168.150.9", type: "host" }
+          - { name: "H_OPN", content: "192.168.50.1, 192.168.100.1, 192.168.150.1, 192.168.200.1, 192.168.250.1, 192.168.50.255, 192.168.100.255, 192.168.150.255, 192.168.251.1", type: "host" }
+          - { name: "H_TABLET", content: "192.168.50.53", type: "host" }
+          - { name: "G_H_SERVERS_MGT", content: "H_DMZ,H_NAS,H_HOME,H_CISCO,H_NAK,H_ESX,H_VAC,H_OPN,H_WIN" }
+          - { name: "G_H_DNSSERVER", content: "H_DNS,H_DNS2", type: "host" }
+          - { name: "G_H_WEBSERVER", content: "H_DMZ,H_NAS,H_HOME", type: "host" }
+          - { name: "G_H_SERVER_INET", content: "H_DMZ,H_NAS,H_HOME,H_VAC,H_TASMOTA,H_WIFI,H_WIN,H_G_Google,H_ESX", type: "host" }
+          - { name: "G_H_SERVER_MAIL", content: "H_NAS,H_HOME,H_NAK,H_OPN,H_WIN", type: "host" }
+          - { name: "G_H_PROM", content: "H_HOME,H_NAK,H_OPN,H_WIN", type: "host" }
+          - { name: "H_TASMOTA", content: "192.168.150.50,192.168.150.51,192.168.150.53,192.168.150.54,192.168.150.55,192.168.150.56,192.168.150.57,192.168.150.58,192.168.150.59,192.168.150.52", type: "host" }
+          - { name: "H_WIFI", content: "192.168.100.10", type: "host" }
+          - { name: "H_FABIOVPN", content: "192.168.251.2,192.168.251.3,192.168.251.5", type: "host" }
+          - { name: "H_VPS_AZURE_BLUE", content: "192.168.251.4,192.168.251.6", type: "host" }
+          - { name: "H_PRINT", content: "192.168.50.60,192.168.50.61", type: "host" }
+          - { name: "H_WIN", content: "192.168.100.4", type: "host" }
+          - { name: "H_G_Google", content: "192.168.150.40,192.168.150.41,192.168.150.42,192.168.150.43,192.168.150.44,192.168.150.30", type: "host" }
+          - { name: "H_AVAHI", content: "224.0.0.251", type: "host" }
+          - { name: "H_FRYER", content: "192.168.150.11", type: "host" }
+          - { name: "H_FRITZ", content: "192.168.178.1", type: "host" }
+          - { name: "H_DNS", content: "192.168.100.20", type: "host" }
+          - { name: "H_DNS2", content: "192.168.100.21", type: "host" }
+          - { name: "H_TV", content: "192.168.50.51", type: "host" }
+
+          - { name: "P_VPN", content: "51820", type: "port" }
+          - { name: "P_WEB", content: "80, 443", type: "port" }
+          - { name: "P_MAIL", content: "25, 465, 587, 993, 995, 4190", type: "port" }
+          - { name: "P_DNSNTP", content: "53, 123, 853, 7", type: "port" }
+          - { name: "P_SMB", content: "137, 138, 139, 445, 2049", type: "port" }
+          - { name: "P_PROM", content: "4443, 9100, P_HOME", type: "port", description: "Homeassistant, pfsense, Nakivo" }
+          - { name: "P_TV", content: "1925, 1926", type: "port" }
+          - { name: "P_HOME", content: "8123", type: "port" }
+          - { name: "P_VEEAM_CLIENT", content: "445, 10005, 10006, 9395:9410, 6183:6200, 2500:3300, 49152:65535, 137:139", type: "port" }
+          - { name: "P_VEEAM_SERVER", content: "22, 135, 445, 6160, 6162, 6167, 6187, 6211, 11731, 2500:3300, 6184:6200, 137:139, 49152:65535, 10005:10006", type: "port" }
+          - { name: "P_Google", content: "10001, 1111", type: "port" }
+          - { name: "P_TAILSCALE", content: "3478, 41641", type: "port" }
+          - { name: "P_FRITZTV", content: "554, 5000, 5001, 5002, 5003, 5004, 5005, 5006, 5007", type: "port" }
+          - { name: "P_AVAHI", content: "5353", type: "port" }
+          - { name: "P_WIFI", content: "3478, 10001, 8843, 6789, 5514, 8080", type: "port" }
+          - { name: "P_PLEX", content: "32400", type: "port" }
+          - { name: "P_HOME_PROM", content: "1883, 9100", type: "port" }
+          - { name: "P_RCLONE", content: "5572", type: "port" }
+          - { name: "P_PORTAINER", content: "8000", type: "port" }
+
+          - { name: "NET_PRIVATE", content: "10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16", type: "network" }
+
+          - { name: "H_Bad_Countries", content: "AO", "BF", "BI", "BJ", "BW", "CD", "CF", "CG", "CI", "CM", "DJ", "DZ", "EG", "EH", "ER", "ET", "GA", "GH", "GM", "GN", "GQ", "GW", "KE", "LR", "LS", "LY", "MA", "ML", "MR", "MW", "MZ", "NA", "NE", "NG", "RW", "SD", "SL", "SN", "SO", "SS", "ST", "SZ", "TD", "TG", "TN", "TZ", "UG", "ZA", "ZM", "ZW", "BR", "MX", "AE", "AF", "AM", "AZ", "BD", "BH", "BN", "BT", "CN", "GE", "ID", "IN", "IQ", "IR", "JO", "KG", "KH", "KP", "KW", "KZ", "LA", "LB", "LK", "MM", "MN", "MO", "MY", "NP", "OM", "PH", "PK", "PS", "QA", "SA", "SG", "SY", "TH", "TJ", "TL", "TM", "TW", "UZ", "VN", "YE", "RO", "RU", "TR", "UA", type: "geoip" }
+
+    - name: Ensure required firewall rules are configured
+      ansible.builtin.loop:
+        - { description: "Ping Router", interface: 'opt2,opt3,opt4,lan,opt1,wireguard', protocol: 'icmp', source_net: 'NET_PRIVATE', destination_net: 'H_OPN', uuid: '0767d940-4bf6-422d-bedf-30035fd98e2e', enabled: true }
+        - { description: "Web Router", interface: 'opt4,lan,opt1', protocol: 'tcp', source_net: 'NET_PRIVATE', destination_net: 'H_OPN', uuid: 'ba0b36f6-4c4e-45d9-aed6-582a8d90529f', enabled: true }
+        - { description: "Web Router", interface: 'opt4,lan,opt1', protocol: 'tcp', source_net: 'NET_PRIVATE', destination_net: 'H_DMZ', uuid: '1b50e8c1-0260-4e6d-84bb-3d83f95b53d3', enabled: false }
+        - { description: "Avahi", interface: 'opt4,lan,opt1', protocol: 'tcp', source_net: 'H_OPN', destination_net: 'H_AVAHI', uuid: '518615d7-d1e2-4b09-a0a4-f9fa100055c1', enabled: true }
+        - { description: "Avahi", interface: 'opt4,lan,opt1', protocol: 'tcp', source_net: 'NET_PRIVATE', destination_net: 'NET_PRIVATE', uuid: 'adf8eae8-bf4f-40c3-af83-ab32cc2b8bea', enabled: true }
+        - { description: "DNS", interface: 'opt2,opt3,opt4,lan,opt1,wireguard', protocol: 'tcp', source_net: 'NET_PRIVATE', destination_net: 'G_H_DNSSERVER', uuid: 'a9f7649e-9760-47a2-b001-efa83133d127', enabled: true }
+        - { description: "DNS", interface: 'opt2,opt3,opt4,lan,opt1,wireguard', protocol: 'icmp', source_net: 'NET_PRIVATE', destination_net: 'G_H_DNSSERVER', uuid: 'a75bf919-5758-4d8a-a55b-5f201d67a770', enabled: true }
+        - { description: "Internet", interface: 'opt2,opt4,lan,opt1', protocol: 'tcp', source_net: 'G_H_SERVER_INET', destination_net: 'NET_PRIVATE', uuid: 'd1c7b3d9-2603-402d-b76a-1b039585c3f8', enabled: true }
+        - { description: "Internet", interface: 'opt2,opt4,lan,opt1', protocol: 'icmp', source_net: 'G_H_SERVER_INET', destination_net: 'NET_PRIVATE', uuid: 'bf3ca9c5-9106-4af7-b192-e6b8f932678f', enabled: true }
+        - { description: "Access Plex via VPN", interface: 'opt2,lan,opt1', protocol: 'tcp', source_net: 'NET_PRIVATE', destination_net: 'H_VPS_AZURE_BLUE', uuid: '95f740be-029c-4d07-aaa6-2e131db0579d', enabled: true}
+
+        - { description: "Bad Country", interface: 'wan', protocol: 'tcp', source_net: 'H_Bad_Countries', destination_net: 'any', uuid: '238b3cb4-f1a0-42d0-b59c-0636f029f9c5', enabled: true, action: 'block'}
+        - { description: "Reverse Proxy sauna.re", interface: 'wan', protocol: 'tcp', source_net: 'any', destination_net: 'H_DMZ', uuid: '28ff992d-d4e8-43ee-8e19-225e4bf05393', enabled: true }
+        - { description: "Mailserver", interface: 'wan', protocol: 'tcp/udp', source_net: 'any', destination_net: 'H_DMZ', destination_port: 'P_MAIL', uuid: '477c5002-34f1-4cf0-afb5-0f94310ccdf7', enabled: false }
+        - { description: "VPN Access", interface: 'wan', protocol: 'tcp/udp', source_net: 'any', destination_net: 'wanip', destination_port: 'P_VPN', uuid: 'bf97a493-0f52-49d8-aed4-e31d4024c2ad', enabled: true }
+        - { description: "Veeam TailScale", interface: 'wan', protocol: 'udp', source_net: 'H_VPS_AZURE_BLUE', source_port: 'P_TAILSCALE', destination_net: 'NET_PRIVATE', uuid: '3c85667d-7c6b-4b73-b17e-b473aeac6fd1', enabled: true }
+        - { description: "Veeam Reverse Proxy", interface: 'wan', protocol: 'tcp/udp', source_net: 'H_VPS_AZURE_BLUE', source_port: 'P_VEEAM_CLIENT', destination_net: 'H_WIN', destination_port: 'P_VEEAM_CLIENT', uuid: '23b77e35-3f99-4a44-ad9f-74d4dc590609', enabled: false }
+        - { description: "Veeam Reverse Proxy", interface: 'wan', protocol: 'tcp/udp', source_net: 'H_VPS_AZURE_BLUE', source_port: 'P_VEEAM_SERVER', destination_net: 'H_WIN', destination_port: 'P_VEEAM_SERVER', uuid: 'd5099430-f39c-4e08-aa78-30cc393695bb', enabled: false }
+        - { description: "Allow All Traffic", interface: 'wan', ip_protocol: 'inet', statetype: 'keep state', direction: 'in', quick: true, protocol: 'tcp/udp', source_net: 'NET_PRIVATE', destination_net: 'any', uuid: '6a6aa06c-9391-44e2-a54a-13b5581b1e9a', enabled: true }
+        - { description: "Block Fritzbox TV", interface: 'wan', ip_protocol: 'inet46', statetype: 'keep state', direction: 'in', quick: true, source_net: 'H_FRITZ', destination_net: 'any', uuid: '6d77d688-9348-432c-9311-257b3d154276', enabled: false }
+        - { description: "Block TV IP", interface: 'wan', ip_protocol: 'inet', statetype: 'keep state', direction: 'in', quick: true, source_net: '192.168.50.59', destination_net: 'any', uuid: '9dad3ed5-44f7-4d84-a319-f5b16120bf50', enabled: false }
+
+        - { description: "Allow LAN to Webserver", interface: 'lan', ip_protocol: 'inet46', statetype: 'keep state', direction: 'in', quick: true, protocol: 'tcp/udp', source_net: 'lan', destination_net: 'G_H_WEBSERVER', destination_port: 'P_WEB', uuid: 'b899114a-ade2-4954-bbdf-3b449e0b2e09', enabled: true }
+        - { description: "Mail", interface: 'lan', ip_protocol: 'inet', statetype: 'keep state', direction: 'in', quick: true, protocol: 'tcp/udp', source_net: 'lan', destination_net: 'H_DMZ', destination_port: 'P_MAIL', uuid: '0f264a6f-7e47-4844-b8b0-4c8c862c1038', enabled: false }
+        - { description: "Jellyfin", interface: 'lan', protocol: 'tcp/udp', source_net: 'lan', destination_net: 'H_DMZ', destination_port: '8920', uuid: 'f9470c08-84bd-4ae9-93c7-c4fe3dd69389', enabled: false }
+        - { description: "NAS", interface: 'lan', protocol: 'tcp/udp', source_net: 'lan', destination_net: 'H_NAS', destination_port: 'P_SMB', uuid: '30b95746-3585-4b37-bd97-5f80064bab8c', enabled: true }
+        - { description: "NAS", interface: 'lan', protocol: 'tcp/udp', source_net: 'lan', destination_net: '192.168.50.255', uuid: '44492a05-515e-4960-adfc-ec4d5c6d7e53', enabled: true }
+        - { description: "TODO", interface: 'lan', protocol: 'inet', statetype: 'keep state', direction: 'in', quick: true, source_net: 'lan', destination_net: 'H_G_Google', uuid: 'd893d8f8-fa1a-484d-86d5-8c454469034d', enabled: true, log: true }
+        - { description: "Avahi", interface: 'lan', protocol: 'udp', source_net: 'lan', destination_net: 'H_AVAHI', destination_port: 'P_AVAHI', uuid: '2d4a35b8-b4e2-4d43-90f8-7ecead771467', enabled: true }
+        - { description: "Block Internet", interface: 'lan', protocol: 'inet46', statetype: 'keep state', direction: 'in', quick: true, action: 'reject', source_net: 'H_PRINT', destination_net: 'NET_PRIVATE', not: true, uuid: 'f20a1a49-45f6-4da5-bb56-626395ef43fe', enabled: true }
+        - { description: "Internet", interface: 'lan', protocol: 'inet46', statetype: 'keep state', direction: 'in', quick: true, protocol: 'tcp/udp', source_net: 'lan', destination_net: 'NET_PRIVATE', not: true, uuid: '92870ce3-e284-416b-b8cb-4cdb74a046f3', enabled: true }
+        - { description: "Internet ICMP", interface: 'lan', protocol: 'icmp', source_net: 'lan', destination_net: 'NET_PRIVATE', not: true, uuid: 'd9e35b16-adf4-42d6-ac6c-f5ea989c1d2c', enabled: true }
+        - { description: "TODO", interface: 'lan', protocol: 'tcp/udp', source_net: 'any', destination_net: 'any', uuid: 'aab49b42-6b7e-4011-93c0-a68a53c21f6d', enabled: false }
+        - { description: "Management ICMP", interface: 'lan', protocol: 'icmp', source_net: 'H_MGT', destination_net: 'NET_PRIVATE', uuid: '779bc195-fa16-4634-a0c5-590ded7bf4b6', enabled: true }
+
+        - { description: "Mail", interface: 'opt1', protocol: 'tcp/udp', source_net: 'G_H_SERVER_MAIL', destination_net: 'H_DMZ', destination_port: 'P_MAIL', uuid: '08be8d8b-5cb4-4155-b948-8d1e627a7391', enabled: true }
+        - { description: "Valetudo Access", interface: 'opt1', protocol: 'tcp/udp', source_net: 'H_NAS', destination_net: 'H_VAC', destination_port: 'P_WEB', uuid: 'a90f62fa-e112-445d-84ad-e5bf05e243e3', enabled: true }
+        - { description: "Valetudo PNG and Node Exporter", interface: 'opt1', protocol: 'tcp/udp', source_net: 'H_NAS', destination_net: 'H_HOME', destination_port: 'P_HOME_PROM', uuid: '7a603296-c892-4f91-ad27-5d331c399059', enabled: true }
+        - { description: "Prometheus Monitoring", interface: 'opt1', protocol: 'tcp/udp', source_net: 'H_NAS', destination_net: 'G_H_PROM', destination_port: 'P_PROM', uuid: '2148f344-1c88-485e-a750-85530a4d0326', enabled: true }
+        - { description: "Unifi", interface: 'opt1', protocol: 'tcp/udp', source_net: 'H_WIFI', destination_net: 'H_NAS', destination_port: 'P_WIFI', uuid: 'cb7d191f-1707-4e18-b844-f9760748ce4e', enabled: true }
+        - { description: "Management ICMP", interface: 'opt1', protocol: 'icmp', source_net: 'H_CISCO', destination_net: 'any', uuid: '1fe7ec91-f21c-4be4-a05b-36cedf7beee1', enabled: true }
+        - { description: "TODO", interface: 'opt1', protocol: 'inet', source_net: 'H_WIN', destination_net: 'H_HOME', uuid: 'c681c7f9-0922-47c2-a167-a25a88cc54da', enabled: false }
+        - { description: "TODO", interface: 'opt1', protocol: 'tcp/udp', source_net: 'H_WIN', destination_net: 'H_VPS_AZURE_BLUE', destination_port: 'P_VEEAM_SERVER', uuid: 'a2576b0b-f9a9-487f-bba8-72070205646c', enabled: true }
+        - { description: "TODO", interface: 'opt1', protocol: 'inet', source_net: 'H_WIN', destination_net: 'H_MGT', uuid: 'afc72922-c31c-42b8-9454-372e958cbb5a', enabled: true }
+        - { description: "TODO", interface: 'opt1', protocol: 'inet', source_net: 'H_WIN', destination_net: 'H_DMZ', uuid: '080f0488-1f07-43b2-99d9-3b991190671c', enabled: true }
+        - { description: "Windows MGT", interface: 'opt1', protocol: 'tcp/udp', source_net: 'H_WIN', destination_net: 'H_MGT', destination_port: '137', uuid: '036a872b-e4ce-49cc-b342-e1ced5543ad6', enabled: true }
+        - { description: "TODO", interface: 'opt1', protocol: 'tcp/udp', source_net: 'any', destination_net: 'any', uuid: 'fc5e340e-49d8-4529-954b-5fc67a7f6533', enabled: false }
+
+        - { description: "HA Access", interface: 'opt2', protocol: 'tcp/udp', source_net: 'H_DMZ', destination_net: 'H_HOME', destination_port: 'P_WEB', uuid: 'bf971bc5-afb0-442d-92ec-f7332cb73fb0', enabled: true }
+        - { description: "Access oiba.de and sauna.re", interface: 'opt2', protocol: 'tcp/udp', source_net: 'H_DMZ', destination_net: 'G_H_WEBSERVER', destination_port: 'P_WEB', uuid: '67712647-71c8-40f2-b466-4af11538b51c', enabled: true }
+        - { description: "NAS", interface: 'opt2', protocol: 'tcp/udp', source_net: 'H_DMZ', destination_net: 'H_NAS', destination_port: 'P_SMB', uuid: 'a731c82f-95d3-4e36-8b59-4a5bf82c6d15', enabled: true }
+        - { description: "Portainer", interface: 'opt2', protocol: 'tcp/udp', source_net: 'H_DMZ', destination_net: 'H_NAS', destination_port: 'P_PORTAINER', uuid: '51171853-0148-4843-a1b0-b1e03ec37073', enabled: true }
+        - { description: "SAUNAFLIX", interface: 'opt2', protocol: 'tcp/udp', source_net: 'H_DMZ', destination_net: 'H_VPS_AZURE_BLUE', uuid: 'b58dd1cf-e571-4cad-b2c5-501cb4760ae5', enabled: false }
+        - { description: "TODO", interface: 'opt2', protocol: 'inet', source_net: 'H_DMZ', destination_net: 'H_WIN', uuid: 'db1beb7c-e80b-468c-a4f6-895405e6ba8c', enabled: true }
+        - { description: "TODO", interface: 'opt2', protocol: 'tcp/udp', source_net: 'H_DMZ', destination_net: 'H_WIN', uuid: 'c681c7f9-0922-47c2-a167-a25a88cc54da', enabled: true }
+        - { description: "TODO", interface: 'opt2', protocol: 'tcp/udp', source_net: 'H_DMZ', destination_net: 'H_HOME', uuid: '080f0488-1f07-43b2-99d9-3b991190671c', enabled: true }
+        - { description: "Windows ICMP", interface: 'opt2', protocol: 'icmp', source_net: 'H_WIN', destination_net: 'any', uuid: '1d4fceb8-e467-45b6-809d-e98706deb337', enabled: false }
+
+        - { description: "Internet", interface: 'opt3', protocol: 'tcp/udp', source_net: 'opt3', destination_net: 'NET_PRIVATE', not: true, uuid: '539d15c9-8fb1-45e1-bccb-ed565082beb7', enabled: true }
+        - { description: "Internet ICMP", interface: 'opt3', protocol: 'icmp', source_net: 'opt3', destination_net: 'NET_PRIVATE', not: true, uuid: 'd27de63c-f015-497d-bf4b-d18adbe24c79', enabled: true }
+
+        - { description: "Block Google", interface: 'opt4', protocol: 'inet46', statetype: 'keep state', direction: 'in', quick: true, source_net: 'H_G_Google', destination_net: 'any', uuid: '541a0d31-997b-4d11-98a0-637232991025', enabled: false }
+        - { description: "Access oiba.de and sauna.re", interface: 'opt4', protocol: 'tcp/udp', source_net: 'H_DMZ', destination_net: 'G_H_WEBSERVER', destination_port: 'P_WEB', uuid: '994d461b-2111-41eb-b989-8edc553a4a9e', enabled: true }
+        - { description: "NAS", interface: 'opt4', protocol: 'tcp/udp', source_net: 'H_DMZ', destination_net: 'H_NAS', destination_port: 'P_SMB', uuid: 'a731c82f-95d3-4e36-8b59-4a5bf82c6d15', enabled: true }
+        - { description: "Portainer", interface: 'opt4', protocol: 'tcp/udp', source_net: 'H_DMZ', destination_net: 'H_NAS', destination_port: 'P_PORTAINER', uuid: '51171853-0148-4843-a1b0-b1e03ec37073', enabled: true }
+        - { description: "SAUNAFLIX", interface: 'opt4', protocol: 'tcp/udp', source_net: 'H_DMZ', destination_net: 'H_VPS_AZURE_BLUE', uuid: 'b58dd1cf-e571-4cad-b2c5-501cb4760ae5', enabled: false }
+        - { description: "TODO", interface: 'opt4', protocol: 'inet', source_net: 'H_DMZ', destination_net: 'H_WIN', uuid: 'db1beb7c-e80b-468c-a4f6-895405e6ba8c', enabled: true }
+        - { description: "Access H_G_Google", interface: 'opt4', protocol: 'inet', source_net: 'H_G_Google', destination_net: 'lan', uuid: 'ad041fda-9b0b-4ace-b2aa-2a8f2845c828', enabled: true }
+        - { description: "Avahi", interface: 'opt4', protocol: 'udp', source_net: 'H_G_Google', destination_net: 'H_AVAHI', destination_port: 'P_AVAHI', uuid: 'ac6efb12-572e-488e-86ec-f485f693db60', enabled: true }
+        - { description: "Home Avahi", interface: 'opt4', protocol: 'udp', source_net: 'H_HOME', destination_net: 'H_AVAHI', destination_port: 'P_AVAHI', uuid: '96736341-8c0b-41e1-9041-3861439af925', enabled: true }
+        - { description: "Jellyfin", interface: 'opt4', protocol: 'tcp/udp', source_net: 'H_G_Google', destination_net: 'G_H_WEBSERVER', destination_port: 'P_WEB', uuid: 'fc77ecef-fed8-4ac3-92b9-936955f2851e', enabled: true }
+        - { description: "Access oiba.de and sauna.re", interface: 'opt4', protocol: 'tcp/udp', source_net: 'H_HOME', destination_net: 'H_NAS', destination_port: 'P_SMB', uuid: 'b1326829-25cb-40b2-a4c5-9c3f9d6e47b8', enabled: true }
+        - { description: "TV Control", interface: 'opt4', protocol: 'tcp', source_net: 'H_HOME', destination_net: 'H_TV', destination_port: 'P_TV', uuid: '241627bb-42af-4c04-9425-1faea6efc2d8', enabled: true }
+        - { description: "TV Control", interface: 'opt4', protocol: 'tcp', source_net: 'H_HOME', destination_net: 'H_OPN', destination_port: '2189', uuid: '8de52e2b-b42b-45ec-8e23-4cb083e5dbc3', enabled: true }
+        - { description: "Veeam", interface: 'opt4', protocol: 'tcp', source_net: 'H_HOME', destination_net: 'H_WIN', uuid: '4b31ee28-144c-4e25-b4a7-b233d1a68caa', enabled: false }
+        - { description: "Veeam", interface: 'opt4', protocol: 'tcp/udp', source_net: 'H_HOME', destination_net: '192.168.150.255', destination_port: '138', uuid: 'fe20cd9f-01f8-47ca-8f96-9444390a433f', enabled: false }
+        - { description: "TODO", interface: 'opt4', protocol: 'inet', source_net: 'any', destination_net: 'any', uuid: '0e6d9855-065a-4aa7-9b5f-5eb2c6e40b4f', enabled: true }
+        - { description: "TODO", interface: 'opt4', protocol: 'inet', source_net: 'H_FRYER', destination_net: 'NET_PRIVATE', not: true, uuid: '8426a07f-4678-4d6f-9604-25fdc049d721', enabled: false }
+
+        - { description: "Portainer", interface: 'opt5', protocol: 'tcp/udp', source_net: 'H_VPS_AZURE_BLUE', destination_net: 'H_NAS', destination_port: 'P_PORTAINER', uuid: 'fc3eaf4a-05c4-4431-b9f5-557557bb4b83', enabled: true }
+        - { description: "Portainer", interface: 'opt5', protocol: 'tcp/udp', source_net: 'H_VPS_AZURE_BLUE', destination_net: 'H_NAS', destination_port: '2049', uuid: 'd01854ec-9952-4e5d-982b-5063a2298dfe', enabled: true }
+        - { description: "Management", interface: 'opt5', protocol: 'tcp/udp', source_net: 'H_FABIOVPN', destination_net: 'G_H_SERVERS_MGT', uuid: '8f8023a6-88d1-4f6f-91e9-ab9a860484c1', enabled: true }
+        - { description: "Internet", interface: 'opt5', protocol: 'tcp/udp', source_net: 'H_FABIOVPN', destination_net: 'NET_PRIVATE', not: true, uuid: '06224fab-56ae-47ee-ba47-7d3016995c8e', enabled: true }
+        - { description: "Internet ICMP", interface: 'opt5', protocol: 'icmp', source_net: 'H_FABIOVPN', destination_net: 'NET_PRIVATE', not: true, uuid: '6e1308d7-6162-4a87-a44f-c7e128aacc41', enabled: true }
+        - { description: "Veeam", interface: 'opt5', protocol: 'tcp/udp', source_net: 'H_VPS_AZURE_BLUE', destination_net: 'H_DMZ', destination_port: 'P_RCLONE', uuid: 'ab9ee7c8-3541-4108-b5f4-9eb3c52395b8', enabled: true }
+        - { description: "Veeam", interface: 'opt5', protocol: 'tcp/udp', source_net: 'H_VPS_AZURE_BLUE', destination_net: 'H_WIN', destination_port: 'P_VEEAM_CLIENT', uuid: 'd4aec9fc-90a6-4de7-8a0f-df53c5f579ea', enabled: true }
+        - { description: "TODO", interface: 'opt5', protocol: 'inet', source_net: 'any', destination_net: 'any', uuid: 'e37f934b-ee4a-4eb7-a8fd-039d9f828974', enabled: true }
+        - { description: "Portainer", interface: 'opt5', protocol: 'tcp/udp', source_net: 'H_VPS_AZURE_BLUE', destination_net: 'G_H_DNSSERVER', destination_port: '443', uuid: '5fec6609-a362-4ff3-8d4b-fa721754653a', enabled: true }
+        - { description: "Portainer", interface: 'opt5', protocol: 'tcp/udp', source_net: 'H_VPS_AZURE_BLUE', destination_net: 'H_HOME', destination_port: '443', uuid: '1bdd9f83-df4d-41d8-b70f-6c4b19dede40', enabled: true }
+      ansibleguy.opnsense.rule:
+        uuid: "{{ item.uuid }}"
+        description: "{{ item.description }}"
+        interface: "{{ item.interface.split(',') }}"
+        protocol: "{{ item.protocol }}"
+        source_net: "{{ item.source_net }}"
+        destination_net: "{{ item.destination_net }}"
+        action: "{{ item.action | default('pass') }}"
+        quick: true
+        direction: 'in'
+        ip_protocol: 'inet'
+        log: true
+        state: 'present'
+        enabled: "{{ item.enabled }}"
+        reload: true
+      loop_control:
+        label: "{{ item.description }}"
+
+    - name: List current firewall rules
+      ansibleguy.opnsense.list:
+        target: 'rule'
+      register: existing_entries
+
+    - name: Display all existing firewall rules
+      ansible.builtin.debug:
+        var: existing_entries.data
+
+    - name: Configure NAT rules
+      hosts: localhost
+      gather_facts: false
+      tasks:
+        - name: Configure outbound NAT rules
+          ansibleguy.opnsense.firewall_nat_outbound:
+            match_fields: ['description']
+            state: present
+            loop:
+              - { description: 'hybrid rule', source: { network: 'lan' }, destination: { network: 'H_FRITZ' }, interface: 'wan', target: '192.168.178.3', dstport: 'P_FRITZTV', staticnatport: 1, disabled: 1 }
+              - { description: 'Nintendo Switch Static Rule Online', source: { network: '192.168.50.50/32' }, destination: { any: 1 }, interface: 'wan', staticnatport: 1 }
+
+        - name: Configure inbound NAT rules
+          ansibleguy.opnsense.firewall_nat:
+            match_fields: ['description']
+            state: present
+            loop:
+              - { protocol: 'tcp/udp', interface: 'lan', category: 'DNS', ipprotocol: 'inet', descr: 'For Firetablet: Forward all DNS Queries to internal DNS instead of Google', target: 'G_H_DNSSERVER', local-port: 53, source: { address: 'H_TABLET' }, destination: { address: '8.8.8.8', port: 53 } }
+              - { protocol: 'tcp/udp', interface: 'opt4', category: 'DNS', ipprotocol: 'inet', descr: 'For Firetablet: Forward all DNS Queries to internal DNS instead of Google', target: 'G_H_DNSSERVER', local-port: 53, source: { address: 'H_G_Google' }, destination: { address: '8.8.8.8', port: 53 } }
+              - { protocol: 'tcp/udp', interface: 'wan', category: 'WEB', ipprotocol: 'inet46', descr: 'Reverse Proxy sauna.re', associated-rule-id: 'nat_61cf06f5ee2195.03649533', target: 'H_DMZ', local-port: 'P_WEB', source: { any: 1 }, destination: { network: 'wanip', port: 'P_WEB' } }
+              - { protocol: 'tcp/udp', interface: 'wan', category: 'MAIL', ipprotocol: 'inet46', descr: 'Mailserver', associated-rule-id: 'nat_61cf070b588d03.31461471', target: 'H_DMZ', local-port: 'P_MAIL', source: { any: 1 }, destination: { network: 'wanip', port: 'P_MAIL' }, disabled: 1 }
+              - { protocol: 'tcp/udp', interface: 'opt1', ipprotocol: 'inet46', descr: 'Unifi Controller', target: 'H_NAS', local-port: 'P_WIFI', source: { address: 'H_WIFI' }, destination: { any: 1 } }
+              - { protocol: 'tcp/udp', interface: 'wan', ipprotocol: 'inet', target: 'H_WIN', local-port: 'P_VEEAM_CLIENT', source: { address: 'H_VPS_AZURE_BLUE', port: 'P_VEEAM_CLIENT' }, destination: { network: 'wanip', port: 'P_VEEAM_CLIENT' }, disabled: 1, associated-rule-id: 'nat_6464b682a92564.44197861' }
+              - { protocol: 'tcp/udp', interface: 'wan', ipprotocol: 'inet', target: 'H_WIN', local-port: 'P_VEEAM_SERVER', source: { address: 'H_VPS_AZURE_BLUE', port: 'P_VEEAM_SERVER' }, destination: { network: 'wanip', port: 'P_VEEAM_SERVER' }, disabled: 1, associated-rule-id: 'nat_6464b69eb35df4.56686806' }
+              - { protocol: 'tcp/udp', interface: 'wan', ipprotocol: 'inet', target: '192.168.50.22', local-port: 'P_FRITZTV', source: { address: 'H_FRITZ' }, destination: { any: 1 }, disabled: 1, associated-rule-id: 'nat_64ee5f52d6a0e3.40712983' }
