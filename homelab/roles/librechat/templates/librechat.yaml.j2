@@ -1,0 +1,64 @@
+# For more information, see the Configuration Guide:
+# https://docs.librechat.ai/install/configuration/custom_config.html
+
+# Configuration version (required)
+version: 1.0.3
+
+# Cache settings: Set to true to enable caching
+cache: true
+
+# Example Registration Object Structure (optional)
+registration:
+  socialLogins: ["github", "google", "discord", "openid", "facebook"]
+  # allowedDomains:
+    # - "gmail.com"
+
+# fileConfig:
+#   endpoints:
+#     assistants:
+#       fileLimit: 5
+#       fileSizeLimit: 10  # Maximum size for an individual file in MB
+#       totalSizeLimit: 50  # Maximum total size for all files in a single request in MB
+#       supportedMimeTypes:
+#         - "image/.*"
+#         - "application/pdf"
+#     openAI:
+#       disabled: true  # Disables file uploading to the OpenAI endpoint
+#     default:
+#       totalSizeLimit: 20
+#     YourCustomEndpointName:
+#       fileLimit: 2
+#       fileSizeLimit: 5
+#   serverFileSizeLimit: 100  # Global server file size limit in MB
+#   avatarSizeLimit: 2  # Limit for user avatar image size in MB
+# rateLimits:
+#   fileUploads:
+#     ipMax: 100
+#     ipWindowInMinutes: 60  # Rate limit window for file uploads per IP
+#     userMax: 50
+#     userWindowInMinutes: 60  # Rate limit window for file uploads per user
+
+# Definition of custom endpoints
+endpoints:
+  azureOpenAI:
+    titleConvo: true
+    titleModel: "gpt-4-turbo-preview"
+    plugins: true
+    groups:
+      - group: "France"
+        apiKey: "489f4cae90a74ed7953e94b6abc6dd60"
+        instanceName: "saunachatfr"
+        version: "2024-02-15-preview"
+        models:
+          gpt-3.5-turbo-1106:
+            deploymentName: "gpt-35-turbo"
+          gpt-4:
+            deploymentName: "gpt-4"
+          gpt-4-turbo-preview:
+            deploymentName: "gpt-4-turbo-preview"
+          gpt-4-32k:
+            deploymentName: "gpt-4-32k"
+          gpt-4-vision-preview:
+            deploymentName: "gpt-4-vision-preview"
+# See the Custom Configuration Guide for more information:
+# https://docs.librechat.ai/install/configuration/custom_config.html
