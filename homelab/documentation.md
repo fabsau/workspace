@@ -20,11 +20,14 @@
 Setup Repo Windows:
 1. Import secrets privatekey and vault_pass
 2. Remove Permission on vault_pass and just put read/write
-3. Export the env variables EDITOR=nano UND ANSIBLE_CONFIG=/root/vscode/workspace/homelab/ansible.cfg
-/root/vscode/workspace/homelab/ansible.cfg
+3. Export the env variables
+export EDITOR=nano
+export ANSIBLE_CONFIG=/root/vscode/workspace/homelab/ansible.cfg
+Open preview to the Side
 4. Git Info hinterlegen
 git config --global user.name "Fabio Sauna"
 git config --global user.email "github@sauna.re"
+
 
 
 ansible-galaxy collection install ansibleguy.opnsense
