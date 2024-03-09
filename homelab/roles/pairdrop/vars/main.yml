@@ -1,0 +1,22 @@
+# vars/main.yml
+docker_role_name: pairdrop
+
+services:
+  - name: pairdrop
+    image: lscr.io/linuxserver/pairdrop:latest
+    env_file:
+      - ../common.env
+      - ./pairdrop.env
+    networks:
+      - pairdrop
+    traefik:
+      - name: pairdrop
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints.pairdrop[ansible_facts['hostname']] }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 3000
+    watchtower: true

@@ -26,7 +26,7 @@ nfs_mounts:
     options: auto,nofail,noatime,nolock,intr,tcp,actimeo=1800
 
 # Ansible Settings
-ansible_home: "/mnt/c/Users/Fabio/Documents/VScode/workspace/homelab"
+ansible_home: "/root/vscode/workspace/homelab/"
 ansible_username: ansible
 ansible_uid: "1000"
 ansible_authorized_keys:
@@ -267,6 +267,8 @@ endpoints:
     dmz: "money.sauna.re"
   johanna-liebt-fabio:
     dmz: "johanna-liebt-fabio.sauna.re"
+  librechat:
+    nas: "chat.oiba.de"
   librespeed:
     nas: "speed.nas.oiba.de"
     dmz: "speed.azure.sauna.re"
@@ -297,6 +299,10 @@ endpoints:
     traefik_extra_server: true
   overseerr:
     dmz: "request.sauna.re"
+  pairdrop:
+    nas: "send.oiba.de"
+  paperless:
+    nas: "paper.oiba.de"
   photoprism:
     dmz: "photo.sauna.re"
   plausible:

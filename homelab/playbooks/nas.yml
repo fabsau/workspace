@@ -8,12 +8,14 @@
     # - name: geerlingguy.security
       # become: true
     # - geerlingguy.docker
-    # - 0docker_setup
+    - 0docker_setup
     - role: 0docker_service
       vars:
         docker_service_roles:
           # - rancher
-          # - traefik
+          - traefik
+          # - librechat
+          # - paperless
           # - tandoorrecipes
           # - prometheus
           # - changedetection
@@ -43,3 +45,4 @@
           # - uptimekuma
           # - czkawka
           # - codeserver
+          - pairdrop
