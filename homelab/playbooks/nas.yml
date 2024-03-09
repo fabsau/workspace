@@ -14,7 +14,7 @@
         docker_service_roles:
           # - rancher
           - traefik
-          # - librechat
+          - librechat
           # - paperless
           # - tandoorrecipes
           # - prometheus

@@ -46,9 +46,9 @@ endpoints:
     plugins: true
     groups:
       - group: "France"
-        apiKey: "489f4cae90a74ed7953e94b6abc6dd60"
-        instanceName: "saunachatfr"
-        version: "2024-02-15-preview"
+        apiKey: "{{ OPENAI_AZURE_API_KEY }}"
+        instanceName: "{{ LIBRECHAT_INSTANCENAME }}"
+        version: "{{ OPENAI_AZURE_API_KEY }}"
         models:
           gpt-3.5-turbo-1106:
             deploymentName: "gpt-35-turbo"

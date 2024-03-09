@@ -7,12 +7,9 @@
   module_defaults:
     group/ansibleguy.opnsense.all:
       firewall: 'router.oiba.de'
-      api_key: "pk4iE+uKEIAHfupl8/jRUNoNvA+uhb6AZZuKjORTkGzE5P6VBcwtn6NwbYaUby77AgJWSpJI2NTyGKEv"
-      api_secret: "ob6ckOpZSU3svPelp/6xRDb7wwT6ae8iaJn8aBGN4yHrfi6W8UHHpv6NQSFHc5Gmqw1nF9P8D6/xr1CS"
+      api_key: "{{ OPNSENSE_API_KEY }}"
+      api_secret: "{{ OPNSENSE_API_SECRET }}"
       ssl_verify: true
-
-      # api_key: "{{ OPNSENSE_API_KEY }}"
-      # api_secret: "{{ OPNSENSE_API_SECRET }}"
 
   tasks:
     - name: Pulling aliases
