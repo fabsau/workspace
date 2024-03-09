@@ -1,7 +1,6 @@
 **/secrets
-**/.terraform/
+**/.terraform
 **/secrets.yml
-**/terraform.tfvars
-**/terraform.tfstate
-**/terraform.tfstate.backup
-**/.terraform.lock
+**terraform.tfvars
+**terraform.tfstate
+**terraform.tfstate.backup
