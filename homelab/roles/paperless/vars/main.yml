@@ -1,0 +1,28 @@
+# vars/main.yml
+docker_role_name: pairdrop
+
+services:
+  - name: paperless-frontend
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    depends_on:
+      - paperless-mariadb
+      - paperless-redis
+      - paperless-gotenberg
+      - paperless-tika
+    env_file:
+      - ./paperless.env
+    volumes:
+      - ./data/app:/data
+    networks:
+      - paperless
+    traefik:
+      - name: paperless
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints.paperless[ansible_facts['hostname']] }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 8000
+    watchtower: true
