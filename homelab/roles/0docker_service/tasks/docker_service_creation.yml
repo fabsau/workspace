@@ -76,7 +76,7 @@
   when: role_tasks.stat.exists
 
 - name: "[{{ role_specific }}] Execute Docker Compose Up"
-  command: "docker compose -f {{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml up -d"
+  command: "docker compose -f {{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml up -d --remove-orphans"
   become: true
   register: docker_compose_up_result
   changed_when: "'Creating' in docker_compose_up_result.stdout or 'Starting' in docker_compose_up_result.stdout"
