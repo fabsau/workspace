@@ -1,0 +1,49 @@
+# vars/main.yml
+docker_role_name: urbackup
+
+services:
+  - name: urbackup
+    image: uroni/urbackup-server:latest
+    env_file:
+      - ../common.env
+    volumes:
+      - ./data/database:/var/urbackup
+      - /srv/dev-disk-by-uuid-bb234a23-a64c-47c0-a11e-5074eefad03f/Backup/Urbackup:/backups
+    ports:
+      - 55415:55415
+      - 35623:35623/udp
+    networks:
+      - urbackup
+    traefik:
+      - name: urbackup
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints.urbackup[ansible_facts['hostname']] }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 55414
+    watchtower: true
+
+  - name: backuppc
+    image: adferrand/backuppc:latest
+    # env_file:
+    #   - ../common.env
+    volumes:
+      - ./backuppc/config:/etc/backuppc
+      - ./backuppc/data://home/backuppc
+      - /srv/dev-disk-by-uuid-bb234a23-a64c-47c0-a11e-5074eefad03f/Backup/backuppc:/data/backuppc
+    networks:
+      - urbackup
+    traefik:
+      - name: backuppc
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints.backuppc[ansible_facts['hostname']] }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 8080
+    watchtower: true

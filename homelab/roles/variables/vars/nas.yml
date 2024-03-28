@@ -27,6 +27,9 @@ docker_networks:
   - paperless
   - librechat
   - pairdrop
+  - urbackup
+  - inputforms
+  - limesurvey
 
 # TRAEFIK
 traefik_oauth_address: auth.sauna.re

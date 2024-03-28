@@ -265,6 +265,8 @@ endpoints:
     traefik_extra_server: true
   ihatemoney:
     dmz: "money.sauna.re"
+  inputforms:
+    nas: "forms.oiba.de"
   johanna-liebt-fabio:
     dmz: "johanna-liebt-fabio.sauna.re"
   librechat:
@@ -282,6 +284,9 @@ endpoints:
       metrics_path: "/probe"
       params:
         script: "librespeed"
+  limesurvey:
+    nas: "survey.oiba.de"
+    dmz: "survey.sauna.re"
   linkhub:
     dmz: "portal.sauna.re"
   nodeexporter:
@@ -409,6 +414,10 @@ endpoints:
       basic_auth:
         username: "{{ PROMETHEUS_UPTIMEKUMA_USER }}"
         password: "{{ PROMETHEUS_UPTIMEKUMA_PASSWORD }}"
+  urbackup:
+    nas: "backup.oiba.de"
+  backuppc:
+    nas: "backup2.oiba.de"
   vacuum:
     nas: "vacuum.oiba.de"
     uptimekuma_monitor: false

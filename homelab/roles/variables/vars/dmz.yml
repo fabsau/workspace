@@ -29,6 +29,7 @@ docker_networks:
   - headscale
   - johanna
   - linkstack
+  - limesurvey
 
 # TRAEFIK
 traefik_host: proxy.sauna.re
