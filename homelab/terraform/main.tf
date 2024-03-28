@@ -47,6 +47,7 @@ resource "proxmox_vm_qemu" "bak" {
     }
   }
 
+
   efidisk {
     efitype = "4m"
     storage = "local-lvm"
@@ -60,6 +61,65 @@ resource "proxmox_vm_qemu" "bak" {
   }
 
 }
+
+
+resource "proxmox_vm_qemu" "opn2" {
+  # VM Settings
+  name              = "OPN2"
+  # vmid              = 105
+  target_node       = "prox"
+  bios              = "ovmf"
+  machine           = "q35"
+  vm_state          = "stopped"
+  full_clone        = false # Buggy program -.-
+
+  # Boot
+  onboot            = true
+  automatic_reboot  = true
+  startup           = "order=7"
+  iso               = "local:iso/proxmox-backup-server_3.0-1.iso"
+
+  # OS and Qemu Agent
+  qemu_os           = "l26"
+  os_type           = "6.x - 2.6 Kernel"
+  agent             = 1
+
+  # CPU
+  sockets           = 1
+  cores             = 2
+  cpu               = "x86-64-v3"
+  
+  # RAM
+  memory            = 4096
+
+  # Disks
+  scsihw = "virtio-scsi-pci"
+  disks {
+    scsi {
+        scsi0 {
+            disk {
+                size = 32
+                storage = "local-lvm"
+            }
+        }
+    }
+  }
+
+
+  efidisk {
+    efitype = "4m"
+    storage = "local-lvm"
+  }
+
+  network {
+    model     = "virtio"
+    bridge    = "vmbr0"
+    # macaddr   = "00:0C:29:7B:40:A8"
+    # tag       = 100
+  }
+
+}
+
 
 resource "proxmox_vm_qemu" "home" {
   # VM Settings
