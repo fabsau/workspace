@@ -47,7 +47,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints.traefik[ansible_facts['hostname']] }}`)"
+        rule: "Host(`{{ endpoints[docker_role_name][ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service: api@internal
@@ -56,7 +56,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints.traefik[ansible_facts['hostname']] }}`) && Path(`/metrics`)"
+        rule: "Host(`{{ endpoints[docker_role_name][ansible_facts['hostname']] }}`) && Path(`/metrics`)"
         middlewares: private-chain@file
         insecuretransport: false
         service: prometheus@internal

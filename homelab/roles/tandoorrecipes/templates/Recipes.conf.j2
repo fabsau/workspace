@@ -1,7 +1,7 @@
 server {
   listen 80;
   listen [::]:80 ipv6only=on;
-  server_name "{{ endpoints.tandoorrecipes[ansible_facts['hostname']] }}";
+  server_name "{{ endpoints[docker_role_name][ansible_facts['hostname']] }}";
 
   client_max_body_size 128M;
 
