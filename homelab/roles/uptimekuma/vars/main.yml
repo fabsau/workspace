@@ -16,7 +16,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[docker_role_name][ansible_facts['hostname']] }}`)"
+        rule: "Host(`{{ endpoints[services[0].name][ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 3001
@@ -25,7 +25,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[docker_role_name][ansible_facts['hostname']] }}`) && PathPrefix(`/api/push/`)"
+        rule: "Host(`{{ endpoints[services[0].name][ansible_facts['hostname']] }}`) && PathPrefix(`/api/push/`)"
         middlewares: public-chain@file
         insecuretransport: false
         service_port: 3001

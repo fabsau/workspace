@@ -249,6 +249,8 @@ endpoints:
     nas: "files.oiba.de"
   demo-dhbwgpt:
     dmz: "demo-dhbwgpt.sauna.re"
+  dockge:
+    nas: "dockge.oiba.de"
   filebrowser:
     dmz: "files.sauna.re"
   fritzbox:
