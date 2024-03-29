@@ -3,46 +3,49 @@
 - hosts: nas
   roles:
     - variables
-    # - 0host_user_management
-    # - robertdebock.logrotate
-    # - name: geerlingguy.security
-      # become: true
-    # - geerlingguy.docker
+    - 0host_user_management
+    - robertdebock.logrotate
+    - name: geerlingguy.security
+      become: true
+    - geerlingguy.docker
     - 0docker_setup
     - role: 0docker_service
       vars:
         docker_service_roles:
-          # - rancher
+          - rancher
           - traefik
+          - urbackup
           - librechat
-          # - paperless
-          # - tandoorrecipes
-          # - prometheus
-          # - changedetection
-          # - watchtower
-          # # - cronjob
-          # - portainer
-          # - unifi
-          # - librespeed
-          # - dockge
-          # - adguardsync
-          # - certdumper
-          # - nodeexporter
-          # - alertmanager
-          # - grafana
-          # - cadvisor
-          # - proxmoxexporter
-          # - adguardexporter
-          # - unifiexporter
-          # - plausibleexporter
-          # - librespeedexporter
-          # - plexexporter
-          # - tautulliexporter
-          # - qbittorrentexporter
-          # - exportarrexporter
-          # - valetudo
-          # - pyload
-          # - uptimekuma
-          # - czkawka
-          # - codeserver
+          - limesurvey
+          - inputforms
+          - paperless
+          - tandoorrecipes
+          - prometheus
+          - changedetection
+          - watchtower
+          # - cronjob
+          - portainer
+          - unifi
+          - librespeed
+          - dockge
+          - adguardsync
+          - certdumper
+          - nodeexporter
+          - alertmanager
+          - grafana
+          - cadvisor
+          - proxmoxexporter
+          - adguardexporter
+          - unifiexporter
+          - plausibleexporter
+          - librespeedexporter
+          - plexexporter
+          - tautulliexporter
+          - qbittorrentexporter
+          - exportarrexporter
+          - valetudo
+          - pyload
+          - uptimekuma
+          - czkawka
+          - codeserver
           - pairdrop

@@ -1,11 +1,12 @@
 - hosts: dmz
   roles:
     - variables
-    # - 0docker_setup
+    - 0docker_setup
     - role: 0docker_service
       vars:
         docker_service_roles:
+          - limesurvey
           - traefik
           - watchtower
-          # - cronjob
+          - cronjob
           - portainer_agent
