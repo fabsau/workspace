@@ -8,18 +8,19 @@ variable "lxc_root_password" {
 resource "proxmox_vm_qemu" "bak" {
   # VM Settings
   name              = "BAK"
-  vmid              = 105
+  vmid              = 110
   target_node       = "prox"
   bios              = "ovmf"
   machine           = "q35"
   vm_state          = "running"
+  clone             = "BAKTEMPLATE"
   full_clone        = false # Buggy program -.-
 
   # Boot
   onboot            = true
   automatic_reboot  = true
   startup           = "order=7"
-  iso               = "local:iso/proxmox-backup-server_3.0-1.iso"
+  # iso               = "local:iso/proxmox-backup-server_3.0-1.iso"
 
   # OS and Qemu Agent
   qemu_os           = "l26"
