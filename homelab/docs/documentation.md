@@ -106,3 +106,5 @@ PBS_ENCRYPTION_PASSWORD=Bitwarden Encryption Key from earlier creation
 crontab -e
 	30 22 * * * proxmox-backup-client backup azure.img:/dev/sda --repository agent@pbs@192.168.100.4:8007:NFS && curl -fsS -m 10 --retry 5 -o /dev/null https://uptime.oiba.de/api/push/hPfSvgJlko?status=up&msg=OK&ping=
 
+Tokei command:
+.\tokei.exe "C:\Users\Fabio\Documents\VScode\workspace" --exclude **/*.md --exclude **/*.psd --exclude **/geerlingguy.docker/**/* --exclude **/geerlingguy.security/**/* --exclude **/robertdebock.logrotate/**/* --exclude **/githubixx.ansible_role_wireguard/**/* --exclude **/lucasheld.uptime_kuma/**/*
