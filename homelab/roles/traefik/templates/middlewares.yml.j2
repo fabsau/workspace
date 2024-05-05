@@ -69,7 +69,7 @@ http:
         permanent: true
 
     whitelist:
-      ipwhitelist:
+      IPAllowList:
         sourceRange: 
 {% for ip in traefik_whitelist_ips %}
           - "{{ ip }}"
