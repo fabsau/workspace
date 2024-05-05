@@ -18,9 +18,6 @@ entryPoints:
     address: ":{{ port.published }}{% if port.protocol == 'udp' %}/udp{% endif %}"
 {% endfor %}
 
-experimental:
-  http3: true
-
 api:
   dashboard: true
 
