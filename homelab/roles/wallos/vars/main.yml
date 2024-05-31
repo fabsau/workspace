@@ -1,0 +1,22 @@
+# vars/main.yml
+
+services:
+  - name: wallos
+    image: bellamy/wallos:latest
+    env_file:
+      - ../common.env
+    networks:
+      - wallos
+    volumes:
+      - ./data/db:/var/www/html/db
+      - ./data/logos:/var/www/html/images/uploads/logos
+    traefik: 
+      - name: wallos
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        insecuretransport: false
+        service_port: 80
+    watchtower: true
