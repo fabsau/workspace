@@ -119,12 +119,12 @@ services:
     labels:
 {% if service.traefik is defined %}
 {% for traefik in service.traefik %}
-{% set hostname = endpoints[role_specific][ansible_facts['hostname']] %}
-{% set traefik_rule = "Host(`" ~ hostname ~ "`)" %}
+{% set default_rule = "Host(`" ~ endpoints[role_specific][ansible_facts['hostname']] ~ "`)" %}
+{% set traefik_rule = traefik.rule | default(default_rule) %}
 {% if traefik.path is defined and traefik.path %}
 {% set traefik_rule = traefik_rule ~ " && PathPrefix(`" ~ traefik.path ~ "`)" %}
 {% endif %}
-{% if traefik.http_redirection is true %}
+{% if traefik.http_redirection is not false %}
       - "traefik.http.routers.{{ traefik.name }}.entrypoints=http"
       - "traefik.http.routers.{{ traefik.name }}.rule={{ traefik_rule }}"
       - "traefik.http.routers.{{ traefik.name }}.middlewares=https-redirect@file"
@@ -132,7 +132,7 @@ services:
 {% endif %}
       - "traefik.{{ traefik.protocol }}.routers.{{ traefik.name }}-{{ traefik.entrypoint }}.entrypoints={{ traefik.entrypoint }}"
       - "traefik.{{ traefik.protocol }}.routers.{{ traefik.name }}-{{ traefik.entrypoint }}.rule={{ traefik_rule }}"
-{% if traefik.enable_tls is true %}
+{% if traefik.enable_tls is not false %}
       - "traefik.{{ traefik.protocol }}.routers.{{ traefik.name }}-{{ traefik.entrypoint }}.tls.certresolver=acme"
 {% endif %}
 {% if traefik.middlewares is defined and traefik.middlewares %}
