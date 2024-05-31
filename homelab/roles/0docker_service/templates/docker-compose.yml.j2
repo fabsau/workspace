@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
 
 {% for service in services %}
@@ -120,19 +118,20 @@ services:
 {% endif %}
     labels:
 {% if service.traefik is defined %}
-      - "traefik.enable=true"
-      - "traefik.docker.network={{ service.networks[0] }}"
 {% for traefik in service.traefik %}
+{% set hostname = endpoints[role_specific][ansible_facts['hostname']] %}
+{% set traefik_rule = "Host(`" ~ hostname ~ "`)" %}
+{% if traefik.path is defined and traefik.path %}
+{% set traefik_rule = traefik_rule ~ " && PathPrefix(`" ~ traefik.path ~ "`)" %}
+{% endif %}
 {% if traefik.http_redirection is true %}
       - "traefik.http.routers.{{ traefik.name }}.entrypoints=http"
-      - "traefik.http.routers.{{ traefik.name }}.rule={{ traefik.rule }}"
+      - "traefik.http.routers.{{ traefik.name }}.rule={{ traefik_rule }}"
       - "traefik.http.routers.{{ traefik.name }}.middlewares=https-redirect@file"
       - "traefik.http.routers.{{ traefik.name }}.service={{ traefik.service | default(traefik.name ~ '-' ~ traefik.entrypoint) }}"
 {% endif %}
       - "traefik.{{ traefik.protocol }}.routers.{{ traefik.name }}-{{ traefik.entrypoint }}.entrypoints={{ traefik.entrypoint }}"
-{% if traefik.rule is defined and traefik.rule %}
-      - "traefik.{{ traefik.protocol }}.routers.{{ traefik.name }}-{{ traefik.entrypoint }}.rule={{ traefik.rule }}"
-{% endif %}
+      - "traefik.{{ traefik.protocol }}.routers.{{ traefik.name }}-{{ traefik.entrypoint }}.rule={{ traefik_rule }}"
 {% if traefik.enable_tls is true %}
       - "traefik.{{ traefik.protocol }}.routers.{{ traefik.name }}-{{ traefik.entrypoint }}.tls.certresolver=acme"
 {% endif %}

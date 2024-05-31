@@ -26,7 +26,7 @@ nfs_mounts:
     options: auto,nofail,noatime,nolock,intr,tcp,actimeo=1800
 
 # Ansible Settings
-ansible_home: "/root/vscode/workspace/homelab/"
+ansible_home: "/root/vscode/workspace/homelab"
 ansible_username: ansible
 ansible_uid: "1000"
 ansible_authorized_keys:
@@ -429,6 +429,8 @@ endpoints:
     uptimekuma_monitor: false
   vscode:
     nas: "code.oiba.de"
+  wallos:
+    nas: "wallos.oiba.de"
   watchtower:
     nas: "watchtower.oiba.de"
     dmz: "watchtower.azure.sauna.re"

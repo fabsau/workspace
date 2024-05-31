@@ -2,14 +2,14 @@
 # https://docs.librechat.ai/install/configuration/custom_config.html
 
 # Configuration version (required)
-version: 1.0.3
+version: 1.1.2
 
 # Cache settings: Set to true to enable caching
 cache: true
 
 # Example Registration Object Structure (optional)
-registration:
-  socialLogins: ["github", "google", "discord", "openid", "facebook"]
+{# registration: #}
+  {# socialLogins: ["github", "google", "discord", "openid", "facebook"] #}
   # allowedDomains:
     # - "gmail.com"
 
@@ -42,23 +42,34 @@ registration:
 endpoints:
   azureOpenAI:
     titleConvo: true
-    titleModel: "gpt-4-1106-preview"
+    titleModel: "gpt-3.5-turbo"
+    assistants: true
     plugins: true
     groups:
-      - group: "France"
-        apiKey: "{{ OPENAI_AZURE_API_KEY }}"
-        instanceName: "{{ LIBRECHAT_INSTANCENAME }}"
+      - group: "EastUS"
+        apiKey: "{{ OPENAI_AZURE_API_KEY_2 }}"
+        instanceName: "{{ OPENAI_AZURE_INSTANCENAME_2 }}"
         version: "{{ OPENAI_AZURE_API_VERSION }}"
         models:
-          gpt-3.5-turbo-1106:
-            deploymentName: "gpt-35-turbo"
+          gpt-4o:
+            deploymentName: "gpt-4o"
+      - group: "Sweden"
+        apiKey: "{{ OPENAI_AZURE_API_KEY_1 }}"
+        instanceName: "{{ OPENAI_AZURE_INSTANCENAME_1 }}"
+        version: "{{ OPENAI_AZURE_API_VERSION }}"
+        assistants: true
+        models:
+          gpt-4-turbo:
+            deploymentName: "gpt-4-turbo"
           gpt-4:
             deploymentName: "gpt-4"
-          gpt-4-1106-preview:
-            deploymentName: "gpt-4-1106-preview"
           gpt-4-32k:
             deploymentName: "gpt-4-32k"
           gpt-4-vision-preview:
-            deploymentName: "gpt-4-vision-preview"
+            deploymentName: "gpt-4-vision"
+          gpt-3.5-turbo:
+            deploymentName: "gpt-35-turbo"
+
+
 # See the Custom Configuration Guide for more information:
 # https://docs.librechat.ai/install/configuration/custom_config.html

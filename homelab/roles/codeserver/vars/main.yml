@@ -1,5 +1,4 @@
 # vars/main.yml
-docker_role_name: codeserver
 
 services:
   - name: codeserver
@@ -19,7 +18,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[services[0].name][ansible_facts['hostname']] }}`)"
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 8443

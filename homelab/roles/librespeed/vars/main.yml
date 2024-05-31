@@ -1,5 +1,4 @@
 # vars/main.yml
-docker_role_name: librespeed
 
 services:
   - name: librespeed
@@ -18,7 +17,7 @@ services:
         entrypoint: http
         http_redirection: false
         enable_tls: false
-        rule: "Host(`{{ endpoints[services[0].name][ansible_facts['hostname']] }}`)"
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
         insecuretransport: false
         service_port: 80
       - name: librespeed2
@@ -26,7 +25,7 @@ services:
         entrypoint: https
         http_redirection: false
         enable_tls: true
-        rule: "Host(`{{ endpoints[services[0].name][ansible_facts['hostname']] }}`)"
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
         middlewares: public-chain@file
         insecuretransport: false
         service_port: 80

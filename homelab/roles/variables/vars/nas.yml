@@ -30,6 +30,7 @@ docker_networks:
   - urbackup
   - inputforms
   - limesurvey
+  - wallos
 
 # TRAEFIK
 traefik_oauth_address: auth.sauna.re

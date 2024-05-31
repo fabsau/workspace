@@ -1,5 +1,4 @@
 # vars/main.yml
-docker_role_name: certdumper
 
 services:
   - name: certdumper

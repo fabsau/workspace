@@ -1,12 +1,10 @@
-# /config/workspace/homelab/roles/0docker_service/tasks/docker_service_creation.yml
-
 - name: "[{{ role_specific }}] Include role-specific vars"
   include_vars: "{{ ansible_home }}/roles/{{ role_specific }}/vars/main.yml"
 
 - name: "[{{ role_specific }}] Create role directory"
   become: true
   file:
-    path: "{{ docker_base_path }}/{{ docker_role_name }}"
+    path: "{{ docker_base_path }}/{{ role_specific }}"
     state: directory
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
@@ -15,7 +13,7 @@
 - name: "[{{ role_specific }}] Template Docker Compose file"
   template:
     src: "{{ ansible_home }}/roles/0docker_service/templates/docker-compose.yml.j2"
-    dest: "{{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml"
+    dest: "{{ docker_base_path }}/{{ role_specific }}/docker-compose.yml"
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
     mode: "{{ default_file_permission_mode }}"
@@ -23,7 +21,7 @@
 
 - name: "[{{ role_specific }}] Find all templates"
   find:
-    paths: "{{ ansible_home }}/roles/{{ docker_role_name }}/templates"
+    paths: "{{ ansible_home }}/roles/{{ role_specific }}/templates"
     patterns: "*.j2"
   delegate_to: localhost
   register: template_files
@@ -33,20 +31,32 @@
     env_files: "{{ template_files.files | selectattr('path', 'search', '.env.j2$') | list }}"
     config_files: "{{ template_files.files | selectattr('path', 'search', '.j2$') | rejectattr('path', 'search', '.env.j2$') | list }}"
 
+- name: "[{{ role_specific }}] Create directory for env files"
+  file:
+    path: "{{ docker_base_path }}/{{ role_specific }}"
+    state: directory
+    owner: "{{ common_username }}"
+    group: "{{ common_group_gid }}"
+    mode: "{{ default_file_permission_mode }}"
+  become: true
+  when: env_files | length > 0
+
 - name: "[{{ role_specific }}] Template env files"
   template:
-    src: "{{ item.path }}"
-    dest: "{{ docker_base_path }}/{{ docker_role_name }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
+    src: "{{ env_item.path }}"
+    dest: "{{ docker_base_path }}/{{ role_specific }}/{{ env_item.path | basename | regex_replace('\\.j2$', '') }}"
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
     mode: "{{ default_file_permission_mode }}"
   become: true
   loop: "{{ env_files }}"
+  loop_control:
+    loop_var: env_item
   when: env_files | length > 0
 
 - name: "[{{ role_specific }}] Create config directory"
   file:
-    path: "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}"
+    path: "{{ docker_base_path }}/{{ role_specific }}/{{ docker_service_volume | default('config') }}"
     state: directory
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
@@ -56,13 +66,15 @@
 
 - name: "[{{ role_specific }}] Template config files"
   template:
-    src: "{{ item.path }}"
-    dest: "{{ docker_base_path }}/{{ docker_role_name }}/{{ docker_service_volume | default('config') }}/{{ item.path | basename | regex_replace('\\.j2$', '') }}"
+    src: "{{ config_item.path }}"
+    dest: "{{ docker_base_path }}/{{ role_specific }}/{{ docker_service_volume | default('config') }}/{{ config_item.path | basename | regex_replace('\\.j2$', '') }}"
     owner: "{{ common_username }}"
     group: "{{ common_group_gid }}"
     mode: "{{ default_file_permission_mode }}"
   become: true
   loop: "{{ config_files }}"
+  loop_control:
+    loop_var: config_item
   when: config_files | length > 0
 
 - name: "[{{ role_specific }}] Check if role-specific tasks exist"
@@ -76,13 +88,13 @@
   when: role_tasks.stat.exists
 
 - name: "[{{ role_specific }}] Execute Docker Compose Up"
-  command: "docker compose -f {{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml up -d --remove-orphans"
+  command: "docker compose -f {{ docker_base_path }}/{{ role_specific }}/docker-compose.yml up -d --remove-orphans"
   become: true
   register: docker_compose_up_result
   changed_when: "'Creating' in docker_compose_up_result.stdout or 'Starting' in docker_compose_up_result.stdout"
 
 - name: "[{{ role_specific }}] Ensure services are running"
-  command: "docker compose -f {{ docker_base_path }}/{{ docker_role_name }}/docker-compose.yml ps"
+  command: "docker compose -f {{ docker_base_path }}/{{ role_specific }}/docker-compose.yml ps"
   become: true
   register: docker_compose_ps_result
   changed_when: false

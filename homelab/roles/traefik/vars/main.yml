@@ -1,10 +1,5 @@
 # vars/main.yml
 
-docker_role_name: traefik
-rename_files:
-  - src: config.yml
-    dest: traefik.yml
-
 # Default ports
 traefik_default_ports:
   - target: 80
@@ -47,7 +42,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[services[0].name][ansible_facts['hostname']] }}`)"
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service: api@internal
@@ -56,7 +51,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[services[0].name][ansible_facts['hostname']] }}`) && Path(`/metrics`)"
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`) && Path(`/metrics`)"
         middlewares: private-chain@file
         insecuretransport: false
         service: prometheus@internal

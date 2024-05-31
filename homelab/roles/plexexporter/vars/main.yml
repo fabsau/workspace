@@ -1,5 +1,4 @@
 # vars/main.yml
-docker_role_name: plexexporter
 
 services:
   - name: plexexporter
@@ -14,7 +13,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[docker_role_name][ansible_facts['hostname']][0] }}`)"
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']][0] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9594
@@ -31,7 +30,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[docker_role_name][ansible_facts['hostname']][1] }}`)"
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']][1] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9000
@@ -48,7 +47,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[docker_role_name][ansible_facts['hostname']][2] }}`)"
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']][2] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9594

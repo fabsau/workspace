@@ -1,5 +1,4 @@
 # vars/main.yml
-docker_role_name: librechat
 
 services:
   - name: librechat
@@ -7,6 +6,7 @@ services:
     depends_on:
       - librechat-mongodb
       - librechat-meilisearch
+      - librechat-rag_api
     env_file:
       - ./librechat.env
     volumes:
@@ -21,7 +21,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[services[0].name][ansible_facts['hostname']] }}`)"
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 3080
@@ -39,11 +39,31 @@ services:
     watchtower: true
 
   - name: librechat-meilisearch
-    image: getmeili/meilisearch:latest
+    image: getmeili/meilisearch:v1.6.2
     env_file:
       - ./librechat.env
     volumes:
       - ./data/meilisearch:/meili_data
+    networks:
+      - librechat
+    watchtower: true
+
+  - name: librechat-rag_api
+    image: ghcr.io/danny-avila/librechat-rag-api-dev:latest
+    depends_on:
+      - librechat-vectordb
+    env_file:
+      - ./librechat.env
+    networks:
+      - librechat
+    watchtower: true
+
+  - name: librechat-vectordb
+    image: ankane/pgvector:latest
+    env_file:
+      - ./librechat.env
+    volumes:
+      - ./data/vectordb:/var/lib/postgresql/data
     networks:
       - librechat
     watchtower: true

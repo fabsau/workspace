@@ -1,5 +1,4 @@
 # vars/main.yml
-docker_role_name: exportarrexporter
 
 services:
   - name: sonarrexporter
@@ -15,7 +14,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[services[0].name][ansible_facts['hostname']] }}`)"
+        rule: "Host(`{{ endpoints.sonarrexporter[ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9707
@@ -33,7 +32,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[services[1].name][ansible_facts['hostname']] }}`)"
+        rule: "Host(`{{ endpoints.radarrexporter[ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9707
@@ -51,7 +50,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[services[2].name][ansible_facts['hostname']] }}`)"
+        rule: "Host(`{{ endpoints.bazarrexporter[ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9707
@@ -69,7 +68,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[services[3].name][ansible_facts['hostname']] }}`)"
+        rule: "Host(`{{ endpoints.prowlarrexporter[ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9707
@@ -87,7 +86,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints[services[4].name][ansible_facts['hostname']] }}`)"
+        rule: "Host(`{{ endpoints.sabnzbdexporter[ansible_facts['hostname']] }}`)"
         middlewares: private-chain@file
         insecuretransport: false
         service_port: 9707
