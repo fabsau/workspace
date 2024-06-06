@@ -2,7 +2,7 @@
 
 services:
   - name: changedetection
-    image: dgtlmoon/changedetection.io:latest
+    image: lscr.io/linuxserver/changedetection.io:latest
     env_file:
       - ../common.env
       - ./changedetection.env

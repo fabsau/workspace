@@ -25,7 +25,7 @@ services:
     watchtower: true
 
   - name: limesurvey-mariadb
-    image: linuxserver/mariadb:amd64-latest	
+    image: lscr.io/linuxserver/mariadb:alpine	
     env_file:
       - ../common.env
       - ./limesurvey-mariadb.env

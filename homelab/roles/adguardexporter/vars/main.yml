@@ -1,7 +1,7 @@
 # vars/main.yml
 services:
   - name: adguardexporter
-    image: ebrianne/adguard-exporter:latest
+    image: csfreak/adguard-exporter:latest
     env_file:
       - ./adguardexporter.env
     networks:

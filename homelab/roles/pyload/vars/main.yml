@@ -1,7 +1,7 @@
 # vars/main.yml
 services:
   - name: pyload
-    image: linuxserver/pyload-ng:latest
+    image: lscr.io/linuxserver/pyload-ng:latest
     env_file:
       - ../common.env
     volumes:
