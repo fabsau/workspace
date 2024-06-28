@@ -1,0 +1,42 @@
+# vars/main.yml
+
+services:
+  - name: authelia
+    image: authelia/authelia:latest
+    env_file:
+      - ./authelia.env
+    networks:
+      - authelia
+    volumes:
+      - ./config:/config
+      - ./data/db:/data
+    traefik: 
+      - name: authelia
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 9959
+      - name: authelia_metrics
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`) && PathPrefix(`/metrics`)"
+        middlewares: secure-chain@file
+        insecuretransport: false
+        service_port: 9959
+    watchtower: true
+
+  - name: authelia_redis
+    image: redis:alpine
+    env_file:
+      - ../common.env
+    networks:
+      - authelia
+    volumes:
+      - ./data/redis:/data
+    watchtower: true

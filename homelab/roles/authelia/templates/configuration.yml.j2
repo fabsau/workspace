@@ -1,0 +1,106 @@
+theme: 'dark'
+log:
+  level: 'info'
+telemetry:
+  metrics:
+    enabled: true
+    address: 'tcp://:9959/metrics'
+totp:
+  disable: false
+  issuer: {{ endpoints[role_specific][ansible_facts['hostname']] }}
+webauthn:
+  disable: true
+identity_validation:
+  reset_password:
+    jwt_secret: {{ AUTHELIA_JWT_SECRET }}
+authentication_backend:
+  password_reset:
+    disable: false
+  file:
+    path: '/config/users_database.yml'
+    watch: true
+    password:
+      algorithm: 'argon2'
+      argon2:
+        variant: 'argon2id'
+        iterations: 1
+        memory: 1024
+        parallelism: 8
+        key_length: 32
+        salt_length: 16
+password_policy:
+  standard:
+    enabled: false
+    min_length: 8
+    max_length: 0
+    require_uppercase: true
+    require_lowercase: true
+    require_number: true
+    require_special: true
+  zxcvbn:
+    enabled: false
+    min_score: 3
+privacy_policy:
+  enabled: false
+  require_user_acceptance: false
+  policy_url: ''
+access_control:
+  default_policy: deny
+  networks:
+    - name: private
+      networks:
+        - '10.0.0.0/8'
+        - '172.16.0.0/12'
+        - '192.168.0.0/16'
+  rules:
+    - domain: '*.sauna.re'
+      policy: bypass
+      networks: 'private'
+    - domain: '*.oiba.de'
+      policy: bypass
+      networks: 'private'
+    - domain: '*.sauna.re'
+      policy: two_factor
+    - domain: '*.oiba.de'
+      policy: two_factor
+session:
+  name: authelia_session
+  domain: sauna.re
+  same_site: lax
+  secret: {{ AUTHELIA_SESSION_SECRET }}
+  expiration: 1h
+  inactivity: 5m
+  remember_me_duration: 1M
+  redis:
+    host: authelia_redis
+    port: 6379
+storage:
+  encryption_key: {{ AUTHELIA_ENCRYPTION_KEY }}
+  local:
+    path: '/data/db.sqlite3'
+notifier:
+  disable_startup_check: true
+  smtp:
+    address: 'smtp://{{ AUTHELIA_SMTP_HOST }}:587'
+    username: {{ AUTHELIA_SMTP_USERNAME }}
+    password: {{ AUTHELIA_SMTP_PASSWORD }}
+    sender: 'Authelia <authelia@sauna.re>'
+identity_providers:
+  oidc:
+    hmac_secret: {{ AUTHELIA_HMAC_SECRET }}
+    issuer_private_key: |
+        {{ AUTHELIA_ISSUER_PRIVATE_KEY | indent(8) }}
+    clients:
+      - client_id: 'portainer'
+        client_name: 'Portainer'
+        client_secret: {{ AUTHELIA_PORTAINER_SECRET }} 
+        public: false
+        authorization_policy: 'two_factor'
+        redirect_uris:
+          - 'https://{{ endpoints.portainer.nas }}'
+        scopes:
+          - 'openid'
+          - 'profile'
+          - 'groups'
+          - 'email'
+        userinfo_signed_response_alg: 'none'
