@@ -154,7 +154,9 @@ services:
 {% endif %}
 {% endfor %}
 {% endif %}
-
+{% if service.watchtower %}
+      - "com.centurylinklabs.watchtower.enable=true"
+{% endif %}
 {% endfor %}
 
 
