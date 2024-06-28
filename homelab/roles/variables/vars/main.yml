@@ -221,6 +221,8 @@ endpoints:
     nas: "alert.oiba.de"
     dmz: "alert.sauna.re"
     prometheus_exporter: true
+  authelia:
+    dmz: "auth.sauna.re"
   bazarrexporter:
     nas: "bazarrexporter.oiba.de"
   bazarr:
