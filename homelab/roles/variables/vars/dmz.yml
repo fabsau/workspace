@@ -70,7 +70,7 @@ traefik_extra_servers:
     entrypoint: https
     middleware: public-chain@file
     url: home.sauna.re
-    backend_url: https://192.168.150.2/
+    backend_url: https://home.sauna.re
     insecuretransport: false
 
 # traefik_additional_ports:
