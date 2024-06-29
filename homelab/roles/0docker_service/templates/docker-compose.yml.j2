@@ -160,18 +160,6 @@ services:
 {% endif %}
 {% endfor %}
 {% endif %}
-{% if service.name == 'traefik' %}
-{% set domain_index = 0 %}
-{% for domain in traefik_domains %}
-      - "traefik.http.routers.traefik.tls.domains[{{ domain_index }}].main={{ domain.main }}"
-{% set san_index = 0 %}
-{% for san in domain.sans %}
-      - "traefik.http.routers.traefik.tls.domains[{{ domain_index }}].sans[{{ san_index }}]={{ san }}"
-{% set san_index = san_index + 1 %}
-{% endfor %}
-{% set domain_index = domain_index + 1 %}
-{% endfor %}
-{% endif %}
 {% if service.watchtower %}
       - "com.centurylinklabs.watchtower.enable=true"
 {% endif %}

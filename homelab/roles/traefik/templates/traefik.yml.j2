@@ -77,6 +77,16 @@ tls:
 #https://golang.org/pkg/crypto/tls/#pkg-constants
 #https://wiki.mozilla.org/Security/Server_Side_TLS#Modern_compatibility
 
+  stores:
+    default:
+      defaultGeneratedCert:
+        resolver: acme
+        domain:
+          main: "sauna.re"
+          sans:
+            - "*.sauna.re"
+            - "*.azure.sauna.re"
+
 metrics:
   prometheus:
     addEntryPointsLabels: true

@@ -57,7 +57,6 @@ services:
         insecuretransport: false
         service: prometheus@internal
     watchtower: true
-    traefik_domains: "{{ traefik_domains }}"
 
   - name: dockerproxy
     image: wollomatic/socket-proxy:1
