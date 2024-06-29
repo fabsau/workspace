@@ -88,3 +88,9 @@ http:
         tls:
         insecureSkipVerify: true
 {% endif %}
+
+    redirectSaunaflix:
+      redirectRegex:
+        regex: "https://status\\.sauna\\.re/$"
+        replacement: "https://status.sauna.re/status/saunaflix"
+        permanent: true
