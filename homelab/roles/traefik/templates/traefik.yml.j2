@@ -81,11 +81,14 @@ tls:
     default:
       defaultGeneratedCert:
         resolver: acme
+{% for domain in traefik_domains %}
         domain:
-          main: "sauna.re"
+          main: "{{ domain.main }}"
           sans:
-            - "*.sauna.re"
-            - "*.azure.sauna.re"
+{% for san in domain.sans %}
+            - "{{ san }}"
+{% endfor %}
+{% endfor %}
 
 metrics:
   prometheus:
