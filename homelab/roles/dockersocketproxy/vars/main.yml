@@ -1,9 +1,9 @@
 # vars/main.yml
 services:
-  - name: dockerapi
+  - name: dockersocketproxy
     image: tecnativa/docker-socket-proxy:latest
     env_file:
-      - ./dockerapi.env
+      - ./dockersocketproxy.env
     ports:
       - "{{ hostvars[inventory_hostname].ansible_host }}:2375:2375"
     volumes:
