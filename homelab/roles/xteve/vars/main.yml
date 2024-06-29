@@ -1,0 +1,25 @@
+# vars/main.yml
+
+services:
+  - name: xteve-de
+    image: fyb3roptik/threadfin:latest
+    env_file:
+      - ../common.env
+    networks:
+      - xteve
+    ports:
+      - 34400:34400
+    volumes:
+      - ./data/de:/home/threadfin/conf
+      - /tmp/xteve/de:/tmp/threadfin
+    traefik: 
+      - name: xteve-de
+        protocol: http
+        entrypoint: https
+        http_redirection: false
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 34400
+    watchtower: true
