@@ -36,7 +36,7 @@ docker_networks:
 
 # TRAEFIK
 traefik_host: proxy.sauna.re
-traefik_oauth_address: https://auth.sauna.re/api/verify
+traefik_oauth_address: auth.sauna.re/api/verify
 traefik_ca_productive: true
 traefik_oauth_insecureSkipVerify: false
 
