@@ -1,0 +1,17 @@
+# vars/main.yml
+
+services:
+  - name: portainer_agent
+    image: portainer/agent:alpine
+    env_file:
+      - ./portainer.env
+      - ../common.env
+    networks:
+      - portainer
+    ports:
+      - "{{ hostvars[inventory_hostname].ansible_host }}:9001:9001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+      - ./data:/data 
+    watchtower: true
