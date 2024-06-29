@@ -125,7 +125,9 @@ services:
     labels:
 {% if service.traefik is defined %}
       - "traefik.enable=true"
+{% if service.networks is defined and service.networks %}
       - "traefik.docker.network={{ service.networks[0] }}"
+{% endif %}
 {% for traefik in service.traefik %}
 {% set default_rule = "Host(`" ~ (endpoints.get(role_specific, {}).get(ansible_facts['hostname'], '')) ~ "`)" %}
 {% set traefik_rule = traefik.rule | default(default_rule) %}
