@@ -107,6 +107,12 @@ services:
       - {{ dns }}
 {% endfor %}
 {% endif %}
+{% if service.traefik_extra_hosts is defined %}
+    extra_hosts:
+{% for host in service.traefik_extra_hosts %}
+      - "{{ host }}"
+{% endfor %}
+{% endif %}
 {% if service.read_only is defined and service.read_only %}
     read_only: {{ service.read_only }}
 {% endif %}
