@@ -1,0 +1,13 @@
+# vars/main.yml
+services:
+  - name: socks5proxy
+    image: serjs/go-socks5-proxy:latest
+    env_file:
+      - ./socks5proxy.env
+    ports:
+      - 1080:1080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - monitoring
+    watchtower: true
