@@ -1,12 +1,23 @@
 - hosts: dmz
   roles:
     - variables
-    - 0docker_setup
+    # - 0host_user_management
+    # - 0docker_setup
     - role: 0docker_service
       vars:
         docker_service_roles:
-          - limesurvey
+          - authelia
+          - librespeed
+          - librechat
+          - portainer_agent
+          - rclone
+          - certdumper
+          - socks5proxy
+          - dockersocketproxy
+          - alertmanager
+          - cadvisor
+          - nodeexporter
+          # - limesurvey
           - traefik
           - watchtower
-          - cronjob
-          - portainer_agent
+          # - cronjob
