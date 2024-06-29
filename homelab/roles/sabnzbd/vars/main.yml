@@ -1,0 +1,24 @@
+# vars/main.yml
+
+services:
+  - name: sabnzbd
+    image: lscr.io/linuxserver/sabnzbd:latest
+    cpus: 1
+    env_file:
+      - ./sabnzbd.env
+    network_mode: host
+    volumes:
+      - /docker/sabnzbd:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /0/local/downloads:/0/downloads:rshared
+    traefik: 
+      - name: sabnzbd
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 8080
+    watchtower: true
