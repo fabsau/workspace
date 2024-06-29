@@ -1,0 +1,42 @@
+[gdrive_0]
+type = drive
+scope = drive
+use_trash = false
+server_side_across_configs = true
+chunk_size = 128M
+acknowledge_abuse = true
+pacer_min_sleep = 1ms
+pacer_burst = 5000
+team_drive = {{ RCLONE_GDRIVE_0_DRIVE_ID }}
+service_account_file = /config/service_accounts/backup100-backup-objgxlrskxo5c8o3x9sm.json
+
+[gdrive_crypt_0]
+type = crypt
+remote = gdrive_0:/crypt
+filename_encryption = standard
+directory_name_encryption = true
+password = {{ RCLONE_GDRIVE_0_PASSWORD }}
+password2 = {{ RCLONE_GDRIVE_0_PASSWORD_2 }}
+
+[sftp]
+type = sftp
+host = blue.sauna.re
+key_file = /config/key.pem
+key_file_pass = {{ RCLONE_SFTP_KEY_FILE_PASS }}
+shell_type = unix
+md5sum_command = md5sum
+sha1sum_command = sha1sum
+
+[streaming]
+type = union
+upstreams = gdrive_crypt_0:/:nc /mnt/local
+action_policy = ff
+create_policy = eplfs
+search_policy = ff
+
+[brain]
+type = union
+upstreams = sftp:/0/local gdrive_crypt_0:/:nc
+action_policy = ff
+create_policy = eplfs
+search_policy = ff
