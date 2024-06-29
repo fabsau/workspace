@@ -1,44 +1,7 @@
-# For more information, see the Configuration Guide:
-# https://docs.librechat.ai/install/configuration/custom_config.html
-
-# Configuration version (required)
 version: 1.1.2
 
-# Cache settings: Set to true to enable caching
 cache: true
 
-# Example Registration Object Structure (optional)
-{# registration: #}
-  {# socialLogins: ["github", "google", "discord", "openid", "facebook"] #}
-  # allowedDomains:
-    # - "gmail.com"
-
-# fileConfig:
-#   endpoints:
-#     assistants:
-#       fileLimit: 5
-#       fileSizeLimit: 10  # Maximum size for an individual file in MB
-#       totalSizeLimit: 50  # Maximum total size for all files in a single request in MB
-#       supportedMimeTypes:
-#         - "image/.*"
-#         - "application/pdf"
-#     openAI:
-#       disabled: true  # Disables file uploading to the OpenAI endpoint
-#     default:
-#       totalSizeLimit: 20
-#     YourCustomEndpointName:
-#       fileLimit: 2
-#       fileSizeLimit: 5
-#   serverFileSizeLimit: 100  # Global server file size limit in MB
-#   avatarSizeLimit: 2  # Limit for user avatar image size in MB
-# rateLimits:
-#   fileUploads:
-#     ipMax: 100
-#     ipWindowInMinutes: 60  # Rate limit window for file uploads per IP
-#     userMax: 50
-#     userWindowInMinutes: 60  # Rate limit window for file uploads per user
-
-# Definition of custom endpoints
 endpoints:
   azureOpenAI:
     titleConvo: true
@@ -46,30 +9,39 @@ endpoints:
     assistants: true
     plugins: true
     groups:
-      - group: "EastUS"
-        apiKey: "{{ OPENAI_AZURE_API_KEY_2 }}"
-        instanceName: "{{ OPENAI_AZURE_INSTANCENAME_2 }}"
-        version: "{{ OPENAI_AZURE_API_VERSION }}"
-        models:
+       {# - group: "EastUS"
+         apiKey: "{{ OPENAI_AZURE_API_KEY_2 }}"
+         instanceName: "{{ OPENAI_AZURE_INSTANCENAME_2 }}"
+         version: "{{ OPENAI_AZURE_API_VERSION }}"
+         models:
           gpt-4o:
-            deploymentName: "gpt-4o"
+           deploymentName: "gpt-4o" #}
       - group: "Sweden"
         apiKey: "{{ OPENAI_AZURE_API_KEY_1 }}"
         instanceName: "{{ OPENAI_AZURE_INSTANCENAME_1 }}"
         version: "{{ OPENAI_AZURE_API_VERSION }}"
         assistants: true
         models:
+          gpt-4o:
+           deploymentName: "gpt-4o"
           gpt-4-turbo:
             deploymentName: "gpt-4-turbo"
-          gpt-4:
-            deploymentName: "gpt-4"
-          gpt-4-32k:
-            deploymentName: "gpt-4-32k"
-          gpt-4-vision-preview:
-            deploymentName: "gpt-4-vision"
           gpt-3.5-turbo:
             deploymentName: "gpt-35-turbo"
+          {# whisper:
+            deploymentName: whisper-01 #}
+      - group: "llama-70b-chat"
+        apiKey: "{{ OPENAI_AZURE_LLAMA_API_KEY }}"
+        baseURL: "https://Meta-Llama-3-70B-Instruct-qekul-serverless.swedencentral.inference.ai.azure.com/v1/chat/completions"
+        serverless: true
+        models:
+          llama-70b-chat: true
+      {# - group: "mistral-inference"
+        apiKey: "{{ OPENAI_AZURE_MISTRAL_API_KEY }}"
+        baseURL: "https://Mistral-large-tfrvw-serverless.swedencentral.inference.ai.azure.com/v1/chat/completions"
+        serverless: true
+        models:
+          mistral-large-chat: true #}
 
-
-# See the Custom Configuration Guide for more information:
-# https://docs.librechat.ai/install/configuration/custom_config.html
+{# See the Custom Configuration Guide for more information:
+https://docs.librechat.ai/install/configuration/custom_config.html #}
