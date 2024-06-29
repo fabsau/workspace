@@ -31,7 +31,7 @@ services:
     env_file:
       - ../common.env
       - ./traefik.env
-    ports: "{{ traefik_default_ports + traefik_additional_ports }}"
+    ports: "{{ traefik_default_ports + (traefik_additional_ports | default([])) }}"
     networks: "{{ docker_networks }}"
     traefik_extra_hosts: "{{ traefik_extra_hosts }}"
     volumes:

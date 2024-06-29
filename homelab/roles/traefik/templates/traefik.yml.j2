@@ -13,7 +13,7 @@ entryPoints:
     http3: {}
   metrics:
     address: ":8082"
-{% for port in traefik_additional_ports %}
+{% for port in (traefik_additional_ports | default([])) %}
   {{ port.name }}:
     address: ":{{ port.published }}{% if port.protocol == 'udp' %}/udp{% endif %}"
 {% endfor %}

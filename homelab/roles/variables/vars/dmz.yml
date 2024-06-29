@@ -73,12 +73,8 @@ traefik_extra_servers:
     backend_url: https://192.168.150.2/
     insecuretransport: false
 
-traefik_additional_ports:
-  - name: adguard
-    target: 5353
-    published: 5353
-    protocol: udp
-    mode: host
+# traefik_additional_ports:
+
 
 # DOCKERPROXY_TRAEFIK
 dockerproxy_allowed_ip: 172.23.1.0/16
