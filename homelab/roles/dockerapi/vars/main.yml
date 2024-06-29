@@ -1,0 +1,13 @@
+# vars/main.yml
+services:
+  - name: dockerapi
+    image: tecnativa/docker-socket-proxy:latest
+    env_file:
+      - ./dockerapi.env
+    ports:
+      - "{{ hostvars[inventory_hostname].ansible_host }}:2375:2375"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - dockerapi
+    watchtower: true
