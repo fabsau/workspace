@@ -240,8 +240,6 @@ endpoints:
     dmz: "read.sauna.re"
   changedetection:
     nas: "change.oiba.de"
-  chat:
-    dmz: "chat.sauna.re"
   ciscoswitch:
     nas: "switch.oiba.de"
     traefik_extra_server: true
@@ -274,7 +272,7 @@ endpoints:
   johanna-liebt-fabio:
     dmz: "johanna-liebt-fabio.sauna.re"
   librechat:
-    nas: "chat.oiba.de"
+    dmz: "chat.sauna.re"
   librespeed:
     nas: "speed.nas.oiba.de"
     dmz: "speed.azure.sauna.re"
@@ -373,6 +371,7 @@ endpoints:
     nas: "rancher.oiba.de"
   rclone:
     blue: "rclone.blue.sauna.re"
+    dmz: "rclone.azure.sauna.re"
   sabnzbd:
     blue: "usenet.sauna.re"
   sabnzbdexporter:
