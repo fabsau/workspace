@@ -9,9 +9,13 @@ services:
     restart: {{ service.restart | default('unless-stopped') }}
 {% if service.command is defined and service.command %}
     command:
+{% if service.command is string %}
+      {{ service.command }}
+{% else %}
 {% for cmd in service.command %}
       - {{ cmd }}
 {% endfor %}
+{% endif %}
 {% endif %}
 {% if service.depends_on is defined and service.depends_on %}
     depends_on: 
