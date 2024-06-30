@@ -9,4 +9,5 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ../traefik/data:/traefik:ro
       - ./ssl:/output:rw
+      - ./config/plex.sh:/hook/hook.sh:ro
     watchtower: true
