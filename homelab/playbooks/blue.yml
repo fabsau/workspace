@@ -1,0 +1,26 @@
+- hosts: blue
+  roles:
+    - variables
+    # - 0host_user_management
+    # - 0docker_setup
+    - role: 0docker_service
+      vars:
+        docker_service_roles:
+          - certdumper
+          - xteve
+          - socks5proxy
+          - plex
+          - cloudplow
+          - rclone
+          - portainer_agent
+          - traefik
+          - sabnzbd
+          - dockersocketproxy
+          - watchtower
+          - nodeexporter
+          - cadvisor
+          - dockge
+          - adguard
+          - librespeed
+          - xteve
+          # - cronjob

@@ -1,0 +1,69 @@
+# vars/dmz.yml
+docker_networks:
+  - traefik
+  - mediaserver
+  - portainer
+  - watchtower
+  - librespeed
+  - monitoring
+  - dockersocketproxy
+  - adguard
+  - dockge
+  - xteve
+
+# TRAEFIK
+traefik_oauth_address: auth.sauna.re/api/verify
+traefik_ca_productive: true
+traefik_oauth_insecureSkipVerify: false
+
+traefik_domains:
+  - main: sauna.re
+    sans:
+      - "*.sauna.re"
+      - "*.blue.sauna.re"
+
+traefik_extra_hosts:
+  - host.docker.internal:172.17.0.1
+
+traefik_whitelist_ips:
+  - 46.223.56.204/32
+  - 172.187.202.93
+  - 172.31.0.0/12
+  - 192.168.251.0/24
+  - 192.168.50.0/24
+  - 192.168.100.0/24
+  - 195.90.219.248
+  - 91.89.114.216/32
+  - 100.64.0.2/24
+
+certdumper_restart_containers: plex,adguard
+  
+traefik_extra_servers:
+  - name: saunaflix_statuspage
+    entrypoint: https
+    middleware: public-chain@file","redirectSaunaflix@file
+    url: status.sauna.re
+    backend_url: https://uptime.oiba.de
+    insecuretransport: false
+  - name: homeassistant
+    entrypoint: https
+    middleware: public-chain@file
+    url: home.sauna.re
+    backend_url: https://home.sauna.re
+    insecuretransport: false
+
+traefik_additional_ports:
+  - name: adguard-dot
+    target: 853
+    published: 853
+    protocol: tcp
+    mode: host
+
+
+# DOCKERPROXY_TRAEFIK
+dockerproxy_allowed_ip: 172.30.1.0/24
+dockerproxy_gid: 999
+
+# WATCHTOWER
+watchtower_schedule: "0 1 * * * *"
+watchtower_mail_subject_praefix: "BLUE: "
