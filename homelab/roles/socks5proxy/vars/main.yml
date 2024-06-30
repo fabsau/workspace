@@ -5,9 +5,7 @@ services:
     env_file:
       - ./socks5proxy.env
     ports:
-      - 1080:1080
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - "{{ hostvars[inventory_hostname].ansible_host }}:1080:1080"
     networks:
       - monitoring
     watchtower: true
