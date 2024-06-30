@@ -1,4 +1,4 @@
-version: 1.1.2
+version: 1.1.4
 
 cache: true
 
@@ -9,13 +9,13 @@ endpoints:
     assistants: true
     plugins: true
     groups:
-       {# - group: "EastUS"
-         apiKey: "{{ OPENAI_AZURE_API_KEY_2 }}"
-         instanceName: "{{ OPENAI_AZURE_INSTANCENAME_2 }}"
-         version: "{{ OPENAI_AZURE_API_VERSION }}"
-         models:
-          gpt-4o:
-           deploymentName: "gpt-4o" #}
+{# - group: "EastUS"
+  apiKey: "{{ OPENAI_AZURE_API_KEY_2 }}"
+  instanceName: "{{ OPENAI_AZURE_INSTANCENAME_2 }}"
+  version: "{{ OPENAI_AZURE_API_VERSION }}"
+  models:
+  gpt-4o:
+    deploymentName: "gpt-4o" #}
       - group: "Sweden"
         apiKey: "{{ OPENAI_AZURE_API_KEY_1 }}"
         instanceName: "{{ OPENAI_AZURE_INSTANCENAME_1 }}"
@@ -28,8 +28,8 @@ endpoints:
             deploymentName: "gpt-4-turbo"
           gpt-3.5-turbo:
             deploymentName: "gpt-35-turbo"
-          {# whisper:
-            deploymentName: whisper-01 #}
+{# whisper:
+  deploymentName: whisper-01 #}
       - group: "llama-70b-chat"
         apiKey: "{{ OPENAI_AZURE_LLAMA_API_KEY }}"
         baseURL: "https://Meta-Llama-3-70B-Instruct-qekul-serverless.swedencentral.inference.ai.azure.com/v1/chat/completions"
