@@ -251,6 +251,9 @@ endpoints:
     dmz: "demo-dhbwgpt.sauna.re"
   dockge:
     nas: "dockge.oiba.de"
+    dmz: "dockge.azure.sauna.re"
+  ferdium:
+    dmz: "ferdium.sauna.re"
   filebrowser:
     dmz: "files.sauna.re"
   fritzbox:
@@ -269,6 +272,8 @@ endpoints:
     dmz: "money.sauna.re"
   inputforms:
     nas: "forms.oiba.de"
+  it-tools:
+    dmz: "tools.sauna.re"
   johanna-liebt-fabio:
     dmz: "johanna-liebt-fabio.sauna.re"
   librechat:

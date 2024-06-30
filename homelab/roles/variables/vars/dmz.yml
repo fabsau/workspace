@@ -15,24 +15,23 @@ docker_networks:
   - librespeed
   - homer
   - monitoring
-  - mealie
   - crowdsec
   - tandoor
   - calibre
-  - peer2profit
   - photoprism
   - signalproxy
   - wizarr
   - xbackbone
-  - barassistant
-  - waf
-  - dockerapi
+  - dockersocketproxy
   - headscale
   - johanna
   - linkstack
   - limesurvey
   - watchtower
   - librechat
+  - ferdium
+  - dockge
+  - it-tools
 
 # TRAEFIK
 traefik_host: proxy.sauna.re
@@ -77,7 +76,7 @@ traefik_extra_servers:
 
 
 # DOCKERPROXY_TRAEFIK
-dockerproxy_allowed_ip: 172.23.1.0/16
+dockerproxy_allowed_ip: 172.30.1.0/24
 dockerproxy_gid: 999
 
 # WATCHTOWER
