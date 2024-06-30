@@ -1,0 +1,23 @@
+# vars/main.yml
+
+services:
+  - name: ferdium
+    image: ferdium/ferdium-server:latest
+    env_file:
+      - ./ferdium.env
+    volumes:
+      - ./data/data:/data
+      - ./data/recipes:/app/build/recipes
+    networks:
+      - ferdium
+    traefik:
+      - name: fertdium
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 3333
+    watchtower: true
