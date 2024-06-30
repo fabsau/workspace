@@ -6,9 +6,13 @@
     - role: 0docker_service
       vars:
         docker_service_roles:
+          - ferdium
+          - librechat
+          - it-tools
+          - dockge
+          - traefik
           - authelia
           - librespeed
-          - librechat
           - portainer_agent
           - rclone
           - certdumper
@@ -18,6 +22,5 @@
           - cadvisor
           - nodeexporter
           # - limesurvey
-          - traefik
           - watchtower
           # - cronjob
