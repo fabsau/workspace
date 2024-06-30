@@ -376,6 +376,7 @@ endpoints:
   rancher:
     nas: "rancher.oiba.de"
   rclone:
+    nas: "rclone.oiba.de"
     BLUE: "rclone.blue.sauna.re"
     dmz: "rclone.azure.sauna.re"
   sabnzbd:

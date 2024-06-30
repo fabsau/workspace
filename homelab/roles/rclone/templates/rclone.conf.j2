@@ -18,9 +18,18 @@ directory_name_encryption = true
 password = {{ RCLONE_GDRIVE_0_PASSWORD }}
 password2 = {{ RCLONE_GDRIVE_0_PASSWORD_2 }}
 
-[sftp]
+[blue]
 type = sftp
 host = blue.sauna.re
+key_file = /config/key.pem
+key_file_pass = {{ RCLONE_SFTP_KEY_FILE_PASS }}
+shell_type = unix
+md5sum_command = md5sum
+sha1sum_command = sha1sum
+
+[dmz]
+type = sftp
+host = dmz.sauna.re
 key_file = /config/key.pem
 key_file_pass = {{ RCLONE_SFTP_KEY_FILE_PASS }}
 shell_type = unix
@@ -30,13 +39,26 @@ sha1sum_command = sha1sum
 [streaming]
 type = union
 upstreams = gdrive_crypt_0:/:nc /mnt/local
-action_policy = ff
+action_policy = epall
 create_policy = eplfs
 search_policy = ff
+{# action_policy = ff
+create_policy = eplfs
+search_policy = ff #}
 
 [brain]
 type = union
-upstreams = sftp:/0/local gdrive_crypt_0:/:nc
-action_policy = ff
+upstreams = blue:/0/local gdrive_crypt_0:/:nc
+action_policy = epall
+create_policy = eplfs
+search_policy = ff
+{# action_policy = ff
+create_policy = eplfs
+search_policy = ff #}
+
+[backupservers]
+type = union
+upstreams = blue:/rclone_mount:ro dmz:/rclone_mount:ro
+action_policy = epall
 create_policy = eplfs
 search_policy = ff
