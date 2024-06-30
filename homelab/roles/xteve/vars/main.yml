@@ -15,6 +15,14 @@ services:
     traefik: 
       - name: xteve-de
         protocol: http
+        entrypoint: http
+        http_redirection: false
+        enable_tls: false
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        insecuretransport: false
+        service_port: 34400
+      - name: xteve-de
+        protocol: http
         entrypoint: https
         http_redirection: false
         enable_tls: true
