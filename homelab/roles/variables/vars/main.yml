@@ -173,7 +173,7 @@ endpoint_hosts:
       type: "tcp"
       path: "http://192.168.200.2:2375"
       id: 2
-  blue:
+  BLUE:
     ip:
       - "195.90.219.248"
       - "192.168.251.4"
@@ -212,7 +212,7 @@ endpoints:
   adguard:
     lxc1: "dns.oiba.de"
     lxc2: "dns2.oiba.de"
-    blue: "dns.blue.sauna.re"
+    BLUE: "dns.blue.sauna.re"
   adguardexporter:
     nas: "adguardexporter.oiba.de"
     prometheus_exporter: true
@@ -234,7 +234,7 @@ endpoints:
   cadvisor:
     nas: "cadvisor.nas.oiba.de"
     dmz: "cadvisor.azure.sauna.re"
-    blue: "cadvisor.blue.sauna.re"
+    BLUE: "cadvisor.blue.sauna.re"
     prometheus_exporter: true
   calibre_web:
     dmz: "read.sauna.re"
@@ -252,6 +252,7 @@ endpoints:
   dockge:
     nas: "dockge.oiba.de"
     dmz: "dockge.azure.sauna.re"
+    BLUE: "dockge.blue.sauna.re"
   ferdium:
     dmz: "ferdium.sauna.re"
   filebrowser:
@@ -281,7 +282,7 @@ endpoints:
   librespeed:
     nas: "speed.nas.oiba.de"
     dmz: "speed.azure.sauna.re"
-    blue: "speed.blue.sauna.re"
+    BLUE: "speed.blue.sauna.re"
   librespeedexporter:
     nas: "librespeedexporter.oiba.de"
     prometheus_exporter: true
@@ -299,7 +300,7 @@ endpoints:
   nodeexporter:
     nas: "node.nas.oiba.de"
     dmz: "node.azure.sauna.re"
-    blue: "node.blue.sauna.re"
+    BLUE: "node.blue.sauna.re"
     opn: "node.opn.oiba.de"
     home: "node.home.oiba.de"
     prometheus_exporter: true
@@ -323,7 +324,7 @@ endpoints:
     nas: "plausibleexporter.oiba.de"
     prometheus_exporter: true
   plex:
-    blue: "watch.sauna.re"
+    BLUE: "watch.sauna.re"
   plexexporter:
     nas:
       - "plexexporter.oiba.de"
@@ -363,7 +364,7 @@ endpoints:
   pyload:
     nas: "pyload.oiba.de"
   qbittorrent:
-    blue: "torrent.sauna.re"
+    BLUE: "torrent.sauna.re"
   qbittorrentexporter:
     nas: "qbittorrentexporter.oiba.de"
     prometheus_exporter: true
@@ -375,10 +376,10 @@ endpoints:
   rancher:
     nas: "rancher.oiba.de"
   rclone:
-    blue: "rclone.blue.sauna.re"
+    BLUE: "rclone.blue.sauna.re"
     dmz: "rclone.azure.sauna.re"
   sabnzbd:
-    blue: "usenet.sauna.re"
+    BLUE: "usenet.sauna.re"
   sabnzbdexporter:
     nas: "sabnzbdexporter.oiba.de"
     prometheus_exporter: true
@@ -400,7 +401,7 @@ endpoints:
   traefik:
     nas: "proxy.oiba.de"
     dmz: "proxy.azure.sauna.re"
-    blue: "proxy.blue.sauna.re"
+    BLUE: "proxy.blue.sauna.re"
     prometheus_exporter: true
   unifi:
     nas: "unifi.oiba.de"
@@ -426,6 +427,8 @@ endpoints:
     nas: "backup.oiba.de"
   backuppc:
     nas: "backup2.oiba.de"
+  duplicacy:
+    nas: "backup3.oiba.de"
   vacuum:
     nas: "vacuum.oiba.de"
     uptimekuma_monitor: false
@@ -440,7 +443,7 @@ endpoints:
   watchtower:
     nas: "watchtower.oiba.de"
     dmz: "watchtower.azure.sauna.re"
-    blue: "watchtower.blue.sauna.re"
+    BLUE: "watchtower.blue.sauna.re"
     prometheus_exporter: true
     prometheus_settings:
       metrics_path: "/v1/metrics"
@@ -450,4 +453,4 @@ endpoints:
   xbackbone:
     dmz: "screen.sauna.re"
   xteve:
-    blue: "xteve-de.sauna.re"
+    BLUE: "xteve-de.sauna.re"
