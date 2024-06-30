@@ -7,8 +7,8 @@ services:
       - ../common.env
     network_mode: host
     volumes:
-      - ./plex/config:/config
-      - ../certdumper/sauna.re:/config/certs
+      - ./config:/config
+      - ../certdumper/ssl/plex:/config/certs
       - /0/merged/personal/plexdb:/backup
       - /tmp/plex:/transcode
       - /0/merged:/0:rshared
