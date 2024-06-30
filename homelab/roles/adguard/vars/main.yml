@@ -9,7 +9,7 @@ services:
       - 53:53/udp
     volumes:
       - ./data:/opt/adguardhome/work
-      - /config:/opt/adguardhome/conf
+      - ./config:/opt/adguardhome/conf
       - ../certdumper/ssl/:/opt/adguardhome/ssl
     traefik: 
       - name: adguard
