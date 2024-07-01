@@ -10,6 +10,7 @@ docker_networks:
   - adguard
   - dockge
   - xteve
+  - urbackup
 
 # TRAEFIK
 traefik_oauth_address: auth.sauna.re/api/verify
