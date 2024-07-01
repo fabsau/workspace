@@ -8,7 +8,11 @@ acknowledge_abuse = true
 pacer_min_sleep = 1ms
 pacer_burst = 5000
 team_drive = {{ RCLONE_GDRIVE_0_DRIVE_ID }}
+{% if ansible_hostname == "BLUE" %}
+service_account_file = /config/service_accounts/backup99-backup-objgxlrskxo5c8o3x9sm.json
+{% elif ansible_hostname == "dmz" %}
 service_account_file = /config/service_accounts/backup100-backup-objgxlrskxo5c8o3x9sm.json
+{% endif %}
 
 [gdrive_crypt_0]
 type = crypt
@@ -17,6 +21,11 @@ filename_encryption = standard
 directory_name_encryption = true
 password = {{ RCLONE_GDRIVE_0_PASSWORD }}
 password2 = {{ RCLONE_GDRIVE_0_PASSWORD_2 }}
+{% if ansible_hostname == "BLUE" %}
+service_account_file = /config/service_accounts/backup99-backup-objgxlrskxo5c8o3x9sm.json
+{% elif ansible_hostname == "dmz" %}
+service_account_file = /config/service_accounts/backup100-backup-objgxlrskxo5c8o3x9sm.json
+{% endif %}
 
 [blue]
 type = sftp
