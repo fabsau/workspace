@@ -269,6 +269,8 @@ endpoints:
   homeassistant:
     dmz: "home.sauna.re"
     traefik_extra_server: true
+  homer:
+    dmz: "home.sauna.re"
   ihatemoney:
     dmz: "money.sauna.re"
   inputforms:
@@ -426,6 +428,9 @@ endpoints:
         password: "{{ PROMETHEUS_UPTIMEKUMA_PASSWORD }}"
   urbackup:
     nas: "backup.oiba.de"
+  urbackupexporter:
+    nas: "urbackupexporter.oiba.de"
+    prometheus_exporter: true
   backuppc:
     nas: "backup2.oiba.de"
   duplicacy:

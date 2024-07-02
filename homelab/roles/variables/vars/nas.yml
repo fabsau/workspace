@@ -183,3 +183,7 @@ watchtower_mail_subject_praefix: "NAS: "
 prometheus_monitor_name: Mozart
 prometheus_alertmanager_targets:
   - "alert.oiba.de"
+
+# URBACKUP-CLIENT
+urbackup_client_additional_volumes:
+  - /srv/dev-disk-by-uuid-4cf2cd9e-0885-47b9-ada6-6005c3daa474/Multimedia:/backup/Multimedia:ro

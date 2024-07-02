@@ -1,17 +1,20 @@
 # vars/main.yml
+
+urbackup_client_default_volumes:
+  - /docker:/backup/docker:ro
+  - /docker2:/backup/docker2:ro
+
 services:
   - name: urbackup-client
     image: uroni/urbackup-client:latest
     env_file:
       - ../common.env
       - ./urbackup-client.env
-    volumes:
-      - /docker:/backup/docker:ro
-      - /docker2:/backup/docker2:ro
+    volumes: "{{ urbackup_client_default_volumes + (urbackup_client_additional_volumes | default([])) }}"
     ports:
       - "{{ hostvars[inventory_hostname].ansible_host }}:35621:35621"
       - "{{ hostvars[inventory_hostname].ansible_host }}:35622:35622/udp"
       - "{{ hostvars[inventory_hostname].ansible_host }}:35623:35623"
-    networks:
-      - urbackup
+    # networks:
+    #   - urbackup
     watchtower: true
