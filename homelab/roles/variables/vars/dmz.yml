@@ -35,7 +35,7 @@ docker_networks:
   - urbackup
 
 # TRAEFIK
-traefik_oauth_address: auth.sauna.re/api/verify
+traefik_oauth_address: http://authelia:9091/api/verify?rd=https%3A%2F%2Fauth.sauna.re%2F
 traefik_ca_productive: true
 traefik_oauth_insecureSkipVerify: false
 
