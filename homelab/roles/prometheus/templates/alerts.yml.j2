@@ -190,3 +190,50 @@ groups:
           severity: information
         annotations:
           description: "{% raw %}{{ $value }} downloads with a warning status at {{$labels.url}}.{% endraw %}"
+
+  - name: UrBackupAlerts
+    rules:
+      # Alert for UrBackup last backup failure for servers
+      - alert: UrBackupBackupServerFailure
+        expr: urbackup_backup_ok{client_group="servers",backup_type="file"} == 0
+        for: 15m
+        labels:
+          severity: information
+        annotations:
+          description: '{% raw %}Last backup for server {{ $labels.client_name }} (ID: {{ $labels.client_id }}) failed.{% endraw %}'
+
+      # Alert for UrBackup backup not done in the last 36 hours for servers
+      - alert: UrBackupBackupStaleServer36h
+        expr: urbackup_backup_lasttime{client_group="servers",backup_type="file"} < (time() - 36 * 3600)
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: '{% raw %}No backup for {{ $labels.client_name }} (ID: {{ $labels.client_id }}) in the last 36 hours.{% endraw %}'
+
+      # Alert for UrBackup backup not done in the last 72 hours for servers
+      - alert: UrBackupBackupStaleServer72h
+        expr: urbackup_backup_lasttime{client_group="servers",backup_type="file"} < (time() - 72 * 3600)
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: '{% raw %}No backup for {{ $labels.client_name }} (ID: {{ $labels.client_id }}) in the last 72 hours.{% endraw %}'
+
+      # Alert for UrBackup backup not done in the last 2 weeks for workstations
+      - alert: UrBackupBackupStaleWorkstation2w
+        expr: urbackup_backup_lasttime{client_group="workstations",backup_type="image"} < (time() - 2 * 7 * 24 * 3600)
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: '{% raw %}No backup for {{ $labels.client_name }} (ID: {{ $labels.client_id }}) in the last 2 weeks.{% endraw %}'
+
+      # Alert for UrBackup backup not done in the last 4 weeks for workstations
+      - alert: UrBackupBackupStaleWorkstation4w
+        expr: urbackup_backup_lasttime{client_group="workstations",backup_type="image"} < (time() - 4 * 7 * 24 * 3600)
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: '{% raw %}No backup for {{ $labels.client_name }} (ID: {{ $labels.client_id }}) in the last 4 weeks.{% endraw %}'
