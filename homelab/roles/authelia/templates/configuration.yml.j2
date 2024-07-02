@@ -96,8 +96,12 @@ notifier:
 identity_providers:
   oidc:
     hmac_secret: {{ AUTHELIA_HMAC_SECRET }}
-    issuer_private_key: |
-        {{ AUTHELIA_ISSUER_PRIVATE_KEY | indent(8) }}
+    jwks:
+      - key_id: 'authelia'
+        algorithm: 'RS256'
+        use: 'sig'
+        key: |
+          {{ AUTHELIA_ISSUER_PRIVATE_KEY | indent(10) }}
     clients:
       - client_id: portainer
         client_name: Portainer
