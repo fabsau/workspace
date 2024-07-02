@@ -11,13 +11,13 @@ services:
     networks:
       - ferdium
     traefik:
-      - name: fertdium
+      - name: ferdium
         protocol: http
         entrypoint: https
         http_redirection: true
         enable_tls: true
         rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
-        middlewares: private-chain@file
+        middlewares: public-chain@file
         insecuretransport: false
         service_port: 3333
     watchtower: true
