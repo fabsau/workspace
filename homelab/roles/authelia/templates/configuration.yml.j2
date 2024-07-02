@@ -1,10 +1,10 @@
-theme: 'dark'
+theme: dark
 log:
-  level: 'info'
+  level: info
 telemetry:
   metrics:
     enabled: true
-    address: 'tcp://:9959/metrics'
+    address: tcp://:9959/metrics
 totp:
   disable: false
   issuer: {{ endpoints[role_specific][ansible_facts['hostname']] }}
@@ -17,12 +17,12 @@ authentication_backend:
   password_reset:
     disable: false
   file:
-    path: '/config/users_database.yml'
+    path: /config/users_database.yml
     watch: true
     password:
-      algorithm: 'argon2'
+      algorithm: argon2
       argon2:
-        variant: 'argon2id'
+        variant: argon2id
         iterations: 1
         memory: 1024
         parallelism: 8
@@ -49,58 +49,66 @@ access_control:
   networks:
     - name: private
       networks:
-        - '10.0.0.0/8'
-        - '172.16.0.0/12'
-        - '192.168.0.0/16'
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
   rules:
-    - domain: '*.sauna.re'
+    - domain: "*.sauna.re"
       policy: bypass
-      networks: 'private'
-    - domain: '*.oiba.de'
+      networks: private
+    - domain: "*.oiba.de"
       policy: bypass
-      networks: 'private'
-    - domain: '*.sauna.re'
+      networks: private
+    - domain: "*.sauna.re"
       policy: two_factor
-    - domain: '*.oiba.de'
+    - domain: "*.oiba.de"
       policy: two_factor
 session:
-  name: authelia_session
-  domain: sauna.re
-  same_site: lax
   secret: {{ AUTHELIA_SESSION_SECRET }}
-  expiration: 1h
+  name: authelia_session
+  same_site: lax
   inactivity: 5m
-  remember_me_duration: 1M
+  expiration: 1h
+  remember_me: 1M
+  cookies:
+    - domain: sauna.re
+      authelia_url: https://{{ endpoints[role_specific][ansible_facts['hostname']] }}
+      default_redirection_url: https://{{ endpoints.homer.dmz }}
+      name: authelia_session
+      same_site: lax
+      inactivity: 5m
+      expiration: 1h
+      remember_me: 1d
   redis:
     host: authelia_redis
     port: 6379
 storage:
   encryption_key: {{ AUTHELIA_ENCRYPTION_KEY }}
   local:
-    path: '/data/db.sqlite3'
+    path: /data/db.sqlite3
 notifier:
   disable_startup_check: true
   smtp:
-    address: 'smtp://{{ AUTHELIA_SMTP_HOST }}:587'
+    address: smtp://{{ AUTHELIA_SMTP_HOST }}:587
     username: {{ AUTHELIA_SMTP_USERNAME }}
     password: {{ AUTHELIA_SMTP_PASSWORD }}
-    sender: 'Authelia <authelia@sauna.re>'
+    sender: Authelia <authelia@sauna.re>
 identity_providers:
   oidc:
     hmac_secret: {{ AUTHELIA_HMAC_SECRET }}
     issuer_private_key: |
         {{ AUTHELIA_ISSUER_PRIVATE_KEY | indent(8) }}
     clients:
-      - client_id: 'portainer'
-        client_name: 'Portainer'
+      - client_id: portainer
+        client_name: Portainer
         client_secret: {{ AUTHELIA_PORTAINER_SECRET }} 
         public: false
-        authorization_policy: 'two_factor'
+        authorization_policy: two_factor
         redirect_uris:
-          - 'https://{{ endpoints.portainer.nas }}/'
+          - https://{{ endpoints.portainer.nas }}/
         scopes:
-          - 'openid'
-          - 'profile'
-          - 'groups'
-          - 'email'
-        userinfo_signed_response_alg: 'none'
+          - openid
+          - profile
+          - groups
+          - email
+        userinfo_signed_response_alg: none
