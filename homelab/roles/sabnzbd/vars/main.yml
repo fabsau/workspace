@@ -5,7 +5,7 @@ services:
     image: lscr.io/linuxserver/sabnzbd:latest
     cpus: 1
     env_file:
-      - ./sabnzbd.env
+      - ../common.env
     network_mode: host
     volumes:
       - /docker/sabnzbd:/config
