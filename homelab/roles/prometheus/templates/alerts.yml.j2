@@ -200,7 +200,7 @@ groups:
         labels:
           severity: information
         annotations:
-          description: '{% raw %}Last backup for server {{ $labels.client_name }} (ID: {{ $labels.client_id }}) failed.{% endraw %}'
+          description: '{% raw %}Last backup for server {{ $labels.client_name }} failed.{% endraw %}'
 
       # Alert for UrBackup backup not done in the last 36 hours for servers
       - alert: UrBackupBackupStaleServer36h
@@ -209,7 +209,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          description: '{% raw %}No backup for {{ $labels.client_name }} (ID: {{ $labels.client_id }}) in the last 36 hours.{% endraw %}'
+          description: '{% raw %}No backup for {{ $labels.client_name }} in the last 36 hours.{% endraw %}'
 
       # Alert for UrBackup backup not done in the last 72 hours for servers
       - alert: UrBackupBackupStaleServer72h
@@ -218,7 +218,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          description: '{% raw %}No backup for {{ $labels.client_name }} (ID: {{ $labels.client_id }}) in the last 72 hours.{% endraw %}'
+          description: '{% raw %}No backup for {{ $labels.client_name }} in the last 72 hours.{% endraw %}'
 
       # Alert for UrBackup backup not done in the last 2 weeks for workstations
       - alert: UrBackupBackupStaleWorkstation2w
@@ -227,7 +227,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          description: '{% raw %}No backup for {{ $labels.client_name }} (ID: {{ $labels.client_id }}) in the last 2 weeks.{% endraw %}'
+          description: '{% raw %}No backup for {{ $labels.client_name }} in the last 2 weeks.{% endraw %}'
 
       # Alert for UrBackup backup not done in the last 4 weeks for workstations
       - alert: UrBackupBackupStaleWorkstation4w
@@ -236,4 +236,4 @@ groups:
         labels:
           severity: critical
         annotations:
-          description: '{% raw %}No backup for {{ $labels.client_name }} (ID: {{ $labels.client_id }}) in the last 4 weeks.{% endraw %}'
+          description: '{% raw %}No backup for {{ $labels.client_name }} in the last 4 weeks.{% endraw %}'
