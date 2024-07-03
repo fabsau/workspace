@@ -4,10 +4,11 @@ services:
   - name: cloudplow
     image: ghcr.io/sabrsorensen/alpine-cloudplow:latest
     network_mode: host
+    env_file:
+      - ../common.env
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /0/local:/data
       - ./config:/config
-      - ../rclone/config/rclone.conf:/config/rclone.conf
-      - ../rclone/config/service_accounts:/service_accounts
+      - ../rclone/config/:/rclone
     watchtower: true
