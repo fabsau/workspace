@@ -6,7 +6,7 @@ services:
       - ../common.env
     volumes:
       - ./data:/var/urbackup
-      - /srv/dev-disk-by-uuid-bb234a23-a64c-47c0-a11e-5074eefad03f/Backup/Urbackup:/backups
+      - /srv/dev-disk-by-uuid-bb234a23-a64c-47c0-a11e-5074eefad03f/Backup/Urbackup:/srv/dev-disk-by-uuid-bb234a23-a64c-47c0-a11e-5074eefad03f/Backup/Urbackup
     ports:
       - 55415:55415
       - 35623:35623/udp
