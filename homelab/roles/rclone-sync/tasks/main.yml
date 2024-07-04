@@ -1,0 +1,17 @@
+- name: "[rclone-sync] Ensure rclone config directory exists"
+  file:
+    path: "{{ docker_base_path }}/rclone-sync/config"
+    state: directory
+    owner: "{{ common_username }}"
+    group: "{{ common_group_gid }}"
+    mode: "{{ default_file_permission_mode }}"
+  become: true
+
+- name: "[rclone-sync] Template rclone.conf from rclone role"
+  template:
+    src: "{{ ansible_home }}/roles/rclone/templates/rclone.conf.j2"
+    dest: "{{ docker_base_path }}/rclone-sync/config/rclone.conf"
+    owner: "{{ common_username }}"
+    group: "{{ common_group_gid }}"
+    mode: "{{ default_file_permission_mode }}"
+  become: true

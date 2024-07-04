@@ -1,0 +1,14 @@
+# vars/main.yml
+
+services:
+  - name: rclone-sync
+    image: pfidr/rclone:latest
+    security_opt:
+        - apparmor:unconfined
+    network_mode: host
+    env_file:
+      - ./rclone-sync.env
+    volumes:
+      - ./config:/config
+      - /srv/dev-disk-by-uuid-bb234a23-a64c-47c0-a11e-5074eefad03f/:/backup:ro
+    watchtower: true
