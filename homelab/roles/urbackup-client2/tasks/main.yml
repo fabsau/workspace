@@ -1,0 +1,9 @@
+- name: Check UrBackup installation status
+  include_tasks: check_installed.yml
+
+- name: Install UrBackup if required
+  include_tasks: install.yml
+  when: urbackup_needs_install
+
+- name: Configure UrBackup
+  include_tasks: configure.yml

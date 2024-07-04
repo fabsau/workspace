@@ -1,0 +1,22 @@
+- name: Create UrBackup client configuration file
+  template:
+    src: "urbackupclient.conf.j2"
+    dest: "{{ urbackup_client_conf_file }}"
+    mode: '0644'
+  become: true
+
+- name: Add backup directories
+  command: >
+    {{ urbackup_client_install_dir }}/urbackupclientctl add-backupdir --path {{ item }}
+  with_items: "{{ backup_dirs }}"
+  become: true
+
+- name: Set server address
+  command: >
+    {{ urbackup_client_install_dir }}/urbackupclientctl set-settings --server-url {{ urbackup_server_address }}
+  become: true
+
+# - name: Set client authkey
+#   command: >
+#     {{ urbackup_client_install_dir }}/urbackupclientctl set-settings --authkey {{ urbackup_client_authkey }}
+#     become: true

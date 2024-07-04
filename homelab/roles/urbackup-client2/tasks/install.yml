@@ -1,0 +1,26 @@
+- name: Install dependencies
+  apt:
+    name: 
+      - wget
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Download UrBackup client installer
+  get_url:
+    url: "{{ urbackup_client_url }}"
+    dest: "/tmp/urbackup_client.sh"
+    mode: "0755"
+
+- name: Run UrBackup client installer
+  command: "sh /tmp/urbackup_client.sh"
+  args:
+    creates: "/usr/local/bin/urbackupclientctl"
+  become: true
+
+- name: Create configuration directory
+  file:
+    path: "/etc/urbackup"
+    state: directory
+    mode: '0755'
+  become: true

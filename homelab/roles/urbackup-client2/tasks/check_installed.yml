@@ -1,0 +1,30 @@
+---
+- name: Check if UrBackup is installed
+  command: urbackupclientctl --version
+  register: urbackup_version_output
+  failed_when: false
+  changed_when: false
+
+- name: Extract version number from urbackupclientctl output
+  set_fact:
+    urbackup_installed_version: "{{ urbackup_version_output.stdout | regex_search('v([0-9.]+)', '\\1') }}"
+  when: urbackup_version_output.stdout is defined
+
+- name: Normalize and convert desired UrBackup version
+  set_fact:
+    urbackup_desired_version: >
+      {{
+        ([urbackup_client_version if urbackup_client_version.endswith('.0')
+        else urbackup_client_version + '.0'])
+      }}
+
+- name: Determine if UrBackup needs installation
+  set_fact:
+    urbackup_needs_install: "{{ (urbackup_installed_version is not defined) or (urbackup_installed_version != urbackup_desired_version) }}"
+
+- name: Debug UrBackup state
+  debug:
+    msg:
+      - "Installed UrBackup version: {{ urbackup_installed_version }}"
+      - "Normalized Desired UrBackup version: {{ urbackup_desired_version }}"
+      - "UrBackup needs install: {{ urbackup_needs_install }}"
