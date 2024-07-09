@@ -30,15 +30,7 @@ service_account_file = /config/service_accounts/backup100-backup-objgxlrskxo5c8o
 [blue]
 type = sftp
 host = blue.sauna.re
-key_file = /config/key.pem
-key_file_pass = {{ RCLONE_SFTP_KEY_FILE_PASS }}
-shell_type = unix
-md5sum_command = md5sum
-sha1sum_command = sha1sum
-
-[dmz]
-type = sftp
-host = dmz.sauna.re
+user = {{ common_username }}
 key_file = /config/key.pem
 key_file_pass = {{ RCLONE_SFTP_KEY_FILE_PASS }}
 shell_type = unix
