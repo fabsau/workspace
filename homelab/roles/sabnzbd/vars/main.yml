@@ -8,7 +8,7 @@ services:
       - ../common.env
     network_mode: host
     volumes:
-      - /docker/sabnzbd:/config
+      - ./config:/config
       - /etc/localtime:/etc/localtime:ro
       - /0/local/downloads:/0/downloads:rshared
     traefik: 
