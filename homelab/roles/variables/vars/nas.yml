@@ -45,9 +45,9 @@ traefik_domains:
       - "*.opn.oiba.de"
       - "*.win.oiba.de"
       - "*.home.oiba.de"
-  - main: sauna.re
-    sans:
-      - "*.sauna.re"
+
+traefik_extra_hosts:
+  - host.docker.internal:172.17.0.1
 
 traefik_additional_ports:
   - name: unifi
