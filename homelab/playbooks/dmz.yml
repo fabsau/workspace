@@ -1,6 +1,7 @@
 - hosts: dmz
   roles:
     - variables
+    - urbackup-client2
     # - 0host_user_management
     # - 0docker_setup
     - role: 0docker_service

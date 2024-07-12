@@ -14,7 +14,12 @@
         docker_service_roles:
           - rancher
           - traefik
+          - wallos
           - urbackup
+          - rclone-sync
+          - urbackupexporter
+          - urbackup-client
+          - rclone
           - librechat
           - limesurvey
           - inputforms
