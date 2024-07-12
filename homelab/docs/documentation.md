@@ -108,3 +108,17 @@ crontab -e
 
 Tokei command:
 .\tokei.exe "C:\Users\Fabio\Documents\VScode\workspace" --exclude **/*.md --exclude **/*.psd --exclude **/geerlingguy.docker/**/* --exclude **/geerlingguy.security/**/* --exclude **/robertdebock.logrotate/**/* --exclude **/githubixx.ansible_role_wireguard/**/* --exclude **/lucasheld.uptime_kuma/**/*
+
+
+# New User
+sudo adduser ansible
+sudo usermod -aG docker ansible
+echo 'ansible ALL=(ALL) NOPASSWD:ALL' | sudo tee -a /etc/sudoers
+Docker SocketProxy traefik the docker GID differs! 993 for ansible, 999 for dmz
+
+
+
+# FOr backup mounts:
+mkdir /rclone_mount
+ln -s / /rclone_mount/blue
+ln -s / /rclone_mount/dmz
