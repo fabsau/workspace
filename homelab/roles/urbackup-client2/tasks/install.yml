@@ -6,21 +6,33 @@
     update_cache: yes
   become: true
 
-- name: Download UrBackup client installer
-  get_url:
-    url: "{{ urbackup_client_url }}"
-    dest: "/tmp/urbackup_client.sh"
-    mode: "0755"
-
-- name: Run UrBackup client installer
-  command: "sh /tmp/urbackup_client.sh"
+- name: Add Datto GPG key
+  shell: sudo apt-key adv --fetch-keys https://cpkg.datto.com/DATTO-PKGS-GPG-KEY
   args:
-    creates: "/usr/local/bin/urbackupclientctl"
+    executable: /bin/bash
+
+- name: Add Datto repository
+  shell: echo "deb [arch=amd64] https://cpkg.datto.com/datto-deb/public/$(lsb_release -sc) $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/datto-linux-agent.list
+  args:
+    executable: /bin/bash
+
+- name: Update package cache
+  apt:
+    update_cache: yes
   become: true
 
-- name: Create configuration directory
-  file:
-    path: "/etc/urbackup"
-    state: directory
-    mode: '0755'
+- name: Install Datto packages
+  apt:
+    name: 
+      - dattobd-dkms
+      - dattobd-utils
+    state: present
   become: true
+
+- name: Download and install UrBackup client
+  shell: |
+    TF=$(mktemp) && wget "{{ urbackup_client_url }}" -O $TF && DATTO=yes sudo sh $TF && rm -f $TF
+  args:
+    executable: /bin/bash
+  become: true
+
