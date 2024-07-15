@@ -30,12 +30,12 @@ endpoints:
             deploymentName: "gpt-35-turbo"
 {# whisper:
   deploymentName: whisper-01 #}
-      - group: "llama-70b-chat"
+      {# - group: "llama-70b-chat"
         apiKey: "{{ OPENAI_AZURE_LLAMA_API_KEY }}"
         baseURL: "https://Meta-Llama-3-70B-Instruct-qekul-serverless.swedencentral.inference.ai.azure.com/v1/chat/completions"
         serverless: true
         models:
-          llama-70b-chat: true
+          llama-70b-chat: true #}
       {# - group: "mistral-inference"
         apiKey: "{{ OPENAI_AZURE_MISTRAL_API_KEY }}"
         baseURL: "https://Mistral-large-tfrvw-serverless.swedencentral.inference.ai.azure.com/v1/chat/completions"

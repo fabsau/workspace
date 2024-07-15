@@ -2,7 +2,7 @@
 
 services:
   - name: librechat
-    image: ghcr.io/danny-avila/librechat-dev:latest
+    image: ghcr.io/danny-avila/librechat:latest
     depends_on:
       - librechat-mongodb
       - librechat-meilisearch
@@ -50,7 +50,7 @@ services:
     watchtower: true
 
   - name: librechat-rag_api
-    image: ghcr.io/danny-avila/librechat-rag-api-dev:latest
+    image: ghcr.io/danny-avila/librechat-rag-api-dev-lite:latest
     depends_on:
       - librechat-vectordb
     env_file:
