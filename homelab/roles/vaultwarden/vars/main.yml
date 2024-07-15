@@ -1,0 +1,87 @@
+# vars/main.yml
+
+services:
+  - name: vaultwarden
+    image: ghcr.io/dani-garcia/vaultwarden:latest-alpine
+    depends_on:
+      - vaultwarden-mariadb
+    env_file:
+      - ./vaultwarden.env
+    volumes:
+      - ./data/app:/data
+    networks:
+      - vaultwarden
+    traefik:
+      - name: vaultwarden
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']][0] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 80
+      - name: vaultwarden-admin
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']][0] }}`) && Path(`/admin`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 80
+    watchtower: true
+
+  - name: vaultwarden-mariadb
+    image: lscr.io/linuxserver/mariadb:latest
+    env_file:
+      - ../common.env
+      - ./vaultwarden-mariadb.env
+    volumes:
+      - ./data/db:/config
+    networks:
+      - vaultwarden
+    watchtower: true
+
+
+  - name: vaultwarden2
+    image: timshel/vaultwarden:latest-alpine
+    depends_on:
+      - vaultwarden-mariadb
+    env_file:
+      - ./vaultwarden2.env
+    volumes:
+      - ./data2/app:/data
+    networks:
+      - vaultwarden
+    traefik:
+      - name: vaultwarden2
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']][1] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 80
+      - name: vaultwarden2-admin
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']][1] }}`) && Path(`/admin`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 80
+    watchtower: true
+
+  - name: vaultwarden2-mariadb
+    image: lscr.io/linuxserver/mariadb:latest
+    env_file:
+      - ../common.env
+      - ./vaultwarden-mariadb.env
+    volumes:
+      - ./data2/db:/config
+    networks:
+      - vaultwarden
+    watchtower: true
