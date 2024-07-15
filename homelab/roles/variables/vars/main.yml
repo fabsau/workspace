@@ -389,6 +389,10 @@ endpoints:
   sonarrexporter:
     nas: "sonarrexporter.oiba.de"
     prometheus_exporter: true
+  spotify:
+    dmz:
+      - "spotify-api.sauna.re"
+      - "spotify.sauna.re"
   tandoorrecipes:
     nas: "recipes.oiba.de"
     prometheus_exporter: true
@@ -416,12 +420,13 @@ endpoints:
     prometheus_exporter: true
   uptimekuma:
     nas: "uptime.oiba.de"
-    dmz: "status.sauna.re"
     prometheus_exporter: true
     prometheus_settings:
       basic_auth:
         username: "{{ PROMETHEUS_UPTIMEKUMA_USER }}"
         password: "{{ PROMETHEUS_UPTIMEKUMA_PASSWORD }}"
+  uptimekuma-saunaflix:
+    dmz: "status.sauna.re"
   urbackup:
     nas: "backup.oiba.de"
   urbackupexporter:
