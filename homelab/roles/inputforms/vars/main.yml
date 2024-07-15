@@ -24,7 +24,7 @@ services:
     watchtower: true
 
   - name: inputforms-mariadb
-    image: lscr.io/linuxserver/mariadb:alpine
+    image: lscr.io/linuxserver/mariadb:latest
     env_file:
       - ../common.env
       - ./inputforms-mariadb.env

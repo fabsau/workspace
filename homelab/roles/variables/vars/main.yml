@@ -26,7 +26,7 @@ nfs_mounts:
     options: auto,nofail,noatime,nolock,intr,tcp,actimeo=1800
 
 # Ansible Settings
-ansible_home: "/root/vscode/workspace/homelab"
+ansible_home: "/home/fabio/VScode/workspace/homelab"
 ansible_username: ansible
 ansible_uid: "1000"
 ansible_authorized_keys:
@@ -227,10 +227,6 @@ endpoints:
     nas: "bazarrexporter.oiba.de"
   bazarr:
     dmz: "bazarr.sauna.re"
-  bitwarden:
-    dmz:
-      - "bitwarden.sauna.re"
-      - "bitwarden2.sauna.re"
   cadvisor:
     nas: "cadvisor.nas.oiba.de"
     dmz: "cadvisor.azure.sauna.re"
@@ -442,6 +438,10 @@ endpoints:
   valetudo:
     nas: "valetudo.oiba.de"
     uptimekuma_monitor: false
+  vaultwarden:
+    dmz:
+      - "bitwarden.sauna.re"
+      - "bitwarden2.sauna.re"
   vscode:
     nas: "code.oiba.de"
   wallos:

@@ -27,7 +27,7 @@ services:
     watchtower: true
 
   - name: paperless-mariadb
-    image: lscr.io/linuxserver/mariadb:alpine
+    image: lscr.io/linuxserver/mariadb:latest
     env_file:
       - ../common.env
       - ./paperless-mariadb.env
