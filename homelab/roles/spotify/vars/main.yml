@@ -1,0 +1,56 @@
+# vars/main.yml
+
+services:
+  - name: spotify
+    image: yooooomi/your_spotify_server:latest
+    depends_on:
+      - spotify-mongodb
+    env_file:
+      - ./spotify.env
+      - ../common.env
+    networks:
+      - spotify
+    traefik:
+      - name: spotify
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']][0] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 8080
+    watchtower: true
+
+  - name: spotify-web
+    image: yooooomi/your_spotify_client:latest
+    depends_on:
+      - spotify
+      - spotify-mongodb
+    env_file:
+      - ./spotify.env
+      - ../common.env
+    networks:
+      - spotify
+    traefik:
+      - name: spotify-web
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']][1] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 3000
+    watchtower: true
+
+  - name: spotify-mongodb
+    image: mongo:6
+    env_file:
+      - ../common.env
+    volumes:
+      - ./data/db:/data/db
+      - ./data/db2:/data/configdb
+    networks:
+      - spotify
+    watchtower: true
