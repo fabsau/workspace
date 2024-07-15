@@ -16,5 +16,5 @@ receivers:
     priority: "{% raw %}{{ if eq .CommonLabels.severity \"critical\" }}2{{ else if eq .CommonLabels.severity \"warning\" }}0{{ else }}-1{{ end }}{% endraw %}"
     title: "{% raw %}{{ if eq .Status \"firing\" }}🔥{{ else }}✅{{ end }} {{ .CommonLabels.alertname }} {{ if eq .CommonLabels.severity \"critical\" }}⛔{{ else if eq .CommonLabels.severity \"warning\" }}⚠️{{ else if eq .CommonLabels.severity \"information\" }}ℹ{{ end }}{% endraw %}"
     message: "{% raw %}{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}{% endraw %}"
-    retry: 1h
-    expire: 48h
+    retry: 999h
+    expire: 1s
