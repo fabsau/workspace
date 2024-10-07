@@ -133,10 +133,14 @@ services:
       - "traefik.docker.network={{ service.networks[0] }}"
 {% endif %}
 {% for traefik in service.traefik %}
+{% if traefik.rule is defined %}
 {% set default_rule = "Host(`" ~ (endpoints.get(role_specific, {}).get(ansible_facts['hostname'], '')) ~ "`)" %}
 {% set traefik_rule = traefik.rule | default(default_rule) %}
 {% if traefik.path is defined and traefik.path %}
 {% set traefik_rule = traefik_rule ~ " && PathPrefix(`" ~ traefik.path ~ "`)" %}
+{% endif %}
+{% else %}
+{% set traefik_rule = None %}
 {% endif %}
 {% set router_name = traefik.name %}
 {% set entrypoint = traefik.entrypoint %}
@@ -149,7 +153,9 @@ services:
       - "traefik.http.routers.{{ router_name }}.service={{ service_name }}"
 {% endif %}
       - "traefik.{{ protocol }}.routers.{{ router_name }}-{{ entrypoint }}.entrypoints={{ entrypoint }}"
+{% if traefik_rule %}
       - "traefik.{{ protocol }}.routers.{{ router_name }}-{{ entrypoint }}.rule={{ traefik_rule }}"
+{% endif %}
 {% if traefik.enable_tls is not false %}
       - "traefik.{{ protocol }}.routers.{{ router_name }}-{{ entrypoint }}.tls.certresolver=acme"
 {% endif %}
