@@ -191,49 +191,40 @@ groups:
         annotations:
           description: "{% raw %}{{ $value }} downloads with a warning status at {{$labels.url}}.{% endraw %}"
 
-  - name: UrBackupAlerts
+  - name: ProxmoxBackupClientAlerts
     rules:
-      # Alert for UrBackup last backup failure for servers
-      - alert: UrBackupBackupServerFailure
-        expr: urbackup_backup_ok{client_group="servers",backup_type="file"} == 0
+      # Alert for Proxmox Backup Server not running
+      - alert: ProxmoxBackupClientDown
+        expr: pbs_up == 0
         for: 15m
         labels:
-          severity: information
+          severity: critical
         annotations:
-          description: '{% raw %}Last backup for server {{ $labels.client_name }} failed.{% endraw %}'
+          description: "{% raw %}Proxmox Backup Server is down on {{ $labels.instance }}.{% endraw %}"
 
-      # Alert for UrBackup backup not done in the last 36 hours for servers
-      - alert: UrBackupBackupStaleServer36h
-        expr: urbackup_backup_lasttime{client_group="servers",backup_type="file"} < (time() - 36 * 3600)
+      # Alert for Proxmox Backup Client backup not done in the last 2 days
+      - alert: ProxmoxBackupClientBackupStale48h
+        expr: time() - pbs_snapshot_vm_last_timestamp > 2 * 24 * 3600
         for: 10m
         labels:
           severity: warning
         annotations:
-          description: '{% raw %}No backup for {{ $labels.client_name }} in the last 36 hours.{% endraw %}'
+          description: '{% raw %}No backup for VM {{ $labels.vm_id }} in the last 2 days.{% endraw %}'
 
-      # Alert for UrBackup backup not done in the last 72 hours for servers
-      - alert: UrBackupBackupStaleServer72h
-        expr: urbackup_backup_lasttime{client_group="servers",backup_type="file"} < (time() - 72 * 3600)
+      # Alert for Proxmox Backup Client backup not done in the last 8 days
+      - alert: ProxmoxBackupClientBackupStale3d
+        expr: time() - pbs_snapshot_vm_last_timestamp > 8 * 24 * 3600
         for: 10m
         labels:
           severity: critical
         annotations:
-          description: '{% raw %}No backup for {{ $labels.client_name }} in the last 72 hours.{% endraw %}'
+          description: '{% raw %}No backup for VM {{ $labels.vm_id }} in the last 8 days.{% endraw %}'
 
-      # Alert for UrBackup backup not done in the last 2 weeks for workstations
-      - alert: UrBackupBackupStaleWorkstation2w
-        expr: urbackup_backup_lasttime{client_group="workstations",backup_type="image"} < (time() - 2 * 7 * 24 * 3600)
-        for: 10m
+      # Alert for Proxmox Backup Client verification failure
+      - alert: ProxmoxBackupClientVerificationFailure
+        expr: pbs_snapshot_vm_last_verify == 0
+        for: 24h
         labels:
           severity: warning
         annotations:
-          description: '{% raw %}No backup for {{ $labels.client_name }} in the last 2 weeks.{% endraw %}'
-
-      # Alert for UrBackup backup not done in the last 4 weeks for workstations
-      - alert: UrBackupBackupStaleWorkstation4w
-        expr: urbackup_backup_lasttime{client_group="workstations",backup_type="image"} < (time() - 4 * 7 * 24 * 3600)
-        for: 10m
-        labels:
-          severity: critical
-        annotations:
-          description: '{% raw %}No backup for {{ $labels.client_name }} in the last 4 weeks.{% endraw %}'
+          description: '{% raw %}Last verification for VM {{ $labels.vm_id }} failed.{% endraw %}'
