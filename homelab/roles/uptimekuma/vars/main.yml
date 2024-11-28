@@ -33,7 +33,7 @@ services:
         entrypoint: https
         http_redirection: true
         enable_tls: true
-        rule: "Host(`{{ endpoints.[role_specific]-saunaflix.dmz }}`)"
+        rule: "Host(`{{ endpoints.uptimekuma_saunaflix.dmz }}`)"
         middlewares: public-chain@file
         insecuretransport: false
         service_port: 3001
