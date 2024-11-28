@@ -1,6 +1,7 @@
 # tasks/main.yml
 
 - name: Create Docker Networks
+  become: true
   docker_network:
     name: "{{ item }}"
     ipam_config:
