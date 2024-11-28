@@ -1,0 +1,50 @@
+# vars/main.yml
+
+services:
+  - name: obsidian-sync
+    image: couchdb:latest
+    # Run inside container
+    # command: curl -s https://raw.githubusercontent.com/vrtmrz/obsidian-livesync/main/utils/couchdb/couchdb-init.sh | bash
+    # Run somewhere you can install deno
+    # snap install deno
+    # export hostname=https://{{ endpoints[role_specific][ansible_facts['hostname']] }}
+    # export username={{ OBSIDIAN_DB_USER }}
+    # export password={{ OBSIDIAN_DB_PASSWORD }}
+    # deno run -A https://raw.githubusercontent.com/vrtmrz/obsidian-livesync/main/utils/flyio/generate_setupuri.ts
+    env_file:
+      - ./obsidian.env
+      - ../common.env
+    networks:
+      - obsidian
+    volumes:
+      - ./config/local.ini:/opt/couchdb/etc/local.ini
+      - ./data:/opt/couchdb/data
+    traefik: 
+      - name: obsidian-sync
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']][0] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 5984
+    watchtower: true
+
+  - name: obsidian-publish
+    image: ghcr.io/jackyzha0/quartz:hugo
+    networks:
+      - obsidian
+    volumes:
+      - /srv/dev-disk-by-uuid-4cf2cd9e-0885-47b9-ada6-6005c3daa474/Multimedia/Backups/Syncthing/ObsidianVault:/content:ro
+    traefik: 
+      - name: obsidian-publish
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']][1] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 1313
+    watchtower: true
