@@ -6,8 +6,8 @@ CERT_PEM="${CERT_DIR}/cert.pem"
 KEY_PEM="${CERT_DIR}/key.pem"
 P12_CERT="${CERT_DIR}/cert.p12"
 
-# Copy from *.blue.sauna.re to plex folder
-cp -r /output/\*.blue.sauna.re/ "${CERT_DIR}" || { echo "Failed to copy files"; exit 1; }
+# Copy from *.blue.sauna.re to plex folder and override existing files
+cp -rf /output/\*.blue.sauna.re/ "${CERT_DIR}" || { echo "Failed to copy files"; exit 1; }
 
 # Create P12 Certificate
 openssl pkcs12 -export -out "$P12_CERT" -certpbe AES-256-CBC -keypbe AES-256-CBC -macalg SHA256 -in "$CERT_PEM" -inkey "$KEY_PEM" -password pass:{{ CERTDUMPER_PLEXCERT_PW }} || { echo "Failed to create P12 certificate"; exit 1; }
