@@ -45,3 +45,33 @@ endpoints:
 
 {# See the Custom Configuration Guide for more information:
 https://docs.librechat.ai/install/configuration/custom_config.html #}
+
+speech:
+  speechTab:
+    conversationMode: true
+    advancedMode: false
+    speechToText:
+      engineSTT: "external"
+      autoTranscribeAudio: true
+      decibelValue: -45
+      autoSendText: -1
+    textToSpeech:
+      engineTTS: "external"
+      voice: "alloy"
+      automaticPlayback: false
+      playbackRate: 1.0
+      cacheTTS: true
+  stt:
+    azureOpenAI:
+      instanceName: "{{ OPENAI_AZURE_INSTANCENAME_1 }}"
+      apiKey: "{{ OPENAI_AZURE_API_KEY_1 }}"
+      deploymentName: "whisper-01"
+      apiVersion: "{{ OPENAI_AZURE_API_VERSION }}"
+  tts:
+    azureOpenAI:
+      instanceName: "{{ OPENAI_AZURE_INSTANCENAME_1 }}"
+      apiKey: "{{ OPENAI_AZURE_API_KEY_1 }}"
+      deploymentName: "tts-hd"
+      apiVersion: "{{ OPENAI_AZURE_API_VERSION }}"
+      model: "tts-hd"
+      voices: ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer']

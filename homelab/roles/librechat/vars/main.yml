@@ -3,16 +3,16 @@
 services:
   - name: librechat
     image: ghcr.io/danny-avila/librechat:latest
+    user: 1000:1000
     depends_on:
       - librechat-mongodb
       - librechat-meilisearch
       - librechat-rag_api
-    user: "{{ common_uid}}:{{ common_gid }}"
     env_file:
       - ./librechat.env
     volumes:
-      - ./data/images:/app/client/public/images
       - ./config:/config
+      - ./data/images:/app/client/public/images
       - ./data/logs:/app/api/logs
     networks:
       - librechat
