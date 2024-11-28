@@ -1,0 +1,27 @@
+# vars/main.yml
+
+services:
+  - name: syncthing
+    image: lscr.io/linuxserver/syncthing:latest
+    env_file:
+      - ../common.env
+    ports:
+      - 22000:22000/tcp
+      - 22000:22000/udp
+      - 21027:21027/udp
+    networks:
+      - syncthing
+    volumes:
+      - ./config/:/config
+      - /srv/dev-disk-by-uuid-4cf2cd9e-0885-47b9-ada6-6005c3daa474/Multimedia/Backups/Syncthing:/Multimedia
+    traefik: 
+      - name: syncthing
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 8384
+    watchtower: true/M
