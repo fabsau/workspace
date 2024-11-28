@@ -1,0 +1,82 @@
+#!/bin/bash
+
+# Your Pushover user key and API token
+PUSHOVER_USER_KEY="{{ ALERTMANAGER_PUSHOVER_USER_KEY }}"
+PUSHOVER_API_TOKEN="{{ ALERTMANAGER_PUSHOVER_TOKEN }}"
+
+# Log all environment variables for debugging
+echo "All environment variables at the start of the script:" > /config/pushover_debug.log
+env >> /config/pushover_debug.log
+
+# Determine the type of event and set the message accordingly
+EVENT="${Event}"
+TASK="${Task}"
+REPO="${Repo.Id}"
+PLAN="${Plan.Id}"
+ERROR="${Error}"
+SNAPSHOT_STATS="${SnapshotStats}"
+
+# Log individual variables for debugging
+echo "EVENT: '${EVENT}'" >> /config/pushover_debug.log
+echo "TASK: '${TASK}'" >> /config/pushover_debug.log
+echo "REPO: '${REPO}'" >> /config/pushover_debug.log
+echo "PLAN: '${PLAN}'" >> /config/pushover_debug.log
+echo "ERROR: '${ERROR}'" >> /config/pushover_debug.log
+echo "SNAPSHOT_STATS: '${SNAPSHOT_STATS}'" >> /config/pushover_debug.log
+
+# Trim any leading/trailing whitespace from the event variable
+EVENT=$(echo "$EVENT" | xargs)
+
+echo "Trimmed EVENT: '${EVENT}'" >> /config/pushover_debug.log
+
+case "$EVENT" in
+  "CONDITION_SNAPSHOT_WARNING")
+    TITLE="Backrest Snapshot Warning"
+    MESSAGE="Warning: Task '${TASK}' for repo '${REPO}' and plan '${PLAN}' encountered warnings with error: ${ERROR}."
+    ;;
+  "CONDITION_PRUNE_ERROR")
+    TITLE="Backrest Prune Error"
+    MESSAGE="Error: Prune operation for repo '${REPO}' failed with error: ${ERROR}."
+    ;;
+  "CONDITION_CHECK_ERROR")
+    TITLE="Backrest Check Error"
+    MESSAGE="Error: Check operation for repo '${REPO}' failed with error: ${ERROR}."
+    ;;
+  "CONDITION_ANY_ERROR")
+    TITLE="Backrest General Error"
+    MESSAGE="Error: Task '${TASK}' for repo '${REPO}' and plan '${PLAN}' encountered an error with error: ${ERROR}."
+    ;;
+  "CONDITION_SNAPSHOT_SUCCESS")
+    TITLE="Backrest Snapshot Success"
+    MESSAGE="Success: Task '${TASK}' for repo '${REPO}' and plan '${PLAN}' completed successfully."
+    ;;
+  "CONDITION_PRUNE_SUCCESS")
+    TITLE="Backrest Prune Success"
+    MESSAGE="Success: Prune operation for repo '${REPO}' completed successfully."
+    ;;
+  "CONDITION_CHECK_SUCCESS")
+    TITLE="Backrest Check Success"
+    MESSAGE="Success: Check operation for repo '${REPO}' completed successfully."
+    ;;
+  *)
+    TITLE="Backrest Alert"
+    MESSAGE="Alert: Task '${TASK}' for repo '${REPO}' and plan '${PLAN}' triggered an event. Event: ${EVENT}."
+    ;;
+esac
+
+# Log the title and message for debugging
+echo "TITLE: '${TITLE}'" >> /config/pushover_debug.log
+echo "MESSAGE: '${MESSAGE}'" >> /config/pushover_debug.log
+
+# Sending the notification via Pushover API
+response=$(curl -s -w "%{http_code}" -o /dev/null \
+  --form-string "token=${PUSHOVER_API_TOKEN}" \
+  --form-string "user=${PUSHOVER_USER_KEY}" \
+  --form-string "title=${TITLE}" \
+  --form-string "message=${MESSAGE}" \
+  https://api.pushover.net/1/messages.json)
+
+if [ "$response" -ne 200 ]; then
+  echo "Failed to send notification, HTTP response code: $response" >> /config/pushover_debug.log
+  exit 1
+fi

@@ -1,0 +1,30 @@
+# vars/main.yml
+
+services:
+  - name: backrest
+    image: garethgeorge/backrest:latest
+    env_file:
+      - ./backrest.env
+      - ../common.env
+    volumes:
+      - ./config/:/config
+      - ../rclone/config/rclone.conf:/root/.config/rclone/rclone.conf
+      - ../rclone/config/service_accounts:/config/service_accounts
+      - ./data:/data
+      - ./tmp/backrest:/cache
+      - /srv/dev-disk-by-uuid-bb234a23-a64c-47c0-a11e-5074eefad03f/Backup/Backrest:/repo
+      - /srv/dev-disk-by-uuid-4cf2cd9e-0885-47b9-ada6-6005c3daa474/Multimedia:/Multimedia:ro
+      - /srv/dev-disk-by-uuid-bb234a23-a64c-47c0-a11e-5074eefad03f/Backup:/Backup:ro
+    networks:
+      - backrest
+    traefik: 
+      - name: backrest
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 9898
+    watchtower: true
