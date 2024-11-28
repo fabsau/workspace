@@ -2,7 +2,7 @@
 
 services:
   - name: certdumper
-    image: ghcr.io/kereis/traefik-certs-dumper:alpine
+    image: ghcr.io/kereis/traefik-certs-dumper:latest
     command: "{{ '--restart-containers ' + certdumper_restart_containers if certdumper_restart_containers | default('') != '' else '' }}"
     network_mode: none
     volumes:
