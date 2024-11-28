@@ -12,7 +12,6 @@ services:
       - /0/merged/personal/plexdb:/backup
       - /tmp/plex:/transcode
       - /0/merged:/0:rshared
-      - /1/merged:/1:rshared
     traefik: 
       - name: plex
         protocol: http
