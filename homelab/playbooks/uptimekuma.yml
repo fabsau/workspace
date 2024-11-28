@@ -3,7 +3,7 @@
   roles:
     - variables
   vars:
-    uptime_kuma_api_url: "https://uptime.sauna.re"
+    uptime_kuma_api_url: "https://uptime.oiba.de"
     monitor_type: "HTTP"
   tasks:
 
@@ -45,10 +45,10 @@
               {% if details.uptimekuma_monitoring is not defined or details.uptimekuma_monitoring != false %}
                 {"name": "{{ host | upper }}", "type": "group"},
                 {% for ip in details.ip %}
-                  {"name": "0 PING ({{ ip }})", "parent_host": "{{ host | upper }}", "ip": "{{ ip }}", "type": "ping"},
+                  {"name": "PING ({{ ip }})", "parent_host": "{{ host | upper }}", "ip": "{{ ip }}", "type": "ping"},
                   {% if details.open_ports is defined %}
                     {% for port in details.open_ports %}
-                      {"name": "0 PORT {{ port }} ({{ ip }})", "parent_host": "{{ host | upper }}", "ip": "{{ ip }}", "port": "{{ port }}", "type": "port"},
+                      {"name": "PORT {{ port }} ({{ ip }})", "parent_host": "{{ host | upper }}", "ip": "{{ ip }}", "port": "{{ port }}", "type": "port"},
                     {% endfor %}
                   {% endif %}
                   {% if details.dns is defined and details.dns == true %}
