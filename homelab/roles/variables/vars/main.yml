@@ -17,6 +17,16 @@ base_packages:
   - dnsutils
   - iputils-ping
   - curl
+  - nfs-common
+
+traefik_whitelist_ips:
+  - 172.31.0.0/12
+  - 192.168.251.0/24
+  - 192.168.50.0/24
+  - 192.168.100.0/24
+  - 100.64.0.2/24
+  - 195.90.209.53/32
+  - 185.128.247.106/32
 
 # NFS Settings
 nfs_mounts:
@@ -26,7 +36,7 @@ nfs_mounts:
     options: auto,nofail,noatime,nolock,intr,tcp,actimeo=1800
 
 # Ansible Settings
-ansible_home: "/home/fabio/VScode/workspace/homelab"
+ansible_home: "/root/vscode/workspace/homelab"
 ansible_username: ansible
 ansible_uid: "1000"
 ansible_authorized_keys:
@@ -46,7 +56,7 @@ common_group: "abc"
 common_group_gid: "2000"
 
 # Admin Group
-admin_group: admin
+admin_group: ansible
 admin_gid: "1000"
 
 # User Creation Settings
@@ -157,7 +167,6 @@ endpoint_hosts:
   nas:
     ip:
       - "192.168.100.3"
-      - "100.64.0.3"
     open_ports:
       - 22
       - 80
@@ -175,9 +184,7 @@ endpoint_hosts:
       id: 2
   BLUE:
     ip:
-      - "195.90.219.248"
       - "192.168.251.4"
-      - "100.64.0.1"
     open_ports:
       - 22
       - 80
@@ -207,6 +214,12 @@ endpoint_hosts:
       - "192.168.100.21"
     dns: true
 
+pbs_global_server:
+  user: "{{ PROXMOX_BACKUP_USER }}"
+  pass: "{{ PROXMOX_BACKUP_PASSWORD }}"
+  host: https://bak.oiba.de:443
+  datastore: Backup
+
 
 endpoints:
   adguard:
@@ -223,10 +236,15 @@ endpoints:
     prometheus_exporter: true
   authelia:
     dmz: "auth.sauna.re"
+  baikal:
+    dmz: "cal.sauna.re"
   bazarrexporter:
     nas: "bazarrexporter.oiba.de"
+  backrest:
+    nas: "backrest.oiba.de"
   bazarr:
     dmz: "bazarr.sauna.re"
+    uptimekuma_monitor: false
   cadvisor:
     nas: "cadvisor.nas.oiba.de"
     dmz: "cadvisor.azure.sauna.re"
@@ -239,8 +257,9 @@ endpoints:
   ciscoswitch:
     nas: "switch.oiba.de"
     traefik_extra_server: true
-  codeserver:
-    nas: "code.oiba.de"
+  # codeserver:
+  #   nas: "code.oiba.de"
+  #   uptimekuma_monitor: false
   czkawka:
     nas: "files.oiba.de"
   demo-dhbwgpt:
@@ -260,21 +279,29 @@ endpoints:
     dmz: "fabio.sauna.re"
   grafana:
     nas: "grafana.oiba.de"
-  headscale:
-    dmz: "headscale.sauna.re"
+  # headscale:
+  #   dmz: "headscale.sauna.re"
   homeassistant:
     dmz: "home.sauna.re"
     traefik_extra_server: true
+    prometheus_exporter: true
+    prometheus_settings:
+      metrics_path: "/api/prometheus"
+      authorization:
+        credentials: "{{ PROMETHEUS_HOMEASSISTANT_TOKEN }}"
   homer:
-    dmz: "home.sauna.re"
+    dmz: "start.sauna.re"
   ihatemoney:
     dmz: "money.sauna.re"
-  inputforms:
-    nas: "forms.oiba.de"
+  # inputforms:
+  #   nas: "forms.oiba.de"
+  #   uptimekuma_monitor: false
   it-tools:
     dmz: "tools.sauna.re"
   johanna-liebt-fabio:
     dmz: "johanna-liebt-fabio.sauna.re"
+  kasm:
+    dmz: "desktop.sauna.re"
   librechat:
     dmz: "chat.sauna.re"
   librespeed:
@@ -291,10 +318,11 @@ endpoints:
       params:
         script: "librespeed"
   limesurvey:
-    nas: "survey.oiba.de"
     dmz: "survey.sauna.re"
   linkhub:
     dmz: "portal.sauna.re"
+  nexterm:
+    nas: "ssh.oiba.de"
   nodeexporter:
     nas: "node.nas.oiba.de"
     dmz: "node.azure.sauna.re"
@@ -302,11 +330,15 @@ endpoints:
     opn: "node.opn.oiba.de"
     home: "node.home.oiba.de"
     prometheus_exporter: true
+  obsidian:
+    dmz:
+      - "obsidian-sync.sauna.re"
+      - "notes.sauna.re"
   openmediavault:
     nas: "nas.oiba.de"
     traefik_extra_server: true
   opnsense:
-    nas: "opn.oiba.de"
+    nas: "router.oiba.de"
     traefik_extra_server: true
   overseerr:
     dmz: "request.sauna.re"
@@ -320,6 +352,7 @@ endpoints:
     dmz: "data.sauna.re"
   plausibleexporter:
     nas: "plausibleexporter.oiba.de"
+    uptimekuma_monitor: false
     prometheus_exporter: true
   plex:
     BLUE: "watch.sauna.re"
@@ -329,6 +362,7 @@ endpoints:
       - "plexexporter2.oiba.de"
       - "plexexporter3.oiba.de"
     prometheus_exporter: true
+    uptimekuma_monitor: false
   portainer:
     nas: "docker.oiba.de"
   prowlarr:
@@ -344,7 +378,7 @@ endpoints:
     nas: "vm.oiba.de"
     traefik_extra_server: true
   proxbak:
-    nas: "backup.oiba.de"
+    nas: "bak.oiba.de"
     traefik_extra_server: true
   proxmoxexporter:
     nas: "proxmoxexporter.oiba.de"
@@ -359,6 +393,9 @@ endpoints:
         node: "1"
       relabel_configs:
         - replacement: proxmoxexporter.oiba.de
+  pbsexporter:
+    nas: "pbsexporter.oiba.de"
+    prometheus_exporter: true
   pyload:
     nas: "pyload.oiba.de"
   qbittorrent:
@@ -366,17 +403,20 @@ endpoints:
   qbittorrentexporter:
     nas: "qbittorrentexporter.oiba.de"
     prometheus_exporter: true
+    uptimekuma_monitor: false
   radarr:
     dmz: "radarr.sauna.re"
   radarrexporter:
     nas: "radarrexporter.oiba.de"
     prometheus_exporter: true
-  rancher:
-    nas: "rancher.oiba.de"
-  rclone:
-    nas: "rclone.oiba.de"
-    BLUE: "rclone.blue.sauna.re"
-    dmz: "rclone.azure.sauna.re"
+  # rancher:
+  #   nas: "rancher.oiba.de"
+  #   uptimekuma_monitor: false
+  # rclone:
+  #   nas: "rclone.oiba.de"
+  #   BLUE: "rclone.blue.sauna.re"
+  #   dmz: "rclone.azure.sauna.re"
+  #   uptimekuma_monitor: false
   sabnzbd:
     BLUE: "usenet.sauna.re"
   sabnzbdexporter:
@@ -393,6 +433,8 @@ endpoints:
     dmz:
       - "spotify-api.sauna.re"
       - "spotify.sauna.re"
+  syncthing:
+    nas: "sync.oiba.de"
   tandoorrecipes:
     nas: "recipes.oiba.de"
     prometheus_exporter: true
@@ -401,6 +443,8 @@ endpoints:
   tautulliexporter:
     nas: "tautulliexporter.oiba.de"
     prometheus_exporter: true
+  torrent:
+    BLUE: "torrent.sauna.re"
   traefik:
     nas: "proxy.oiba.de"
     dmz: "proxy.azure.sauna.re"
@@ -409,11 +453,7 @@ endpoints:
   unifi:
     nas: "unifi.oiba.de"
     uptimekuma_container:
-        unifi_mariadb:
-          docker_connection_host: "nas"
-  unifi2:
-    uptimekuma_container:
-        unifi_mariadb2:
+        unifi_mongodb:
           docker_connection_host: "nas"
   unifiexporter:
     nas: "unifiexporter.oiba.de"
@@ -425,20 +465,10 @@ endpoints:
       basic_auth:
         username: "{{ PROMETHEUS_UPTIMEKUMA_USER }}"
         password: "{{ PROMETHEUS_UPTIMEKUMA_PASSWORD }}"
-  uptimekuma-saunaflix:
+  uptimekuma_saunaflix:
     dmz: "status.sauna.re"
-  urbackup:
-    nas: "backup.oiba.de"
-  urbackupexporter:
-    nas: "urbackupexporter.oiba.de"
-    prometheus_exporter: true
-  backuppc:
-    nas: "backup2.oiba.de"
-  duplicacy:
-    nas: "backup3.oiba.de"
   vacuum:
     nas: "vacuum.oiba.de"
-    uptimekuma_monitor: false
     traefik_extra_server: true
   valetudo:
     nas: "valetudo.oiba.de"
@@ -447,18 +477,19 @@ endpoints:
     dmz:
       - "bitwarden.sauna.re"
       - "bitwarden2.sauna.re"
-  vscode:
-    nas: "code.oiba.de"
+  # vscode:
+  #   nas: "code.oiba.de"
   wallos:
     nas: "wallos.oiba.de"
-  watchtower:
-    nas: "watchtower.oiba.de"
-    dmz: "watchtower.azure.sauna.re"
-    BLUE: "watchtower.blue.sauna.re"
-    prometheus_exporter: true
-    prometheus_settings:
-      metrics_path: "/v1/metrics"
-      bearer_token: "{{ WATCHTOWER_HTTP_API_TOKEN }}"
+  # watchtower:
+  #   nas: "watchtower.oiba.de"
+  #   dmz: "watchtower.azure.sauna.re"
+  #   BLUE: "watchtower.blue.sauna.re"
+  #   prometheus_exporter: true
+  #   prometheus_settings:
+  #     metrics_path: "/v1/metrics"
+  #     bearer_token: "{{ WATCHTOWER_HTTP_API_TOKEN }}"
+  #   uptimekuma_monitor: false
   wizarr:
     dmz: "setup.sauna.re"
   xbackbone:

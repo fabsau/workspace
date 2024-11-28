@@ -33,6 +33,9 @@ docker_networks:
   - dockge
   - it-tools
   - urbackup
+  - baikal
+  - obsidian
+  - kasm
 
 # TRAEFIK
 traefik_oauth_address: http://authelia:9091/api/verify?rd=https%3A%2F%2Fauth.sauna.re%2F
@@ -47,15 +50,6 @@ traefik_domains:
 
 traefik_extra_hosts:
   - host.docker.internal:172.17.0.1
-
-traefik_whitelist_ips:
-  - 46.223.56.204/32
-  - 172.187.202.93
-  - 172.31.0.0/12
-  - 192.168.251.0/24
-  - 192.168.50.0/24
-  - 192.168.100.0/24
-  - 195.90.219.248
 
   
 traefik_extra_servers:
