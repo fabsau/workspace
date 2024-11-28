@@ -1,0 +1,20 @@
+# vars/main.yml
+
+services:
+  - name: nexterm
+    image: germannewsmaker/nexterm:latest
+    networks:
+      - nexterm
+    volumes:
+      - ./data:/app/data
+    traefik: 
+      - name: nexterm
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 6989
+    watchtower: true
