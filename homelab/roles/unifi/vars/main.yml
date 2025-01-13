@@ -4,7 +4,7 @@ services:
   - name: unifi
     image: lscr.io/linuxserver/unifi-network-application:latest
     depends_on:
-      - unifi_mongodb
+      - unifi-mongodb
     env_file:
       - ./unifi.env
       - ../common.env
@@ -84,7 +84,7 @@ services:
         service_port: 10001
     watchtower: true
 
-  - name: unifi_mongodb
+  - name: unifi-mongodb
     image: mongo:latest
     networks:
       - unifi

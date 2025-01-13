@@ -31,7 +31,7 @@ services:
         service_port: 9959
     watchtower: true
 
-  - name: authelia_redis
+  - name: authelia-redis
     image: redis:alpine
     env_file:
       - ../common.env
