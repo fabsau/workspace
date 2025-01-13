@@ -58,9 +58,9 @@
   file:
     path: "{{ docker_base_path }}/{{ role_specific }}/{{ docker_service_volume | default('config') }}"
     state: directory
-    owner: "{{ common_username }}"
-    group: "{{ common_group_gid }}"
-    mode: "{{ default_file_permission_mode }}"
+    owner: "{{ config_files_settings.role_owner | default(common_username) }}"
+    group: "{{ config_files_settings.role_group | default(common_group_gid) }}"
+    mode: "{{ config_files_settings.role_folder_permission_mode | default(default_file_permission_mode) }}"
   become: true
   when: config_files | length > 0
 
@@ -68,9 +68,9 @@
   template:
     src: "{{ config_item.path }}"
     dest: "{{ docker_base_path }}/{{ role_specific }}/{{ docker_service_volume | default('config') }}/{{ config_item.path | basename | regex_replace('\\.j2$', '') }}"
-    owner: "{{ common_username }}"
-    group: "{{ common_group_gid }}"
-    mode: "{{ default_file_permission_mode }}"
+    owner: "{{ config_files_settings.role_owner | default(common_username) }}"
+    group: "{{ config_files_settings.role_group | default(common_group_gid) }}"
+    mode: "{{ config_files_settings.role_file_permission_mode | default(default_file_permission_mode) }}"
   become: true
   loop: "{{ config_files }}"
   loop_control:
