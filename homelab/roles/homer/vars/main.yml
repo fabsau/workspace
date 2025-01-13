@@ -1,0 +1,24 @@
+# vars/main.yml
+
+services:
+  - name: homer
+    image: b4bz/homer:latest
+    user: "{{ common_uid }}:{{ common_gid }}"
+    volumes:
+      - ./config:/www/assets/
+      - ./dashboard-icons/png:/www/assets/icons/png
+      - ./dashboard-icons/svg:/www/assets/icons/svg
+      - ./dashboard-icons/webp:/www/assets/icons/webp
+    networks:
+      - homer
+    traefik:
+      - name: homer
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: public-oauth-chain@file
+        insecuretransport: false
+        service_port: 8080
+    watchtower: true

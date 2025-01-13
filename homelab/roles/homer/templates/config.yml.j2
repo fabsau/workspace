@@ -1,0 +1,469 @@
+---
+# Homepage configuration
+# See https://fontawesome.com/icons for icons options
+
+# Optional: Use external configuration file.
+# Using this will ignore remaining config in this file
+# externalConfig: https://example.com/server-luci/config.yaml
+
+title: "App dashboard"
+subtitle: "Homer"
+documentTitle: "Homer" # Customize the browser tab text
+logo: "assets/logo.png"
+# Alternatively a fa icon can be provided:
+# icon: "fas fa-skull-crossbones"
+
+header: false # Set to false to hide the header
+footer: false
+
+columns: "auto" # "auto" or number (must be a factor of 12: 1, 2, 3, 4, 6, 12)
+connectivityCheck: true # whether you want to display a message when the apps are not accessible anymore (VPN disconnected for example)
+
+# Optional theming
+
+# Optional theme customization
+# Nord theme inspired from - https://github.com/thermatico/homer-nord
+theme: default
+colors:
+  light:
+    highlight-primary: "#3367d6"
+    highlight-secondary: "#4285f4"
+    highlight-hover: "#5a95f5"
+    background: "#f5f5f5"
+    card-background: "#ffffff"
+    text: "#363636"
+    text-header: "#ffffff"
+    text-title: "#303030"
+    text-subtitle: "#424242"
+    card-shadow: rgba(0, 0, 0, 0.1)
+    link-hover: "#363636"
+  dark:
+    highlight-primary: "#2E3440"
+    highlight-secondary: "#4C566A"
+    highlight-hover: "#81A1C1"
+    background: "#3B4252"
+    card-background: "#2E3440"
+    text: "#D8DEE9"
+    text-header: "#D8DEE9"
+    text-title: "#81A1C1"
+    text-subtitle: "#81A1C1"
+    card-shadow: rgba(0, 0, 0, 0.4)
+    link-hover: "#BF616A"
+        
+    # colors from Nord theme: https://github.com/arcticicestudio/nord
+
+message:
+  # style: "is-info"
+  # title: "Searx"
+  # icon: "fas fa-search"
+  # content: '<form action="https://searx.sauna.re/search?q=" method="get" target="_top"> <input type="text" name="q" placeholder="Search" spellcheck="false" autofocus="true" onkeydown="handleKeyPress(event)"/></form>
+  style: "is-info"
+  title: "Searx"
+  icon: "fas fa-search"
+  content: '<form method="POST" action="https://searx.sauna.re/search?q=" method="get" target="_top" id="search_form" role="search"> <input type="search" name="q" class="form-control input-lg" id="q" placeholder="Search" autocomplete="on" style="width:97%" max-content" value="">  <button type="submit" class="btn btn-primary input-lg"><i class="fas fa-search"></i></button> </form>'
+
+links:
+  - icon: "fab fa-youtube"
+    url: "https://www.youtube.com/feed/subscriptions"
+    target: "_top"
+  - icon: "far fa-newspaper"
+    url: "https://heise.de"
+    target: "_top"
+  - icon: "fas fa-percent"
+    url: "https://mydealz.de"
+    target: "_top"
+  - icon: "fab fa-reddit"
+    url: "https://reddit.com"
+    target: "_top"
+
+# Services
+# First level array represent a group.
+# Leave only a "items" key if not using group (group name, icon & tagstyle are optional, section separation will not be displayed).
+# Place the icons in "assets/icons/svg/"
+
+services:
+  - name: "Saunaflix"
+    icon: "fas fa-tv"
+    items:
+      - name: "Plex"
+        logo: "assets/icons/svg/plex.svg"
+        subtitle: "Media"
+        url: "https://{{ endpoints.plex.BLUE }}"
+        target: '_top'
+      - name: "Overseerr"
+        logo: "assets/icons/svg/overseerr.svg"
+        subtitle: "Requester"
+        url: "https://{{ endpoints.overseerr.dmz }}"
+        target: '_top'
+      - name: "Wizarr"
+        logo: "assets/icons/svg/wizarr.svg"
+        subtitle: "Wizarr"
+        url: "https://{{ endpoints.wizarr.dmz }}"
+        target: '_top'
+      - name: "Tautulli"
+        logo: "assets/icons/svg/tautulli.svg"
+        subtitle: "Statistics"
+        url: "https://{{ endpoints.tautulli.dmz }}"
+        target: '_top'
+      - name: "Sonarr"
+        logo: "assets/icons/svg/sonarr.svg"
+        subtitle: "Series"
+        url: "https://{{ endpoints.sonarr.dmz }}"
+        target: '_top'
+      - name: "Radarr"
+        logo: "assets/icons/svg/radarr.svg"
+        subtitle: "Movies"
+        url: "https://{{ endpoints.radarr.dmz }}"
+        target: '_top'
+      - name: "Bazarr"
+        logo: "assets/icons/svg/bazarr.svg"
+        subtitle: "Subtitles"
+        url: "https://{{ endpoints.bazarr.dmz }}"
+        target: '_top'
+      - name: "Prowlarr"
+        logo: "assets/icons/svg/prowlarr.svg"
+        subtitle: "Indexer"
+        url: "https://prowlarr.sauna.re/"
+        target: '_top'
+      - name: "Sabnzbd"
+        logo: "assets/icons/svg/sabnzbd.svg"
+        subtitle: "Usenet"
+        url: "https://{{ endpoints.sabnzbd.BLUE }}"
+        target: '_top'
+      - name: "qBittorrent"
+        logo: "assets/icons/svg/qbittorrent.svg"
+        subtitle: "Torrent"
+        url: "https://{{ endpoints.qbittorrent.BLUE }}"
+        target: '_top'
+      - name: "Pyload"
+        logo: "assets/icons/svg/pyload.svg"
+        subtitle: "Pyload"
+        url: "https://{{ endpoints.pyload.nas }}"
+        target: '_top'
+
+  - name: "Media"
+    icon: "fas fa-film"
+    items:
+      - name: "PhotoPrism"
+        logo: "assets/icons/svg/photoprism.svg"
+        subtitle: "Photos"
+        url: "https://{{ endpoints.photoprism.dmz }}"
+        target: '_top'
+      - name: "Paperless"
+        logo: "assets/icons/svg/paperless-ng.svg"
+        subtitle: "Documents"
+        url: "https://{{ endpoints.paperless.nas }}"
+        target: '_top'
+      - name: "Obsidian"
+        logo: "assets/icons/svg/obsidian.svg"
+        subtitle: "Obsidian"
+        url: "https://{{ endpoints.obsidian.dmz[1] }}"
+        target: '_top'
+      - name: "Your Spotify"
+        logo: "assets/icons/svg/spotify.svg"
+        subtitle: "Statistics"
+        url: "https://{{ endpoints.spotify.dmz[1] }}"
+        target: '_top'
+      - name: "Calibre"
+        logo: "assets/icons/svg/calibre.svg"
+        subtitle: "Books"
+        url: "https://{{ endpoints.calibre_web.dmz }}"
+        target: '_top'
+      - name: "Xbackbone"
+        logo: "assets/icons/svg/xbackbone.svg"
+        subtitle: "Xbackbone"
+        url: "https://{{ endpoints.xbackbone.dmz }}"
+        target: '_top'
+      - name: "Files"
+        logo: "assets/icons/svg/filebrowser.svg"
+        subtitle: "Cloud"
+        url: "https://{{ endpoints.filebrowser.dmz }}"
+        target: '_top'
+      - name: "Czkawka"
+        logo: "assets/icons/svg/czkawka.svg"
+        subtitle: "Czkawka"
+        url: "https://{{ endpoints.czkawka.nas }}"
+        target: '_top'
+      - name: "SyncThing"
+        logo: "assets/icons/svg/syncthing.svg"
+        subtitle: "SyncThing"
+        url: "https://{{ endpoints.syncthing.nas }}"
+        target: '_top'
+
+  - name: "Server"
+    icon: "fas fa-server"
+    items:
+      - name: "Proxmox"
+        logo: "assets/icons/svg/proxmox.svg"
+        subtitle: "Proxmox"
+        url: "https://{{ endpoints.proxmox.nas }}"
+        target: '_top'
+      - name: "ProxBak"
+        logo: "assets/icons/svg/proxmox-light.svg"
+        subtitle: "ProxBak"
+        url: "https://{{ endpoints.proxbak.nas }}"
+        target: '_top'
+      - name: "Home-Assistant"
+        logo: "assets/icons/svg/home-assistant.svg"
+        subtitle: "Smart-Home"
+        url: "https://{{ endpoints.homeassistant.dmz }}"
+        target: '_top'
+      - name: "Openmediavault"
+        logo: "assets/icons/svg/openmediavault.svg"
+        subtitle: "NAS"
+        url: "https://{{ endpoints.openmediavault.nas }}"
+        target: '_top'
+      - name: "OPNsense"
+        logo: "assets/icons/svg/opnsense.svg"
+        subtitle: "Firewall"
+        url: "https://{{ endpoints.opnsense.nas }}"
+        target: '_top'
+      - name: "Switch"
+        logo: "assets/icons/svg/cisco.svg"
+        subtitle: "SG250-08"
+        url: "https://{{ endpoints.ciscoswitch.nas }}"
+        target: '_top'
+      - name: "Unifi"
+        logo: "assets/icons/svg/unifi.svg"
+        subtitle: "Controller"
+        url: "https://{{ endpoints.unifi.nas }}"
+        target: '_top'
+      - name: "Valetudo"
+        logo: "assets/icons/svg/valetudo.svg"
+        subtitle: "VAC"
+        url: "https://{{ endpoints.valetudo.nas }}"
+        target: '_top'
+
+  - name: "Traefik"
+    icon: "fas fa-traffic-light"
+    items:
+      - name: "Traefik"
+        logo: "assets/icons/svg/traefik.svg"
+        subtitle: "AZURE01"
+        url: "https://{{ endpoints.traefik.dmz }}"
+        target: '_top'
+      - name: "Traefik"
+        logo: "assets/icons/svg/traefik.svg"
+        subtitle: "CLOUD"
+        url: "https://{{ endpoints.traefik.dmz }}"
+        target: '_top'
+      - name: "Traefik"
+        logo: "assets/icons/svg/traefik.svg"
+        subtitle: "DMZ"
+        url: "https://{{ endpoints.traefik.nas }}"
+        target: '_top'
+
+  - name: "Management"
+    icon: "fas fa-tools"
+    items:
+      - name: "Nexterm"
+        logo: "assets/icons/svg/nexterm.svg"
+        subtitle: "Nexterm"
+        url: "https://{{ endpoints.nexterm.nas }}"
+        target: '_top'
+      - name: "Portainer"
+        logo: "assets/icons/svg/portainer.svg"
+        subtitle: "Docker"
+        url: "https://{{ endpoints.portainer.nas }}"
+        target: '_top'
+      - name: "DockGE"
+        logo: "assets/icons/svg/dockge.svg"
+        subtitle: "DockGE NAS"
+        url: "https://{{ endpoints.dockge.nas }}"
+        target: '_top'
+      - name: "DockGE"
+        logo: "assets/icons/svg/dockge.svg"
+        subtitle: "DockGE Azure"
+        url: "https://{{ endpoints.dockge.dmz }}"
+        target: '_top'
+      - name: "DockGE"
+        logo: "assets/icons/svg/dockge.svg"
+        subtitle: "DockGE BLUE"
+        url: "https://{{ endpoints.dockge.BLUE }}"
+        target: '_top'
+
+  - name: "IT Tools"
+    icon: "fas fa-tools"
+    items:
+      - name: "IT Tools"
+        logo: "assets/icons/svg/it-tools.svg"
+        subtitle: "Tools"
+        url: "https://{{ endpoints['it-tools'].dmz }}"
+        target: '_top'
+      - name: "phpMyAdmin"
+        logo: "assets/icons/svg/phpmyadmin.svg"
+        subtitle: "Database"
+        url: "https://{{ endpoints.phpmyadmin.dmz }}"
+        target: '_top'
+
+  - name: "Adguard"
+    icon: "fas fa-shield-alt"
+    items:
+      - name: "AdGuard"
+        logo: "assets/icons/svg/adguard-home.svg"
+        subtitle: "NAS"
+        url: "https://{{ endpoints.adguard.lxc1 }}"
+        target: '_top'
+      - name: "AdGuard"
+        logo: "assets/icons/svg/adguard-home.svg"
+        subtitle: "DMZ"
+        url: "https://{{ endpoints.adguard.lxc2 }}"
+        target: '_top'
+      - name: "AdGuard"
+        logo: "assets/icons/svg/adguard-home.svg"
+        subtitle: "BLUE"
+        url: "https://{{ endpoints.adguard.BLUE }}"
+        target: '_top'
+
+  - name: "Monitoring"
+    icon: "fas fa-heartbeat"
+    items:
+      - name: "Uptime Kuma"
+        logo: "assets/icons/svg/uptime-kuma.svg"
+        subtitle: "Uptime Kuma"
+        url: "https://{{ endpoints.uptimekuma.nas }}"
+        target: '_top'
+      - name: "Prometheus"
+        logo: "assets/icons/svg/prometheus.svg"
+        subtitle: "NAS"
+        url: "https://{{ endpoints.prometheus.nas }}"
+        target: '_top'
+      - name: "Prometheus"
+        logo: "assets/icons/svg/prometheus.svg"
+        subtitle: "CLOUD"
+        url: "https://{{ endpoints.prometheus.dmz }}"
+        target: '_top'
+      - name: "Grafana"
+        logo: "assets/icons/svg/grafana.svg"
+        subtitle: "Graphs"
+        url: "https://{{ endpoints.grafana.nas }}"
+        target: '_top'
+      - name: "Alertmanager"
+        logo: "assets/icons/svg/alertmanager.svg"
+        subtitle: "NAS"
+        url: "https://{{ endpoints.alertmanager.nas }}"
+        target: '_top'
+      - name: "Alertmanager"
+        logo: "assets/icons/svg/alertmanager.svg"
+        subtitle: "CLOUD"
+        url: "https://{{ endpoints.alertmanager.dmz }}"
+        target: '_top'
+      - name: "cAdvisor"
+        logo: "assets/icons/webp/cadvisor.webp"
+        subtitle: "cAdvisor NAS"
+        url: "https://{{ endpoints.cadvisor.nas }}"
+        target: '_top'
+      - name: "cAdvisor"
+        logo: "assets/icons/webp/cadvisor.webp"
+        subtitle: "cAdvisor Azure"
+        url: "https://{{ endpoints.cadvisor.dmz }}"
+        target: '_top'
+      - name: "cAdvisor"
+        logo: "assets/icons/webp/cadvisor.webp"
+        subtitle: "cAdvisor BLUE"
+        url: "https://{{ endpoints.cadvisor.BLUE }}"
+        target: '_top'
+      - name: "Node Exporter"
+        logo: "assets/icons/svg/prometheus.svg"
+        subtitle: "Node Exporter NAS"
+        url: "https://{{ endpoints.nodeexporter.nas }}"
+        target: '_top'
+      - name: "Node Exporter"
+        logo: "assets/icons/svg/prometheus.svg"
+        subtitle: "Node Exporter Azure"
+        url: "https://{{ endpoints.nodeexporter.dmz }}"
+        target: '_top'
+      - name: "Node Exporter"
+        logo: "assets/icons/svg/prometheus.svg"
+        subtitle: "Node Exporter BLUE"
+        url: "https://{{ endpoints.nodeexporter.BLUE }}"
+        target: '_top'
+      - name: "Librespeed"
+        logo: "assets/icons/svg/librespeed.svg"
+        subtitle: "Speedtest NAS"
+        url: "https://{{ endpoints.librespeed.nas }}"
+        target: '_top'
+      - name: "Librespeed"
+        logo: "assets/icons/svg/librespeed.svg"
+        subtitle: "Speedtest AZURE"
+        url: "https://{{ endpoints.librespeed.dmz }}"
+        target: '_top'
+      - name: "Librespeed"
+        logo: "assets/icons/svg/librespeed.svg"
+        subtitle: "Speedtest"
+        url: "https://{{ endpoints.librespeed.BLUE }}"
+        target: '_top'
+
+  - name: "Apps"
+    icon: "fas fa-window-maximize"
+    items:
+      - name: "Bitwarden"
+        logo: "assets/icons/svg/bitwarden.svg"
+        subtitle: "Passwords"
+        url: "https://{{ endpoints.vaultwarden.dmz[0] }}"
+        target: '_top'
+      - name: "Fabio Sauna Blog"
+        logo: "assets/icons/custom/blog.png"
+        subtitle: "Blog"
+        url: "https://{{ endpoints.ghost.dmz }}"
+        target: '_top'
+      - name: "Plausible"
+        logo: "assets/icons/svg/plausible.svg"
+        subtitle: "Analytics"
+        url: "https://{{ endpoints.plausible.dmz }}"
+        target: '_top'
+      - name: "IhateMoney"
+        logo: "assets/icons/webp/ihatemoney.webp"
+        subtitle: "Expenses"
+        url: "https://{{ endpoints.ihatemoney.dmz }}"
+        target: '_top'
+      - name: "Kasm"
+        logo: "assets/icons/svg/kasm.svg"
+        subtitle: "Desktop"
+        url: "https://{{ endpoints.kasm.dmz }}"
+        target: '_top'
+      - name: "Changedetection"
+        logo: "assets/icons/svg/changedetection.svg"
+        subtitle: "Changedetection"
+        url: "https://{{ endpoints.changedetection.nas }}"
+        target: '_top'
+      - name: "LibreChat"
+        logo: "assets/icons/svg/chatgpt.svg"
+        subtitle: "Chat"
+        url: "https://{{ endpoints.librechat.dmz }}"
+        target: '_top'
+      - name: "LimeSurvey"
+        logo: "assets/icons/svg/limesurvey.svg"
+        subtitle: "Survey"
+        url: "https://{{ endpoints.limesurvey.dmz }}"
+        target: '_top'
+      - name: "Ferdium"
+        logo: "assets/icons/svg/ferdium.svg"
+        subtitle: "Ferdium"
+        url: "https://{{ endpoints.ferdium.dmz }}"
+        target: '_top'
+      - name: "Pairdrop"
+        logo: "assets/icons/webp/pairdrop.webp"
+        subtitle: "Pairdrop"
+        url: "https://{{ endpoints.pairdrop.nas }}"
+        target: '_top'
+      - name: "Tandoor Recipes"
+        logo: "assets/icons/svg/tandoor-recipes.svg"
+        subtitle: "Recipes"
+        url: "https://{{ endpoints.tandoorrecipes.nas }}"
+        target: '_top'
+      - name: "Wallos"
+        logo: "assets/icons/webp/wallos.webp"
+        subtitle: "Wallos"
+        url: "https://{{ endpoints.wallos.nas }}"
+        target: '_top'
+      - name: "Backrest"
+        logo: "assets/icons/svg/backrest.svg"
+        subtitle: "Backrest"
+        url: "https://{{ endpoints.backrest.nas }}"
+        target: '_top'
+      - name: "Authelia"
+        logo: "assets/icons/svg/authelia.svg"
+        subtitle: "SSO"
+        url: "https://{{ endpoints.authelia.dmz }}"
+        target: '_top'
