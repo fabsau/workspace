@@ -11,15 +11,20 @@ http:
           - "secure-headers"
           - "compression"
           - "www-redirect"
-          
+
     private-chain:
       chain:
         middlewares:
           - "public-chain"
           - "whitelist"
-          # - "oauth"
 
-    oauth-chain:
+    public-oauth-chain:
+      chain:
+        middlewares:
+          - "public-chain"
+          - "oauth"
+
+    private-oauth-chain:
       chain:
         middlewares:
           - "private-chain"
