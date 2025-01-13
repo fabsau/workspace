@@ -4,7 +4,7 @@ services:
   - name: searxng
     image: searxng/searxng:latest
     depends_on:
-      - searxng_redis
+      - searxng-redis
     cap_drop:
       - ALL
     cap_add:
@@ -26,12 +26,12 @@ services:
         http_redirection: true
         enable_tls: true
         rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
-        middlewares: oauth-chain@file
+        middlewares: public-oauth-chain@file
         insecuretransport: false
         service_port: 8080
     watchtower: true
 
-  - name: searxng_redis
+  - name: searxng-redis
     image: redis:alpine
     command: redis-server --save "" --appendonly "no"
     cap_drop:

@@ -24,6 +24,7 @@ traefik_whitelist_ips:
   - 192.168.251.0/24
   - 192.168.50.0/24
   - 192.168.100.0/24
+  - 192.168.150.2/32
   - 100.64.0.2/24
   - 195.90.209.53/32
   - 185.128.247.106/32
@@ -277,10 +278,17 @@ endpoints:
     traefik_extra_server: true
   ghost:
     dmz: "fabio.sauna.re"
+    uptimekuma_container:
+      ghost-mysql:
+        docker_connection_host: "dmz"
   grafana:
     nas: "grafana.oiba.de"
-  # headscale:
-  #   dmz: "headscale.sauna.re"
+  headscale:
+    dmz: "headscale.sauna.re"
+    prometheus_settings:
+      metrics_path: "/metrics"
+    uptimekuma_monitor:
+      path: "/web"
   homeassistant:
     dmz: "home.sauna.re"
     traefik_extra_server: true
@@ -396,6 +404,8 @@ endpoints:
   pbsexporter:
     nas: "pbsexporter.oiba.de"
     prometheus_exporter: true
+  phpmyadmin:
+    dmz: "pma.sauna.re"
   pyload:
     nas: "pyload.oiba.de"
   qbittorrent:
@@ -422,8 +432,13 @@ endpoints:
   sabnzbdexporter:
     nas: "sabnzbdexporter.oiba.de"
     prometheus_exporter: true
-  searx:
+  searxng:
     dmz: "searx.sauna.re"
+    prometheus_exporter: true
+    prometheus_settings:
+      basic_auth:
+        username: "{{ SEARXNG_PROMETHEUS_USER }}"
+        password: "{{ SEARXNG_PROMETHEUS_PASSWORD }}"
   sonarr:
     dmz: "sonarr.sauna.re"
   sonarrexporter:
@@ -453,7 +468,7 @@ endpoints:
   unifi:
     nas: "unifi.oiba.de"
     uptimekuma_container:
-        unifi_mongodb:
+        unifi-mongodb:
           docker_connection_host: "nas"
   unifiexporter:
     nas: "unifiexporter.oiba.de"

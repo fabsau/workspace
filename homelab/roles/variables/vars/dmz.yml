@@ -5,8 +5,8 @@ docker_networks:
   - portainer
   - authelia
   - vaultwarden
-  - blog
-  - searx
+  - ghost
+  - searxng
   - spotify
   - plausible
   - adguard
@@ -36,6 +36,7 @@ docker_networks:
   - baikal
   - obsidian
   - kasm
+  - phpmyadmin
 
 # TRAEFIK
 traefik_oauth_address: http://authelia:9091/api/verify?rd=https%3A%2F%2Fauth.sauna.re%2F
