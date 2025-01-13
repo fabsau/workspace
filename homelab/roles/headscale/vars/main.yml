@@ -1,0 +1,53 @@
+# vars/main.yml
+
+services:
+  - name: headscale
+    image: headscale/headscale:0.23
+    command: serve
+    volumes:
+      - ./config:/etc/headscale
+      - ./data:/var/lib/headscale
+      - ../certdumper/ssl/*.azure.sauna.re:/opt/ssl
+    ports:
+      - 9090:9090
+      - 3478:3478/udp
+    networks:
+      - headscale
+    traefik:
+      - name: headscale
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: true
+        service_port: 443
+      - name: headscale-metrics
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`) && Path(`/metrics`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 9090
+    watchtower: true
+
+  - name: headscale_ui
+    image: ghcr.io/gurucomputing/headscale-ui:latest
+    depends_on:
+      - headscale
+    networks:
+      - headscale
+    traefik:
+      - name: headscale_ui
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`) && (PathPrefix(`/web`) || PathPrefix(`/web/`))"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 8080
+    watchtower: true
