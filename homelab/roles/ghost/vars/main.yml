@@ -1,0 +1,45 @@
+# vars/main.yml
+
+services:
+  - name: ghost
+    image: ghost:latest
+    depends_on:
+      - ghost-mysql
+    env_file:
+      - ../common.env
+      - ./ghost.env
+    volumes:
+      - ./data:/var/lib/ghost/content
+    networks:
+      - ghost
+    traefik:
+      - name: ghost
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 2368
+      - name: ghost-admin
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`) && Path(`/ghost/`)"
+        middlewares: public-oauth-chain@file
+        insecuretransport: false
+        service_port: 2368
+    watchtower: true
+
+  - name: ghost-mysql
+    image: mysql:latest
+    env_file:
+      - ../common.env
+      - ./ghost-mysql.env
+    volumes:
+      - ./db:/var/lib/mysql
+    networks:
+      - ghost
+    watchtower: true
