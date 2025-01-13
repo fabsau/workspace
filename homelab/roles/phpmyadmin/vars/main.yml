@@ -1,0 +1,23 @@
+# vars/main.yml
+
+services:
+  - name: phpmyadmin
+    image: phpmyadmin:latest
+    env_file:
+      - ./phpmyadmin.env
+    volumes:
+      - ./data:/var/lib/ghost/content
+    networks:
+      - phpmyadmin
+      - ghost
+    traefik:
+      - name: phpmyadmin
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: private-oauth-chain@file
+        insecuretransport: false
+        service_port: 80
+    watchtower: true
