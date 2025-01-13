@@ -126,6 +126,12 @@ services:
       - {{ volume }}
 {% endfor %}
 {% endif %}
+{% if service.tmpfs is defined and service.tmpfs %}
+    tmpfs:
+{% for tmpfs in service.tmpfs %}
+      - {{ tmpfs }}
+{% endfor %}
+{% endif %}
     labels:
 {% if service.traefik is defined %}
       - "traefik.enable=true"
