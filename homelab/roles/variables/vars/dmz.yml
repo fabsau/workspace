@@ -16,7 +16,7 @@ docker_networks:
   - homer
   - monitoring
   - crowdsec
-  - tandoor
+  - tandoorrecipes
   - calibre
   - photoprism
   - signalproxy

@@ -251,6 +251,8 @@ endpoints:
     dmz: "cadvisor.azure.sauna.re"
     BLUE: "cadvisor.blue.sauna.re"
     prometheus_exporter: true
+  calibre:
+    dmz: "calibre.sauna.re"
   calibre_web:
     dmz: "read.sauna.re"
   changedetection:
@@ -327,7 +329,7 @@ endpoints:
         script: "librespeed"
   limesurvey:
     dmz: "survey.sauna.re"
-  linkhub:
+  linkstack:
     dmz: "portal.sauna.re"
   nexterm:
     nas: "ssh.oiba.de"
@@ -451,7 +453,7 @@ endpoints:
   syncthing:
     nas: "sync.oiba.de"
   tandoorrecipes:
-    nas: "recipes.oiba.de"
+    dmz: "recipes.sauna.re"
     prometheus_exporter: true
   tautulli:
     dmz: "tulli.sauna.re"
