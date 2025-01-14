@@ -2,7 +2,7 @@
 
 services:
   - name: cadvisor
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    image: gcr.io/cadvisor/cadvisor:v0.49.2
     command:
       - --housekeeping_interval=20s
       - --docker_only
