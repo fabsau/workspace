@@ -1,0 +1,77 @@
+# Optionally, protect your webhooks with authentication
+authentication:
+  username: {{ AUTOSCAN_WEBHOOK_USERNAME }}
+  password: {{ AUTOSCAN_WEBHOOK_PASSWORD }}
+
+# port for Autoscan webhooks to listen on
+port: 3030
+
+
+# # override the minimum age to 30 minutes:
+minimum-age: 1m
+
+# # override the delay between processed scans:
+# # defaults to 5 seconds
+scan-delay: 1m
+
+# # override the interval scan stats are displayed:
+# # defaults to 1 hour / 0s to disable
+# scan-stats: 1m
+
+# # set multiple anchor files
+# anchors:
+#   - /mnt/unionfs/drive1.anchor
+#   - /mnt/unionfs/drive2.anchor
+
+triggers:
+  # The manual trigger is always enabled, the config only adjusts its priority and the rewrite rules.
+  # manual:
+  #   priority: 5
+    # rewrite:
+    #   - from: ^/media/
+    #     to: /data/
+
+  # inotify:
+  #   - priority: 0
+
+  #     # filter with regular expressions
+  #     include:
+  #       - ^/mnt/unionfs/Media/
+  #     exclude:
+  #       - '\.(srt|pdf)$'
+
+  #     # rewrite inotify path to unified filesystem
+  #     rewrite:
+  #     - from: ^/media/
+  #       to: /data/
+
+  #     # local filesystem paths to monitor
+  #     paths:
+  #       - path: /mnt/local/Media
+
+  sonarr:
+    - name: sonarr # /triggers/sonarr-docker
+      priority: 2
+
+      # Rewrite the path from within the container
+      # to your local filesystem.
+      # rewrite:
+      # - from: ^/shared/merged/Media/Series
+        # to: /shared/series/english
+
+  radarr:
+    - name: radarr   # /triggers/radarr
+      priority: 2
+
+      # # rewrite:
+      # # - from: ^/shared/merged/Media/Movies
+        # # to: /shared/movies/english
+
+targets:
+  plex:
+    - url: https://{{ endpoints.plex.BLUE }} # URL of your Plex server
+      token: {{ PLEX_TOKEN }} # Plex API Token
+
+#  jellyfin:
+#   - url: https://jellyfin.sauna.re # URL of your Jellyfin server
+#     token: 4eaa68a341e9476188649b2d6ea94530 # Jellyfin API Token

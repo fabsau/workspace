@@ -1,0 +1,12 @@
+# vars/main.yml
+
+services:
+  - name: autoscan
+    image: hotio/autoscan:latest
+    env_file:
+      - ../common.env
+    volumes:
+      - ./config:/config
+      - /0/merged:/0:rshared
+    network_mode: host
+    watchtower: true
