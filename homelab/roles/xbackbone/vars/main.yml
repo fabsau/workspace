@@ -1,0 +1,35 @@
+# vars/main.yml
+
+services:
+  - name: xbackbone
+    image: lscr.io/linuxserver/xbackbone:latest
+    depends_on:
+      - xbackbone-mariadb
+    env_file:
+      - ../common.env
+    volumes:
+      - ./config:/config
+    networks:
+      - xbackbone
+    traefik:
+      - name: xbackbone
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: true
+        service_port: 443
+    watchtower: true
+
+  - name: xbackbone-mariadb
+    image: lscr.io/linuxserver/mariadb:latest	
+    env_file:
+      - ../common.env
+      - ./xbackbone-mariadb.env
+    volumes:
+      - ./data/db:/config
+    networks:
+      - xbackbone
+    watchtower: true
