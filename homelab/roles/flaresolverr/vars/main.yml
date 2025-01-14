@@ -1,0 +1,10 @@
+# vars/main.yml
+
+services:
+  - name: flaresolverr
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    env_file:
+      - ../common.env
+    networks:
+      - mediaserver
+    watchtower: true
