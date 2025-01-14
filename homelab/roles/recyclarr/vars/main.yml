@@ -10,5 +10,5 @@ services:
     volumes:
       - ./config:/config
     networks:
-      - recyclarr
+      - mediaserver
     watchtower: true

@@ -17,7 +17,7 @@
 # Configuration specific to Sonarr
 sonarr:
   sonarr:  # A custom name used to identify this particular instance.
-    base_url: https://{{ endpoints.sonarr.dmz }}
+    base_url: http://sonarr:8989
     api_key: {{ SONARR_API_KEY }}
 
     quality_definition:
@@ -110,7 +110,7 @@ sonarr:
           
 radarr:
   radarr:   # A custom name used to identify this particular instance.
-    base_url: https://{{ endpoints.radarr.dmz }}
+    base_url: http://radarr:7878
     api_key: {{ RADARR_API_KEY }}
 
     quality_definition:

@@ -8,5 +8,6 @@ services:
     volumes:
       - ./config:/config
       - /0/merged:/0:rshared
-    network_mode: host
+    networks:
+      - mediaserver
     watchtower: true
