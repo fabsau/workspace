@@ -1,0 +1,24 @@
+# vars/main.yml
+
+services:
+  - name: johanna
+    image: httpd:latest
+    networks:
+      - johanna
+    volumes:
+      - ./config/index.html:/usr/local/apache2/htdocs/index.html
+    traefik: 
+      - name: johanna
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 80
+    watchtower: true
+
+config_files_settings:
+  role_folder_permission_mode: '0644'
+  role_file_permission_mode: '0644'

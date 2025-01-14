@@ -1,0 +1,104 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+    <meta charset="UTF-8">
+    <title>Liebevolle Verlosung</title>
+    <style>
+        body {
+            background-color: #ffeffa;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            padding: 30px;
+            color: #6c5b7b;
+        }
+
+        h1 {
+            color: #c06c84;
+            font-size: 2.5em;
+        }
+
+        p {
+            padding: 0 30px;
+        }
+
+        input {
+            margin-top: 20px;
+            padding: 10px 25px;
+            font-size: 1.2em;
+            border: 2px solid #6c5b7b;
+            border-radius: 4px;
+            color: #6c5b7b;
+            background-color: #white;
+            transition: box-shadow 0.2s ease-in-out;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 15px;
+            font-size: 1.1em;
+            color: #ffffff;
+            background-color: #c06c84;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #6c5b7b;
+        }
+
+        #winner-message {
+    display: none;
+    color: #ff8474;
+    animation: blink-animation 0.2s steps(5, start) infinite;
+    -webkit-animation: blink-animation 0.2s steps(5, start) infinite;
+    padding: 15px;
+    margin-top: 15px;
+    background-color: #ffffff;
+    box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+        @keyframes blink-animation {
+            to {
+                visibility: hidden;
+            }
+        }
+        @-webkit-keyframes blink-animation {
+            to {
+                visibility: hidden;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>♥ Meine liebevolle Verlosung ♥</h1>
+
+    <p>Mein lieber Schatz, gib den magischen Code ein, um deinen speziellen Preis zu enthüllen:</p>
+
+    <input type="password" id="theInput">
+    <button onclick="checkCode()">Versuche mein Glück!</button>
+
+    <div id="winner-message">
+        🎉 🎉 GLÜCKWÜNSCH!!! 🎉 🎉
+        <br>
+        Du hast gerade den erstaunlichen Preis gewonnen mit mir in einer Beziehung sein zu dürfen. So kannst du für immer bei mir bleiben 😜
+    </div>
+
+    <script type="text/javascript">
+        function checkCode() {
+            var code = document.getElementById('theInput').value;
+            var winnerMessage = document.getElementById('winner-message');
+
+            if (code == "Rednelakstnevda") {
+                winnerMessage.style.display = "block";
+            } else {
+                alert("Oh nein, das ist nicht der richtige magische Code. Denk daran, er ist in den Sternen geschrieben ☺️");
+            }
+
+            document.getElementById('theInput').value="";
+        }
+    </script>
+</body>
+</html>
