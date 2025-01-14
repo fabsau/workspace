@@ -1,0 +1,14 @@
+# vars/main.yml
+
+services:
+  - name: recyclarr
+    image: ghcr.io/recyclarr/recyclarr:latest
+    user: "{{ common_uid }}:{{ common_gid }}"
+    env_file:
+      - ../common.env
+      - ./recyclarr.env
+    volumes:
+      - ./config:/config
+    networks:
+      - recyclarr
+    watchtower: true
