@@ -1,0 +1,36 @@
+# vars/main.yml
+
+services:
+  - name: linkstack
+    image: linkstackorg/linkstack:latest
+    env_file:
+      - ./linkstack.env
+    networks:
+      - linkstack
+    volumes:
+      - ./data:/htdocs
+    traefik: 
+      - name: linkstack
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: true
+        service_port: 443
+    watchtower: true
+
+# Old config:
+
+# Container level:
+  # volumes:
+      # - linkstack:/htdocs
+
+# volumes:                
+#     linkstack:
+#         driver: local
+#         driver_opts:
+#             type: none
+#             o: bind
+#             device: ./linkstack
