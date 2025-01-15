@@ -131,6 +131,14 @@ services:
 {% for tmpfs in service.tmpfs %}
       - {{ tmpfs }}
 {% endfor %}
+{% if service.logging is defined and service.logging %}
+    logging:
+      driver: "{{ service.logging.driver }}"
+      options:
+{% for option, value in service.logging.options.items() %}
+        {{ option }}: "{{ value }}"
+{% endfor %}
+{% endif %}
 {% endif %}
 {% if service.ulimits is defined and service.ulimits %}
     ulimits:
