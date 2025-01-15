@@ -132,6 +132,14 @@ services:
       - {{ tmpfs }}
 {% endfor %}
 {% endif %}
+{% if service.ulimits is defined and service.ulimits %}
+    ulimits:
+{% for limit, values in service.ulimits.items() %}
+      {{ limit }}:
+        soft: {{ values.soft }}
+        hard: {{ values.hard }}
+{% endfor %}
+{% endif %}
     labels:
 {% if service.traefik is defined %}
       - "traefik.enable=true"
