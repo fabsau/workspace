@@ -50,7 +50,7 @@ services:
   - name: tandoorrecipes-postgresdb
     image: postgres:alpine
     env_file:
-      - ./tandoorrecipes.env
+      - ./tandoorrecipes-postgres.env
     volumes:
       - ./data/db:/var/lib/postgresql/data
     networks:
