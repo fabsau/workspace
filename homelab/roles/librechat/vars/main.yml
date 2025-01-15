@@ -42,7 +42,7 @@ services:
   - name: librechat-meilisearch
     image: getmeili/meilisearch:v1.6.2
     env_file:
-      - ./librechat.env
+      - ./librechat-meilisearch.env
     volumes:
       - ./data/meilisearch:/meili_data
     networks:
@@ -54,7 +54,7 @@ services:
     depends_on:
       - librechat-vectordb
     env_file:
-      - ./librechat.env
+      - ./librechat-rag_api.env
     networks:
       - librechat
     watchtower: true
@@ -62,9 +62,16 @@ services:
   - name: librechat-vectordb
     image: ankane/pgvector:latest
     env_file:
-      - ./librechat.env
+      - ./librechat-postgres.env
     volumes:
       - ./data/vectordb:/var/lib/postgresql/data
     networks:
       - librechat
     watchtower: true
+
+  
+config_files_settings:
+  role_owner: 1000
+  role_group: 1000
+  role_folder_permission_mode: '0700'
+  role_file_permission_mode: '0700'
