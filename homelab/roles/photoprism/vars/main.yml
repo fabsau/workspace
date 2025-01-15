@@ -31,10 +31,10 @@ services:
     volumes:
       - ./data/db:/config
     logging:
-      driver: "json-file"
+      driver: json-file
       options:
-        max-size: "10M"
-        max-file: "10"
+        max-size: 10M
+        max-file: 10
     networks:
       - photoprism
     watchtower: true
