@@ -1,0 +1,22 @@
+---
+- name: Login to Uptime Kuma
+  lucasheld.uptime_kuma.login:
+    api_url: "{{ uptime_kuma_api_url }}"
+    api_username: "{{ UPTIMEKUMA_USER }}"
+    api_password: "{{ UPTIMEKUMA_PASSWORD }}"
+    api_ssl_verify: "{{ api_ssl_verify }}"
+    api_timeout: "{{ api_timeout }}"
+    api_wait_events: "{{ api_wait_events }}"
+  register: login_result
+  retries: "{{ retry_attempts }}"
+  delay: "{{ retry_delay }}"
+  until: login_result is success
+
+- name: Set API token as fact
+  set_fact:
+    uptime_kuma_api_token: "{{ login_result.token }}"
+
+- name: Debug login result
+  debug:
+    var: login_result
+  when: debug | bool and debug_level == 'info'

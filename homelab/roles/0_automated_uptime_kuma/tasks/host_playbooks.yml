@@ -1,0 +1,18 @@
+---
+- name: Find all host playbooks
+  find:
+    paths: "{{ ansible_home }}/playbooks/hosts"
+    patterns: "*.yml"
+  register: host_playbooks
+
+- name: Load and parse host playbooks
+  set_fact:
+    host_playbook_contents: "{{ lookup('file', item.path) | from_yaml }}"
+  loop: "{{ host_playbooks.files }}"
+  register: loaded_playbooks
+
+- name: Debug loaded host playbooks
+  debug:
+    msg: "Host {{ item.item.path | basename | splitext | first }}: {{ item.ansible_facts.host_playbook_contents }}"
+  loop: "{{ loaded_playbooks.results }}"
+  when: debug | bool and debug_level == 'verbose'

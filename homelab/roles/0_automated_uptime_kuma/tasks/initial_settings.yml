@@ -1,0 +1,14 @@
+---
+- name: Set Uptime Kuma to trust reverse proxy headers
+  lucasheld.uptime_kuma.settings:
+    api_url: "{{ uptime_kuma_api_url }}"
+    api_token: "{{ uptime_kuma_api_token }}"
+    api_timeout: "{{ api_timeout }}"
+    api_wait_events: "{{ api_wait_events }}"
+    api_ssl_verify: "{{ api_ssl_verify }}"
+    trustProxy: yes
+  register: trust_reverse_proxy_result
+  retries: "{{ retry_attempts }}"
+  delay: "{{ retry_delay }}"
+  until: not trust_reverse_proxy_result.failed
+  when: initial_setup | bool

@@ -1,0 +1,60 @@
+---
+    - name: Create missing groups
+      lucasheld.uptime_kuma.monitor:
+        api_url: "{{ uptime_kuma_api_url }}"
+        api_token: "{{ uptime_kuma_api_token }}"
+        name: "{{ item.name }}"
+        type: "{{ item.type }}"
+        parent_name: "{{ item.parent_name | default(omit) }}"
+        interval: 60
+        maxretries: 5
+        state: present
+        api_ssl_verify: "{{ api_ssl_verify }}"
+      loop: "{{ missing_groups }}"
+      register: group_result
+      retries: "{{ retry_attempts }}"
+      delay: "{{ retry_delay }}"
+      until: group_result is success
+      loop_control:
+        pause: "{{ loop_pause }}"
+
+    - name: Create missing monitors
+      lucasheld.uptime_kuma.monitor:
+        api_url: "{{ uptime_kuma_api_url }}"
+        api_token: "{{ uptime_kuma_api_token }}"
+        name: "{{ item.name }}"
+        type: "{{ item.type }}"
+        parent_name: "{{ item.parent_name | default(omit) }}"
+        hostname: "{{ item.hostname | default(omit) }}"
+        port: "{{ item.port | default(omit) }}"
+        url: "{{ item.url | default(omit) }}"
+        dns_resolve_server: "{{ item.dns_resolve_server | default(omit) }}"
+        docker_container: "{{ item.docker_container | default(omit) }}"
+        docker_host_name: "{{ item.docker_host_name | default(omit) }}"
+        interval: 60
+        maxretries: 5
+        state: present
+        api_ssl_verify: "{{ api_ssl_verify }}"
+      loop: "{{ missing_monitors }}"
+      register: monitor_result
+      retries: "{{ retry_attempts }}"
+      delay: "{{ retry_delay }}"
+      until: monitor_result is success
+      loop_control:
+        pause: "{{ loop_pause }}"
+
+    - name: Delete obsolete monitors
+      lucasheld.uptime_kuma.monitor:
+        api_url: "{{ uptime_kuma_api_url }}"
+        api_token: "{{ uptime_kuma_api_token }}"
+        name: "{{ item.name }}"
+        type: "{{ item.type }}"
+        state: absent
+        api_ssl_verify: "{{ api_ssl_verify }}"
+      loop: "{{ obsolete_monitors | from_json }}"
+      register: delete_result
+      retries: "{{ retry_attempts }}"
+      delay: "{{ retry_delay }}"
+      until: delete_result is success
+      loop_control:
+        pause: "{{ loop_pause }}"

@@ -1,0 +1,169 @@
+---
+    - name: Get all monitors currently set up in Uptime Kuma
+      lucasheld.uptime_kuma.monitor_info:
+        api_url: "{{ uptime_kuma_api_url }}"
+        api_token: "{{ uptime_kuma_api_token }}"
+        api_timeout: "{{ api_timeout }}"
+        api_wait_events: "{{ api_wait_events }}"
+        api_ssl_verify: "{{ api_ssl_verify }}"
+      register: existing_monitors
+      retries: "{{ retry_attempts }}"
+      delay: "{{ retry_delay }}"
+      until: existing_monitors is success
+
+    - name: Debug all monitors currently set up in Uptime Kuma
+      debug:
+        var: existing_monitors
+      when: debug | bool and debug_level == 'verbose'
+      
+    - name: Find which of our newly-defined monitors already exist
+      set_fact:
+        common_entries: >-
+          {%- set result = [] -%}
+          {%- for new_monitor in complete_monitor_list -%}
+            {%- for existing_monitor in existing_monitors.monitors -%}
+              {%- if new_monitor.name == existing_monitor.name and new_monitor.type == existing_monitor.type -%}
+                {%- set _ = result.append(new_monitor) -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endfor -%}
+          {{ result | to_json }}
+
+    - name: Convert common_entries from JSON string
+      set_fact:
+        common_entries: "{{ common_entries | from_json }}"
+
+    - name: Generate common_keys for existing monitors/groups
+      set_fact:
+        common_keys: >-
+          {%- set keys = [] -%}
+          {%- for monitor in existing_monitors.monitors -%}
+            {%- if monitor.type == 'group' -%}
+              {%- set _ = keys.append(monitor.name ~ '|' ~ monitor.type) -%}
+            {%- else -%}
+              {%- set _ = keys.append(monitor.name ~ '|' ~ monitor.type ~ '|' ~ (monitor.hostname|default('')) ~ '|' ~ (monitor.port|default('')) ~ '|' ~ (monitor.url|default('')) ~ '|' ~ (monitor.dns_resolve_server|default('')) ~ '|' ~ (monitor.docker_container|default('')) ~ '|' ~ (monitor.docker_host_name|default(''))) -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{ keys }}
+
+    - name: Debug common keys
+      debug:
+        var: common_keys
+      when: debug | bool and debug_level == 'info'
+
+    - name: Debug common entries that were found
+      debug:
+        var: common_entries
+      when: debug | bool and debug_level == 'info'
+
+    - name: Determine missing groups
+      set_fact:
+        missing_groups: >
+          {%- set missing = [] -%}
+          {%- for g in group_list -%}
+            {%- if (g.name ~ '|' ~ g.type) not in common_keys -%}
+              {%- do missing.append(g) -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{ missing }}
+
+    - name: Generate monitor keys for comparison
+      set_fact:
+        current_monitor_keys: >-
+          {%- set result = {} -%}
+          {%- for monitor in complete_monitor_list -%}
+            {%- if monitor.type != 'group' -%}
+              {%- set key_parts = [] -%}
+              {%- set _ = key_parts.append(monitor.name) -%}
+              {%- set _ = key_parts.append(monitor.type) -%}
+              {%- if monitor.type == 'http' -%}
+                {%- set _ = key_parts.append(monitor.url | default('')) -%}
+              {%- elif monitor.type == 'ping' -%}
+                {%- set _ = key_parts.append(monitor.hostname | default('')) -%}
+              {%- elif monitor.type == 'port' -%}
+                {%- set _ = key_parts.append(monitor.hostname | default('')) -%}
+                {%- set _ = key_parts.append(monitor.port | string | default('')) -%}
+              {%- elif monitor.type == 'dns' -%}
+                {%- set _ = key_parts.append(monitor.hostname | default('')) -%}
+                {%- set _ = key_parts.append(monitor.dns_resolve_server | default('')) -%}
+              {%- elif monitor.type == 'docker' -%}
+                {%- set _ = key_parts.append(monitor.docker_container | default('')) -%}
+                {%- set _ = key_parts.append(monitor.docker_host_name | default('')) -%}
+              {%- endif -%}
+              {%- set _ = result.update({(key_parts | join('|')): monitor}) -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{ result | to_json }}
+
+    - name: Generate existing monitor keys
+      set_fact:
+        existing_monitor_keys: >-
+          {%- set result = {} -%}
+          {%- for monitor in existing_monitors.monitors -%}
+            {%- if monitor.type != 'group' -%}
+              {%- set key_parts = [] -%}
+              {%- set _ = key_parts.append(monitor.name) -%}
+              {%- set _ = key_parts.append(monitor.type) -%}
+              {%- if monitor.type == 'http' -%}
+                {%- set _ = key_parts.append(monitor.url | default('')) -%}
+              {%- elif monitor.type == 'ping' -%}
+                {%- set _ = key_parts.append(monitor.hostname | default('')) -%}
+              {%- elif monitor.type == 'port' -%}
+                {%- set _ = key_parts.append(monitor.hostname | default('')) -%}
+                {%- set _ = key_parts.append(monitor.port | string | default('')) -%}
+              {%- elif monitor.type == 'dns' -%}
+                {%- set _ = key_parts.append(monitor.hostname | default('')) -%}
+                {%- set _ = key_parts.append(monitor.dns_resolve_server | default('')) -%}
+              {%- elif monitor.type == 'docker' -%}
+                {%- set _ = key_parts.append(monitor.docker_container | default('')) -%}
+                {%- set _ = key_parts.append(monitor.docker_host_name | default('')) -%}
+              {%- endif -%}
+              {%- set _ = result.update({(key_parts | join('|')): monitor}) -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{ result | to_json }}
+
+    - name: Determine missing monitors
+      set_fact:
+        missing_monitors: >-
+          {%- set current_keys = (current_monitor_keys | from_json).keys() | list -%}
+          {%- set existing_keys = (existing_monitor_keys | from_json).keys() | list -%}
+          {%- set missing = [] -%}
+          {%- for key in current_keys -%}
+            {%- if key not in existing_keys -%}
+              {%- set monitor = (current_monitor_keys | from_json)[key] -%}
+              {%- set _ = missing.append(monitor) -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{ missing }}
+
+    - name: Debug missing groups
+      debug:
+        var: missing_groups
+      when: debug | bool and debug_level == 'info'
+
+    - name: Debug missing monitors
+      debug:
+        var: missing_monitors
+      when: debug | bool and debug_level == 'info'
+
+    - name: Determine obsolete monitors
+      set_fact:
+        obsolete_monitors: >-
+          {%- set current_keys = (current_monitor_keys | from_json).keys() | list -%}
+          {%- set existing_keys = (existing_monitor_keys | from_json).keys() | list -%}
+          {%- set obsolete = [] -%}
+          {%- for key in existing_keys -%}
+            {%- if key not in current_keys -%}
+              {%- set monitor = (existing_monitor_keys | from_json)[key] -%}
+              {%- if 'manual' not in (monitor.tags | map(attribute='name') | list) -%}
+                {%- set _ = obsolete.append(monitor) -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{ obsolete | to_json }}
+
+    - name: Debug obsolete monitors
+      debug:
+        var: obsolete_monitors | from_json
+      when: debug | bool and debug_level == 'info'

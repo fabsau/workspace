@@ -1,0 +1,68 @@
+    - name: Get information about existing tags
+      lucasheld.uptime_kuma.tag_info:
+        api_url: "{{ uptime_kuma_api_url }}"
+        api_token: "{{ uptime_kuma_api_token }}"
+        api_timeout: "{{ api_timeout }}"
+        api_wait_events: "{{ api_wait_events }}"
+        api_ssl_verify: "{{ api_ssl_verify }}"
+      register: existing_tags
+      retries: "{{ retry_attempts }}"
+      delay: "{{ retry_delay }}"
+      until: existing_tags is success
+
+    - name: Debug existing tags
+      debug:
+        var: existing_tags
+      when: debug | bool and debug_level == 'info'
+
+    - name: Create list of existing tag names
+      set_fact:
+        existing_tag_names: "{{ existing_tags.tags | map(attribute='name') | list }}"
+
+    - name: Create list of desired tag names
+      set_fact:
+        desired_tag_names: "{{ uptime_kuma_tags | map(attribute='name') | list }}"
+
+    - name: Debug tag lists
+      debug:
+        msg:
+          - "Existing tags: {{ existing_tag_names }}"
+          - "Desired tags: {{ desired_tag_names }}"
+      when: debug | bool and debug_level == 'info'
+
+    - name: Create missing tags
+      lucasheld.uptime_kuma.tag:
+        api_url: "{{ uptime_kuma_api_url }}"
+        api_token: "{{ uptime_kuma_api_token }}"
+        name: "{{ item.name }}"
+        color: "{{ item.color }}"
+        state: present
+        api_timeout: "{{ api_timeout }}"
+        api_wait_events: "{{ api_wait_events }}"
+        api_ssl_verify: "{{ api_ssl_verify }}"
+      loop: "{{ uptime_kuma_tags }}"
+      when: item.name not in existing_tag_names
+      register: tag_create_result
+      retries: "{{ retry_attempts }}"
+      delay: "{{ retry_delay }}"
+      until: tag_create_result is success
+      loop_control:
+        pause: "{{ loop_pause }}"
+
+    - name: Remove obsolete tags
+      lucasheld.uptime_kuma.tag:
+        api_url: "{{ uptime_kuma_api_url }}"
+        api_token: "{{ uptime_kuma_api_token }}"
+        name: "{{ item.name }}"
+        state: absent
+        api_timeout: "{{ api_timeout }}"
+        api_wait_events: "{{ api_wait_events }}"
+        api_ssl_verify: "{{ api_ssl_verify }}"
+      loop: "{{ existing_tags.tags }}"
+      when: item.name not in desired_tag_names
+      register: tag_delete_result
+      retries: "{{ retry_attempts }}"
+      delay: "{{ retry_delay }}"
+      until: tag_delete_result is success
+      loop_control:
+        pause: "{{ loop_pause }}"

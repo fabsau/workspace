@@ -1,0 +1,185 @@
+---
+    - name: Build full monitor list (groups, subgroups, and individual checks)
+      set_fact:
+        complete_monitor_list: >-
+          {% set all = [] %}
+          {%- for host_key, host_details in endpoint_hosts.items() %}
+            {%- set parent_group = {
+              "name": host_key | upper,
+              "type": "group"
+            } -%}
+            {%- set _ = all.append(parent_group) -%}
+
+            {%- set has_basic = host_details.uptimekuma_basic_monitoring | default(false) %}
+            {%- set has_http = host_details.uptimekuma_http_monitoring | default(false) %}
+            {%- set has_container = host_details.uptimekuma_container_monitoring | default(false) %}
+
+            {%- set host_services = active_docker_services[host_key | lower] | default([]) -%}
+
+            {%- if has_basic %}
+              {%- set _ = all.append({
+                "name": kuma_subgroups.basic ~ " (" ~ host_key | upper ~ ")",
+                "type": "group",
+                "parent_name": parent_group.name
+              }) -%}
+
+              {%- for ip in host_details.ip | default([]) %}
+                {%- set _ = all.append({
+                      "name": "PING (" ~ ip ~ ")",
+                      "type": "ping",
+                      "hostname": ip,
+                      "parent_name": kuma_subgroups.basic ~ " (" ~ host_key | upper ~ ")"
+                    }) -%}
+
+                {%- if host_details.open_ports is defined %}
+                  {%- for port in host_details.open_ports %}
+                    {%- set _ = all.append({
+                      "name": "PORT " ~ port | string ~ " (" ~ ip ~ ")",
+                      "type": "port",
+                      "hostname": ip,
+                      "port": port,
+                      "parent_name": kuma_subgroups.basic ~ " (" ~ host_key | upper ~ ")"
+                    }) -%}
+                  {%- endfor %}
+                {%- endif %}
+
+                {%- if host_details.dns is defined and host_details.dns %}
+                  {%- set _ = all.append({
+                    "name": "DNS (" ~ ip ~ ")",
+                    "type": "dns",
+                    "hostname": "google.com",
+                    "dns_resolve_server": ip,
+                    "parent_name": kuma_subgroups.basic ~ " (" ~ host_key | upper ~ ")"
+                  }) -%}
+                {%- endif %}
+              {%- endfor %}
+            {%- endif %}
+
+            {%- if has_http %}
+              {%- set _ = all.append({
+                "name": kuma_subgroups.http ~ " (" ~ host_key | upper ~ ")",
+                "type": "group",
+                "parent_name": parent_group.name
+              }) -%}
+
+              {%- for service_name, service_details in endpoints.items() %}
+                {%- if service_name in host_services %}
+                  {%- if not (service_details.prometheus_exporter | default(false)) %}
+                    {%- set default_settings = {
+                      "type": "http",
+                      "interval": 60,
+                      "maxretries": 3,
+                      "retryInterval": 30,
+                      "verify_ssl": true,
+                      "accepted_statuscodes": ["200-299"],
+                      "method": "GET",
+                      "monitoring_disabled": false
+                    } %}
+                    {%- set settings = service_details.uptimekuma_settings | default(default_settings) %}
+                    {%- if not (settings.monitoring_disabled | default(false)) %}
+                      {%- for sub_host, urlval in service_details.items() if service_details is mapping and sub_host == host_key %}
+                        {%- if urlval is string %}
+                          {%- set base_url = "https://" ~ urlval %}
+                          {%- set url_path = settings.url_path | default('') %}
+                          {%- set full_url = base_url ~ url_path %}
+                          
+                          {%- set monitor_settings = {
+                            "name": (service_name | capitalize) ~ " HTTP (" ~ (host_key | upper) ~ ")",
+                            "type": settings.type | default("http"),
+                            "url": full_url,
+                            "parent_name": kuma_subgroups.http ~ " (" ~ host_key | upper ~ ")",
+                            "interval": settings.interval | default(60),
+                            "maxretries": settings.maxretries | default(3),
+                            "retryInterval": settings.retryInterval | default(30),
+                            "upsideDown": settings.upside_down | default(false),
+                            "description": settings.description | default(omit),
+                            "method": settings.method | default("GET"),
+                            "body": settings.body | default(omit),
+                            "headers": settings.headers | default(omit),
+                            "httpBodyEncoding": settings.body_encoding | default(omit),
+                            "timeout": settings.advanced_http.timeout | default(omit),
+                            "maxredirects": settings.advanced_http.max_redirects | default(omit),
+                            "authMethod": settings.authentication.type | default(omit),
+                            "basic_auth_user": settings.authentication.username | default(omit),
+                            "basic_auth_pass": settings.authentication.password | default(omit),
+                            "authDomain": settings.authentication.domain | default(omit),
+                            "authWorkstation": settings.authentication.workstation | default(omit),
+                            "ignoreTls": not (settings.verify_ssl | default(true)),
+                            "tlsCa": settings.tls.ca | default(omit),
+                            "tlsCert": settings.tls.cert | default(omit),
+                            "tlsKey": settings.tls.key | default(omit),
+                            "expiryNotification": settings.tls.expiry_notification | default(false),
+                            "tlsExpiryNotifyDays": settings.tls.expiry_days | default(omit),
+                            "keyword": (settings.keyword_monitoring.keyword if settings.keyword_monitoring.enabled | default(false)) | default(omit),
+                            "invertKeyword": settings.keyword_monitoring.invert | default(false),
+                            "accepted_statuscodes": settings.accepted_statuscodes | default(["200-299"]),
+                            "proxyId": settings.proxy.name | default(omit),
+                            "tags": settings.tags | default([]),
+                            "notificationIDList": settings.notifications | default([])
+                          } -%}
+                          {%- set _ = all.append(monitor_settings) -%}
+                        {%- endif %}
+                      {%- endfor %}
+                    {%- endif %}
+                  {%- endif %}
+                {%- endif %}
+              {%- endfor %}
+            {%- endif %}
+
+            {%- if has_container %}
+              {%- set _ = all.append({
+                "name": kuma_subgroups.containers ~ " (" ~ host_key | upper ~ ")",
+                "type": "group",
+                "parent_name": parent_group.name
+              }) -%}
+
+              {%- for service_name, service_details in endpoints.items() %}
+                {%- if service_name in host_services %}
+                  {%- if service_details.uptimekuma_settings.containers is defined %}
+                    {%- for container_name, container_defs in service_details.uptimekuma_settings.containers.items() %}
+                      {%- if container_defs.docker_connection_host | lower == host_key | lower %}
+                        {%- set container_settings = container_defs.container_settings | default({}) %}
+                        {%- set monitor_settings = {
+                          "name": (container_name | capitalize) ~ " CONTAINER (" ~ (host_key | upper) ~ ")",
+                          "type": "docker",
+                          "docker_container": container_name,
+                          "docker_host_name": host_key | upper,
+                          "parent_name": kuma_subgroups.containers ~ " (" ~ host_key | upper ~ ")",
+                          "interval": container_settings.interval | default(60),
+                          "maxretries": container_settings.retries | default(3),
+                          "notificationIDList": container_settings.notifications | default([])
+                        } -%}
+                        {%- set _ = all.append(monitor_settings) -%}
+                      {%- endif %}
+                    {%- endfor %}
+                  {%- endif %}
+                {%- endif %}
+              {%- endfor %}
+            {%- endif %}
+          {%- endfor %}
+
+          {{ all | to_json }}
+
+    - name: Debug final list of all groups/monitors to create
+      debug:
+        var: complete_monitor_list
+      when: debug | bool and debug_level == 'info'
+
+    - name: Convert that JSON string into real lists/dicts
+      set_fact:
+        complete_monitor_list: "{{ complete_monitor_list | from_json }}"
+
+    - name: Separate groups from monitors
+      set_fact:
+        group_list: "{{ complete_monitor_list | selectattr('type', 'equalto', 'group') | list }}"
+        monitor_list: "{{ complete_monitor_list | rejectattr('type', 'equalto', 'group') | list }}"
+
+    - name: Debug group list
+      debug:
+        var: group_list
+      when: debug | bool and debug_level == 'info'
+
+    - name: Debug monitor list
+      debug:
+        var: monitor_list
+      when: debug | bool and debug_level == 'info'

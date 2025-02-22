@@ -1,0 +1,12 @@
+---
+- import_tasks: pre_tasks.yml
+- import_tasks: host_playbooks.yml
+- import_tasks: initial_settings.yml
+- import_tasks: monitor_cleanup.yml
+- import_tasks: docker_hosts.yml
+- import_tasks: proxies.yml
+- import_tasks: notifications.yml
+- import_tasks: tags.yml
+- import_tasks: monitor_list_creation.yml
+- import_tasks: monitor_list_calculations.yml
+- import_tasks: monitor_crud.yml

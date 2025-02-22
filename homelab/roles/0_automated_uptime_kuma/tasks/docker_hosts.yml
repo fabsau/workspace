@@ -1,0 +1,91 @@
+---
+- name: Extract active docker services per host
+  set_fact:
+    active_docker_services: >-
+      {%- set result = {} -%}
+      {%- for playbook in loaded_playbooks.results -%}
+        {%- set host = playbook.item.path | basename | splitext | first -%}
+        {%- for task in playbook.ansible_facts.host_playbook_contents -%}
+          {%- if task.roles is defined -%}
+            {%- for role in task.roles -%}
+              {%- if role is mapping and role.role == '0docker_service' and role.vars is defined and role.vars.docker_service_roles is defined -%}
+                {%- set docker_roles = role.vars.docker_service_roles | default([]) -%}
+                {%- if docker_roles is not none -%}
+                  {%- set _ = result.update({host: docker_roles}) -%}
+                {%- else -%}
+                  {%- set _ = result.update({host: []}) -%}
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endfor -%}
+      {{ result }}
+
+- name: Debug active docker services per host
+  debug:
+    var: active_docker_services
+  when: debug | bool and debug_level == 'info'
+
+- name: Gather information about existing Docker hosts in Uptime Kuma
+  lucasheld.uptime_kuma.docker_host_info:
+    api_url: "{{ uptime_kuma_api_url }}"
+    api_token: "{{ uptime_kuma_api_token }}"
+    api_timeout: "{{ api_timeout }}"
+    api_wait_events: "{{ api_wait_events }}"
+    api_ssl_verify: "{{ api_ssl_verify }}"
+  register: docker_host_info_result
+  retries: "{{ retry_attempts }}"
+  delay: "{{ retry_delay }}"
+  until: docker_host_info_result is success
+
+- name: Extract list of existing Docker host names
+  set_fact:
+    existing_docker_host_names: "{{ docker_host_info_result.docker_hosts | map(attribute='name') | list }}"
+
+- name: Debug existing Docker host names
+  debug:
+    var: existing_docker_host_names
+  when: debug | bool and debug_level == 'info'
+
+- name: Add defined Docker hosts that do not exist
+  lucasheld.uptime_kuma.docker_host:
+    api_url: "{{ uptime_kuma_api_url }}"
+    api_token: "{{ uptime_kuma_api_token }}"
+    name: "{{ item.key | upper }}"
+    dockerType: "{{ item.value.docker_connection.type }}"
+    dockerDaemon: "{{ item.value.docker_connection.path }}"
+    api_timeout: "{{ api_timeout }}"
+    api_wait_events: "{{ api_wait_events }}"
+    api_ssl_verify: "{{ api_ssl_verify }}"
+  loop: "{{ lookup('dict', endpoint_hosts) }}"
+  when:
+    - item.value.docker_connection is defined
+    - (item.key | upper) not in existing_docker_host_names
+  register: docker_host_result
+  retries: "{{ retry_attempts }}"
+  delay: "{{ retry_delay }}"
+  until: not docker_host_result.failed
+
+- name: Remove Docker hosts that should no longer exist
+  lucasheld.uptime_kuma.docker_host:
+    api_url: "{{ uptime_kuma_api_url }}"
+    api_token: "{{ uptime_kuma_api_token }}"
+    name: "{{ item.key | upper }}"
+    state: absent
+    api_timeout: "{{ api_timeout }}"
+    api_wait_events: "{{ api_wait_events }}"
+    api_ssl_verify: "{{ api_ssl_verify }}"
+  loop: "{{ lookup('dict', endpoint_hosts) }}"
+  when:
+    - item.value.docker_connection is not defined
+    - (item.key | upper) in existing_docker_host_names
+  register: docker_host_remove_result
+  retries: "{{ retry_attempts }}"
+  delay: "{{ retry_delay }}"
+  until: not docker_host_remove_result.failed
+
+- name: Debug endpoint_hosts
+  debug:
+    var: endpoint_hosts
+  when: debug | bool and debug_level == 'info'

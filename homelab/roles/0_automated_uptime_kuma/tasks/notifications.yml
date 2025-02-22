@@ -1,0 +1,139 @@
+    - name: Get information about existing notifications
+      lucasheld.uptime_kuma.notification_info:
+        api_url: "{{ uptime_kuma_api_url }}"
+        api_token: "{{ uptime_kuma_api_token }}"
+        api_timeout: "{{ api_timeout }}"
+        api_wait_events: "{{ api_wait_events }}"
+        api_ssl_verify: "{{ api_ssl_verify }}"
+      register: existing_notifications
+      retries: "{{ retry_attempts }}"
+      delay: "{{ retry_delay }}"
+      until: existing_notifications is success
+
+    - name: Debug existing notifications
+      debug:
+        var: existing_notifications
+      when: debug | bool and debug_level == 'info'
+
+    - name: Generate notification fingerprints
+      set_fact:
+        existing_notification_fingerprints: >-
+          {%- set result = {} -%}
+          {%- for notif in existing_notifications.notifications -%}
+            {%- set fingerprint = {
+              'name': notif.name | string,
+              'type': notif.type | string,
+              'isDefault': notif.isDefault | default(false) | bool,
+              'active': notif.active | default(true) | bool,
+              'applyExisting': notif.applyExisting | default(false) | bool,
+              'pushoveruserkey': notif.pushoveruserkey | default('') | string,
+              'pushoverapptoken': notif.pushoverapptoken | default('') | string,
+              'pushovertitle': notif.pushovertitle | default('') | string,
+              'pushoverpriority': (notif.pushoverpriority | default('')) | string,
+              'pushoverttl': (notif.pushoverttl | default('')) | int,
+              'homeAssistantUrl': notif.homeAssistantUrl | default('') | string,
+              'longLivedAccessToken': notif.longLivedAccessToken | default('') | string
+            } -%}
+            {%- set _ = result.update({notif.name: fingerprint}) -%}
+          {%- endfor -%}
+          {{ result | to_json }}
+        desired_notification_fingerprints: >-
+          {%- set result = {} -%}
+          {%- for notif in uptime_kuma_notifications -%}
+            {%- set merged_settings = notification_defaults | combine(notif.settings) -%}
+            {%- set fingerprint = {
+              'name': notif.name | string,
+              'type': notif.type | string,
+              'isDefault': merged_settings.isDefault | default(false) | bool,
+              'active': merged_settings.active | default(true) | bool,
+              'applyExisting': merged_settings.applyExisting | default(false) | bool,
+              'pushoveruserkey': merged_settings.pushoveruserkey | default('') | string,
+              'pushoverapptoken': merged_settings.pushoverapptoken | default('') | string,
+              'pushovertitle': merged_settings.pushovertitle | default('') | string,
+              'pushoverpriority': (merged_settings.pushoverpriority | default('')) | string,
+              'pushoverttl': (merged_settings.pushoverttl | default('')) | int,
+              'homeAssistantUrl': merged_settings.homeAssistantUrl | default('') | string,
+              'longLivedAccessToken': merged_settings.longLivedAccessToken | default('') | string
+            } -%}
+            {%- set _ = result.update({notif.name: fingerprint}) -%}
+          {%- endfor -%}
+          {{ result | to_json }}
+
+    - name: Determine notifications that need updating
+      set_fact:
+        notifications_to_update: >-
+          {%- set existing = existing_notification_fingerprints | from_json -%}
+          {%- set desired = desired_notification_fingerprints | from_json -%}
+          {%- set to_update = [] -%}
+          {%- for notif in uptime_kuma_notifications -%}
+            {%- if notif.name in existing and existing[notif.name] != desired[notif.name] -%}
+              {%- set _ = to_update.append(notif) -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{ to_update | to_json }}
+
+    - name: Determine new notifications
+      set_fact:
+        notifications_to_create: >-
+          {%- set existing = existing_notification_fingerprints | from_json -%}
+          {%- set to_create = [] -%}
+          {%- for notif in uptime_kuma_notifications -%}
+            {%- if notif.name not in existing -%}
+              {%- set _ = to_create.append(notif) -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{ to_create | to_json }}
+
+    - name: Debug notification changes
+      debug:
+        msg:
+          - "Notifications to create: {{ notifications_to_create | from_json | map(attribute='name') | list }}"
+          - "Notifications to update: {{ notifications_to_update | from_json | map(attribute='name') | list }}"
+      when: debug | bool and debug_level == 'info'
+
+    - name: Create or update notifications
+      vars:
+        merged_settings: "{{ notification_defaults | combine(item.settings) }}"
+      lucasheld.uptime_kuma.notification:
+        api_url: "{{ uptime_kuma_api_url }}"
+        api_token: "{{ uptime_kuma_api_token }}"
+        name: "{{ item.name }}"
+        type: "{{ item.type }}"
+        state: "{{ merged_settings.state }}"
+        api_timeout: "{{ api_timeout }}"
+        api_wait_events: "{{ api_wait_events }}"
+        api_ssl_verify: "{{ api_ssl_verify }}"
+        applyExisting: "{{ merged_settings.applyExisting }}"
+        isDefault: "{{ merged_settings.isDefault }}"
+        pushoveruserkey: "{{ merged_settings.pushoveruserkey | default(omit) }}"
+        pushoverapptoken: "{{ merged_settings.pushoverapptoken | default(omit) }}"
+        pushovertitle: "{{ merged_settings.pushovertitle | default(omit) }}"
+        pushoverpriority: "{{ merged_settings.pushoverpriority | default(omit) }}"
+        pushoverttl: "{{ merged_settings.pushoverttl | default(omit) }}"
+        homeAssistantUrl: "{{ merged_settings.homeAssistantUrl | default(omit) }}"
+        longLivedAccessToken: "{{ merged_settings.longLivedAccessToken | default(omit) }}"
+      loop: "{{ (notifications_to_create | from_json) + (notifications_to_update | from_json) }}"
+      register: notification_result
+      retries: "{{ retry_attempts }}"
+      delay: "{{ retry_delay }}"
+      until: notification_result is success
+      loop_control:
+        pause: "{{ loop_pause }}"
+
+    - name: Remove obsolete notifications
+      lucasheld.uptime_kuma.notification:
+        api_url: "{{ uptime_kuma_api_url }}"
+        api_token: "{{ uptime_kuma_api_token }}"
+        name: "{{ item.name }}"
+        state: absent
+        api_timeout: "{{ api_timeout }}"
+        api_wait_events: "{{ api_wait_events }}"
+        api_ssl_verify: "{{ api_ssl_verify }}"
+      loop: "{{ existing_notifications.notifications }}"
+      when: item.name not in (uptime_kuma_notifications | map(attribute='name') | list)
+      register: notification_delete_result
+      retries: "{{ retry_attempts }}"
+      delay: "{{ retry_delay }}"
+      until: notification_delete_result is success
+      loop_control:
+        pause: "{{ loop_pause }}"

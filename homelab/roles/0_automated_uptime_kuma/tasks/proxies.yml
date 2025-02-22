@@ -1,0 +1,109 @@
+    - name: Get information about existing proxies
+      lucasheld.uptime_kuma.proxy_info:
+        api_url: "{{ uptime_kuma_api_url }}"
+        api_token: "{{ uptime_kuma_api_token }}"
+        api_timeout: "{{ api_timeout }}"
+        api_wait_events: "{{ api_wait_events }}"
+        api_ssl_verify: "{{ api_ssl_verify }}"
+      register: existing_proxies
+      retries: "{{ retry_attempts }}"
+      delay: "{{ retry_delay }}"
+      until: existing_proxies is success
+
+    - name: Debug existing proxies
+      debug:
+        var: existing_proxies
+      when: debug | bool and debug_level == 'info'
+
+    - name: Build list of required proxies from hosts with socks5proxy
+      set_fact:
+        required_proxies: >-
+          {%- set proxies = [] -%}
+          {%- for host_key, host_details in active_docker_services.items() -%}
+            {%- if 'socks5proxy' in host_details -%}
+              {%- for host, host_info in endpoint_hosts.items() if host | lower == host_key | lower -%}
+                {%- for ip in host_info.ip | default([]) -%}
+                  {%- set proxy = {
+                    'host': ip,
+                    'port': proxy_defaults.port,
+                    'protocol': proxy_defaults.protocol,
+                    'auth': proxy_defaults.auth,
+                    'username': proxy_defaults.username,
+                    'password': proxy_defaults.password,
+                    'active': proxy_defaults.active,
+                    'default': proxy_defaults.default,
+                    'applyExisting': proxy_defaults.applyExisting
+                  } -%}
+                  {%- do proxies.append(proxy) -%}
+                {%- endfor -%}
+              {%- endfor -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {{ proxies }}
+
+    - name: Debug required proxies
+      debug:
+        var: required_proxies
+      when: debug | bool and debug_level == 'info'
+
+    - name: Get proxy fingerprints
+      set_fact:
+        existing_proxy_fingerprints: >-
+          {%- set fingerprints = [] -%}
+          {%- for proxy in existing_proxies.proxies -%}
+            {%- set fingerprint = proxy.host ~ ':' ~ proxy.port ~ ':' ~ proxy.protocol -%}
+            {%- do fingerprints.append(fingerprint) -%}
+          {%- endfor -%}
+          {{ fingerprints }}
+        required_proxy_fingerprints: >-
+          {%- set fingerprints = [] -%}
+          {%- for proxy in required_proxies -%}
+            {%- set fingerprint = proxy.host ~ ':' ~ proxy.port ~ ':' ~ proxy.protocol -%}
+            {%- do fingerprints.append(fingerprint) -%}
+          {%- endfor -%}
+          {{ fingerprints }}
+
+    - name: Create missing proxies
+      lucasheld.uptime_kuma.proxy:
+        api_url: "{{ uptime_kuma_api_url }}"
+        api_token: "{{ uptime_kuma_api_token }}"
+        host: "{{ item.host }}"
+        port: "{{ item.port }}"
+        protocol: "{{ item.protocol }}"
+        auth: "{{ item.auth }}"
+        username: "{{ item.username }}"
+        password: "{{ item.password }}"
+        active: "{{ item.active }}"
+        default: "{{ item.default }}"
+        applyExisting: "{{ item.applyExisting }}"
+        state: present
+        api_timeout: "{{ api_timeout }}"
+        api_wait_events: "{{ api_wait_events }}"
+        api_ssl_verify: "{{ api_ssl_verify }}"
+      loop: "{{ required_proxies }}"
+      when: item.host ~ ':' ~ item.port ~ ':' ~ item.protocol not in existing_proxy_fingerprints
+      register: proxy_create_result
+      retries: "{{ retry_attempts }}"
+      delay: "{{ retry_delay }}"
+      until: proxy_create_result is success
+      loop_control:
+        pause: "{{ loop_pause }}"
+
+    - name: Remove obsolete proxies
+      lucasheld.uptime_kuma.proxy:
+        api_url: "{{ uptime_kuma_api_url }}"
+        api_token: "{{ uptime_kuma_api_token }}"
+        host: "{{ item.host }}"
+        port: "{{ item.port }}"
+        state: absent
+        api_timeout: "{{ api_timeout }}"
+        api_wait_events: "{{ api_wait_events }}"
+        api_ssl_verify: "{{ api_ssl_verify }}"
+      loop: "{{ existing_proxies.proxies }}"
+      when: item.host ~ ':' ~ item.port ~ ':' ~ item.protocol not in required_proxy_fingerprints
+      register: proxy_delete_result
+      retries: "{{ retry_attempts }}"
+      delay: "{{ retry_delay }}"
+      until: proxy_delete_result is success
+      loop_control:
+        pause: "{{ loop_pause }}"

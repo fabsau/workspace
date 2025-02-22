@@ -1,0 +1,29 @@
+---
+- name: Retrieve all monitors
+  lucasheld.uptime_kuma.monitor_info:
+    api_url: "{{ uptime_kuma_api_url }}"
+    api_token: "{{ uptime_kuma_api_token }}"
+    api_timeout: "{{ api_timeout }}"
+    api_wait_events: "{{ api_wait_events }}"
+    api_ssl_verify: "{{ api_ssl_verify }}"
+  register: monitor_info_result
+  retries: "{{ retry_attempts }}"
+  delay: "{{ retry_delay }}"
+  until: monitor_info_result is success
+  when: delete_all
+
+- name: Delete all monitors if delete_all is true
+  lucasheld.uptime_kuma.monitor:
+    api_url: "{{ uptime_kuma_api_url }}"
+    api_token: "{{ uptime_kuma_api_token }}"
+    name: "{{ item.name }}"
+    type: "{{ item.type }}"
+    state: absent
+    api_timeout: "{{ api_timeout }}"
+    api_wait_events: "{{ api_wait_events }}"
+    api_ssl_verify: "{{ api_ssl_verify }}"
+  loop: "{{ monitor_info_result.monitors }}"
+  retries: "{{ retry_attempts }}"
+  delay: "{{ retry_delay }}"
+  until: monitor_result is success
+  when: delete_all
