@@ -1,0 +1,217 @@
+# vars/main.yml
+
+services:
+  - name: openvas-vulnerability-tests
+    image: registry.community.greenbone.net/community/vulnerability-tests
+    env_file:
+      - ./openvas-vulnerability-tests.env
+    networks:
+      - openvas
+    volumes:
+      - ./data/openvas/vt:/mnt
+    watchtower: true
+
+  - name: openvas-notus-data
+    image: registry.community.greenbone.net/community/notus-data
+    networks:
+      - openvas
+    volumes:
+      - ./data/openvas/notus:/mnt
+    watchtower: true
+
+  - name: openvas-scap-data
+    image: registry.community.greenbone.net/community/scap-data
+    networks:
+      - openvas
+    volumes:
+      - ./data/openvas/scap:/mnt
+    watchtower: true
+
+  - name: openvas-cert-bund-data
+    image: registry.community.greenbone.net/community/cert-bund-data
+    networks:
+      - openvas
+    volumes:
+      - ./data/openvas/cert:/mnt
+    watchtower: true
+
+  - name: openvas-dfn-cert-data
+    image: registry.community.greenbone.net/community/dfn-cert-data
+    depends_on:
+      - openvas-cert-bund-data
+    networks:
+      - openvas
+    volumes:
+      - ./data/openvas/cert:/mnt
+    watchtower: true
+
+  - name: openvas-data-objects
+    image: registry.community.greenbone.net/community/data-objects
+    networks:
+      - openvas
+    volumes:
+      - ./data/openvas/data_objects:/mnt
+    watchtower: true
+
+  - name: openvas-report-formats
+    image: registry.community.greenbone.net/community/report-formats
+    depends_on:
+      - openvas-data-objects
+    networks:
+      - openvas
+    volumes:
+      - ./data/openvas/data_objects:/mnt
+    watchtower: true
+
+  - name: openvas-gpg-data
+    image: registry.community.greenbone.net/community/gpg-data
+    networks:
+      - openvas
+    volumes:
+      - ./data/openvas/gpg:/mnt
+    watchtower: true
+
+  - name: openvas-redis-server
+    image: registry.community.greenbone.net/community/redis-server
+    networks:
+      - openvas
+    volumes:
+      - ./data/openvas/redis_socket:/run/redis/
+    watchtower: true
+
+  - name: openvas-pg-gvm
+    image: registry.community.greenbone.net/community/pg-gvm:stable
+    networks:
+      - openvas
+    volumes:
+      - ./db/openvas/psql:/var/lib/postgresql/data
+      - ./db/openvas/psql_socket:/var/run/postgresql
+    watchtower: true
+
+  - name: openvas-gvmd
+    image: registry.community.greenbone.net/community/gvmd:stable
+    depends_on:
+      - openvas-pg-gvm
+      - openvas-scap-data
+      - openvas-cert-bund-data
+      - openvas-dfn-cert-data
+      - openvas-data-objects
+      - openvas-report-formats
+    networks:
+      - openvas
+    volumes:
+      - ./data/openvas/gvmd:/var/lib/gvm
+      - ./data/openvas/scap:/var/lib/gvm/scap-data/
+      - ./data/openvas/cert:/var/lib/gvm/cert-data
+      - ./data/openvas/data_objects:/var/lib/gvm/data-objects/gvmd
+      - ./data/openvas/vt:/var/lib/openvas/plugins
+      - ./db/openvas/psql:/var/lib/postgresql
+      - ./data/openvas/gvmd_socket:/run/gvmd
+      - ./data/openvas/ospd_openvas_socket:/run/ospd
+      - ./db/openvas/psql_socket:/var/run/postgresql
+    watchtower: true
+
+  - name: openvas-gsa
+    image: registry.community.greenbone.net/community/gsa:stable
+    depends_on:
+      - openvas-gvmd
+    volumes:
+      - ./data/openvas/gvmd_socket:/run/gvmd
+    networks:
+      - openvas
+    traefik:
+      - name: openvas-gsa
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`vuln.oiba.de`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 80
+    watchtower: true
+
+  - name: openvas-configure-openvas
+    image: registry.community.greenbone.net/community/openvas-scanner:stable
+    networks:
+      - openvas
+    volumes:
+      - ./config/openvas/openvas:/mnt
+      - ./data/openvas/openvas_log:/var/log/openvas
+    command:
+      - /bin/sh
+      - -c
+      - printf 'table_driven_lsc = yes\nopenvasd_server = http://openvasd:80\n' > /mnt/openvas.conf && sed 's/127/128/' /etc/openvas/openvas_log.conf | sed 's/gvm/openvas/' > /mnt/openvas_log.conf && chmod 644 /mnt/openvas.conf && chmod 644 /mnt/openvas_log.conf && touch /var/log/openvas/openvas.log && chmod 666 /var/log/openvas/openvas.log
+
+    watchtower: true
+
+  - name: openvas-openvas
+    image: registry.community.greenbone.net/community/openvas-scanner:stable
+    depends_on:
+      - openvas-configure-openvas
+    command:
+      - /bin/sh
+      - -c
+      - cat /etc/openvas/openvas.conf && tail -f /var/log/openvas/openvas.log
+    networks:
+      - openvas
+    volumes:
+      - ./config/openvas/openvas:/etc/openvas
+      - ./data/openvas/openvas_log:/var/log/openvas
+    watchtower: true
+
+  - name: openvas-openvasd
+    image: registry.community.greenbone.net/community/openvas-scanner:stable
+    depends_on:
+      - openvas-vulnerability-tests
+      - openvas-configure-openvas
+      - openvas-gpg-data
+    env_file:
+      - ./openvas-openvasd.env
+    networks:
+      - openvas
+    volumes:
+      - ./config/openvas/openvas:/etc/openvas
+      - ./data/openvas/openvas_log:/var/log/openvas
+      - ./data/openvas/gpg:/etc/openvas/gnupg
+      - ./data/openvas/notus:/var/lib/notus
+    watchtower: true
+
+  - name: openvas-ospd-openvas
+    image: registry.community.greenbone.net/community/ospd-openvas:stable
+    depends_on:
+      - openvas-redis-server
+      - openvas-gpg-data
+      - openvas-vulnerability-tests
+      - openvas-configure-openvas
+    command: |
+      ospd-openvas -f --config /etc/gvm/ospd-openvas.conf --notus-feed-dir /var/lib/notus/advisories -m 666
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    security_opt:
+      - seccomp=unconfined
+      - apparmor=unconfined
+    networks:
+      - openvas
+    volumes:
+      - ./data/openvas/gpg:/etc/openvas/gnupg
+      - ./data/openvas/vt:/var/lib/openvas/plugins
+      - ./data/openvas/notus:/var/lib/notus
+      - ./data/openvas/ospd_openvas_socket:/run/ospd
+      - ./data/openvas/redis_socket:/run/redis/
+      - ./config/openvas/openvas:/etc/openvas/
+      - ./data/openvas/openvas_log:/var/log/openvas
+    watchtower: true
+
+  - name: openvas-gvm-tools
+    image: registry.community.greenbone.net/community/gvm-tools
+    depends_on:
+      - openvas-gvmd
+      - openvas-ospd-openvas
+    networks:
+      - openvas
+    volumes:
+      - ./data/openvas/gvmd_socket:/run/gvmd
+      - ./data/openvas/ospd_openvas_socket:/run/ospd
+    watchtower: true
