@@ -1,6 +1,6 @@
 # Host Settings
 host_timezone: Europe/Berlin
-docker_base_path: /docker2
+docker_base_path: /docker
 docker_network_base_subnet: "172.30"
 default_file_permission_mode: "770"
 security_ssh_permit_root_login: "yes" # TODO REMOVE!
@@ -176,6 +176,9 @@ endpoint_hosts:
       type: "socket"
       path: "/var/run/docker.sock"
       id: 1
+    uptimekuma_basic_monitoring: true
+    uptimekuma_http_monitoring: true
+    uptimekuma_container_monitoring: true
   dmz:
     ip:
       - "192.168.200.2"
@@ -183,6 +186,9 @@ endpoint_hosts:
       type: "tcp"
       path: "http://192.168.200.2:2375"
       id: 2
+    uptimekuma_basic_monitoring: true
+    uptimekuma_http_monitoring: true
+    uptimekuma_container_monitoring: true
   BLUE:
     ip:
       - "192.168.251.4"
@@ -198,6 +204,9 @@ endpoint_hosts:
       - 8090 # Librespeed
       - 5572 # Rclone
       - 9001 # Portainer
+    uptimekuma_basic_monitoring: true
+    uptimekuma_http_monitoring: true
+    uptimekuma_container_monitoring: true
     docker_connection:
       type: "tcp"
       path: "http://100.64.0.1:2375"
@@ -210,19 +219,30 @@ endpoint_hosts:
     ip:
       - "192.168.100.20"
     dns: true
+    uptimekuma_basic_monitoring: true
+    uptimekuma_http_monitoring: true
+    uptimekuma_container_monitoring: false
   lxc2:
     ip:
       - "192.168.100.21"
     dns: true
-
+    uptimekuma_basic_monitoring: true
+    uptimekuma_http_monitoring: true
+    uptimekuma_container_monitoring: false 
+    
 pbs_global_server:
   user: "{{ PROXMOX_BACKUP_USER }}"
   pass: "{{ PROXMOX_BACKUP_PASSWORD }}"
-  host: https://bak.oiba.de:443
+  host: 192.168.100.4:8007
   datastore: Backup
+  fingerprint: "{{ PROXMOX_BACKUP_FINGERPRINT }}"
 
+# Proxy Settings
+socks5_proxy_port: 1080
 
 endpoints:
+  actualbudget:
+    dmz: "budget.sauna.re"
   adguard:
     lxc1: "dns.oiba.de"
     lxc2: "dns2.oiba.de"
@@ -230,7 +250,6 @@ endpoints:
   adguardexporter:
     nas: "adguardexporter.oiba.de"
     prometheus_exporter: true
-    uptimekuma_monitoring: false
   alertmanager:
     nas: "alert.oiba.de"
     dmz: "alert.sauna.re"
@@ -245,10 +264,9 @@ endpoints:
     nas: "backrest.oiba.de"
   bazarr:
     dmz: "bazarr.sauna.re"
-    uptimekuma_monitor: false
   cadvisor:
     nas: "cadvisor.nas.oiba.de"
-    dmz: "cadvisor.azure.sauna.re"
+    dmz: "cadvisor.dmz.sauna.re"
     BLUE: "cadvisor.blue.sauna.re"
     prometheus_exporter: true
   calibre:
@@ -262,15 +280,16 @@ endpoints:
     traefik_extra_server: true
   # codeserver:
   #   nas: "code.oiba.de"
-  #   uptimekuma_monitor: false
   czkawka:
     nas: "files.oiba.de"
   demo-dhbwgpt:
     dmz: "demo-dhbwgpt.sauna.re"
   dockge:
     nas: "dockge.oiba.de"
-    dmz: "dockge.azure.sauna.re"
+    dmz: "dockge.dmz.sauna.re"
     BLUE: "dockge.blue.sauna.re"
+  donetick:
+    dmz: "todo.sauna.re"
   ferdium:
     dmz: "ferdium.sauna.re"
   filebrowser:
@@ -280,17 +299,103 @@ endpoints:
     traefik_extra_server: true
   ghost:
     dmz: "fabio.sauna.re"
-    uptimekuma_container:
-      ghost-mysql:
-        docker_connection_host: "dmz"
+    uptimekuma_settings:
+      monitoring_disabled: false  # Explicitly enable monitoring (default is false)
+      url_path: "/ghost"
+      # URL Path Settings
+      url_path: "/ghost"        # This will be appended to the base URL
+      
+      # Monitor Type Settings
+      type: "http"              # Options: http, keyword, ping, port, dns, docker, etc.
+      
+      # General Settings
+      description: "Ghost Blog"  # Monitor description
+      tags: 
+        - blog
+        - production
+      notifications:
+        - telegram
+        - discord
+      interval: 60             # Heartbeat interval in seconds
+      maxretries: 3           # Maximum number of retries
+      retryInterval: 30       # Retry interval in seconds
+      
+      # HTTP/HTTPS Specific
+      verify_ssl: true
+      accepted_statuscodes:
+        - "200-299"
+      ignored_status_codes:
+        - 403
+      method: "GET"           # HTTP method (GET, POST, etc.)
+      body: ""               # Request body
+      body_encoding: "json"   # Options: json, xml, urlencoded
+      headers:              # Custom headers
+        User-Agent: "UptimeKuma"
+        Authorization: "Bearer token123"
+      
+      # Keyword Monitor Settings
+      keyword_monitoring:
+        enabled: true
+        keyword: "Ghost Blog"
+        type: "keyword"     # Use this to switch to keyword monitoring
+        invert: false       # Look for absence of keyword instead
+      
+      # Authentication
+      authentication:
+        enabled: false
+        type: "basic"       # Options: basic, ntlm, mtls
+        username: ""
+        password: ""
+        domain: ""          # For NTLM
+        workstation: ""     # For NTLM
+        
+      # TLS/Certificate Settings
+      tls:
+        ca: ""             # Custom CA certificate
+        cert: ""           # Client certificate
+        key: ""            # Client key
+        expiry_notification: true
+        expiry_days:       # Notify when cert expires in X days
+          - 7
+          - 14
+          - 30
+      
+      # Proxy Settings
+      proxy:
+        name: "eu-proxy"    # Name of predefined proxy
+        custom:            # Or define custom proxy
+          host: "proxy.example.com"
+          port: 8080
+          protocol: "http" # Options: http, https, socks, socks5, socks5h
+          auth:
+            username: ""
+            password: ""
+      
+      # Docker Container Monitoring
+      containers:
+        ghost-mysql:
+          docker_connection_host: "dmz"
+          container_settings:
+            notifications:
+              - slack
+            interval: 30
+            retries: 5
+            description: "Ghost MySQL Database"
+            
+      # Advanced HTTP Settings
+      advanced_http:
+        max_redirects: 10
+        timeout: 30        # Request timeout in seconds
+        host_header: ""    # Custom Host header
+        resolution: "IPv4" # Force IPv4/IPv6 resolution
   grafana:
     nas: "grafana.oiba.de"
   headscale:
     dmz: "headscale.sauna.re"
     prometheus_settings:
       metrics_path: "/metrics"
-    uptimekuma_monitor:
-      path: "/web"
+    uptimekuma_settings:
+      url_path: "/web"
   homeassistant:
     dmz: "home.sauna.re"
     traefik_extra_server: true
@@ -305,18 +410,19 @@ endpoints:
     dmz: "money.sauna.re"
   # inputforms:
   #   nas: "forms.oiba.de"
-  #   uptimekuma_monitor: false
   it-tools:
     dmz: "tools.sauna.re"
-  johanna-liebt-fabio:
+  johanna-l#bt-fabio:
     dmz: "johanna-liebt-fabio.sauna.re"
   kasm:
-    dmz: "desktop.sauna.re"
+    dmz:
+      - "kasm.sauna.re"
+      - "kasm-setup.sauna.re"
   librechat:
     dmz: "chat.sauna.re"
   librespeed:
     nas: "speed.nas.oiba.de"
-    dmz: "speed.azure.sauna.re"
+    dmz: "speed.dmz.sauna.re"
     BLUE: "speed.blue.sauna.re"
   librespeedexporter:
     nas: "librespeedexporter.oiba.de"
@@ -335,7 +441,7 @@ endpoints:
     nas: "ssh.oiba.de"
   nodeexporter:
     nas: "node.nas.oiba.de"
-    dmz: "node.azure.sauna.re"
+    dmz: "node.dmz.sauna.re"
     BLUE: "node.blue.sauna.re"
     opn: "node.opn.oiba.de"
     home: "node.home.oiba.de"
@@ -362,17 +468,16 @@ endpoints:
     dmz: "data.sauna.re"
   plausibleexporter:
     nas: "plausibleexporter.oiba.de"
-    uptimekuma_monitor: false
     prometheus_exporter: true
   plex:
-    BLUE: "watch.sauna.re"
+    blue: "watch.sauna.re"
+    dmz: "watch.sauna.re"
   plexexporter:
     nas:
       - "plexexporter.oiba.de"
       - "plexexporter2.oiba.de"
       - "plexexporter3.oiba.de"
     prometheus_exporter: true
-    uptimekuma_monitor: false
   portainer:
     nas: "docker.oiba.de"
   prowlarr:
@@ -415,7 +520,6 @@ endpoints:
   qbittorrentexporter:
     nas: "qbittorrentexporter.oiba.de"
     prometheus_exporter: true
-    uptimekuma_monitor: false
   radarr:
     dmz: "radarr.sauna.re"
   radarrexporter:
@@ -423,14 +527,13 @@ endpoints:
     prometheus_exporter: true
   # rancher:
   #   nas: "rancher.oiba.de"
-  #   uptimekuma_monitor: false
   # rclone:
   #   nas: "rclone.oiba.de"
   #   BLUE: "rclone.blue.sauna.re"
   #   dmz: "rclone.azure.sauna.re"
-  #   uptimekuma_monitor: false
   sabnzbd:
     BLUE: "usenet.sauna.re"
+    dmz: "usenet.sauna.re"
   sabnzbdexporter:
     nas: "sabnzbdexporter.oiba.de"
     prometheus_exporter: true
@@ -462,9 +565,10 @@ endpoints:
     prometheus_exporter: true
   torrent:
     BLUE: "torrent.sauna.re"
+    dmz: "torrent.sauna.re"
   traefik:
     nas: "proxy.oiba.de"
-    dmz: "proxy.azure.sauna.re"
+    dmz: "proxy.dmz.sauna.re"
     BLUE: "proxy.blue.sauna.re"
     prometheus_exporter: true
   unifi:
@@ -477,11 +581,12 @@ endpoints:
     prometheus_exporter: true
   uptimekuma:
     nas: "uptime.oiba.de"
+    dmz: "uptime.sauna.re"
     prometheus_exporter: true
     prometheus_settings:
       basic_auth:
-        username: "{{ PROMETHEUS_UPTIMEKUMA_USER }}"
-        password: "{{ PROMETHEUS_UPTIMEKUMA_PASSWORD }}"
+        username: "{{ UPTIMEKUMA_USER }}"
+        password: "{{ UPTIMEKUMA_PASSWORD }}"
   uptimekuma_saunaflix:
     dmz: "status.sauna.re"
   vacuum:
@@ -489,7 +594,6 @@ endpoints:
     traefik_extra_server: true
   valetudo:
     nas: "valetudo.oiba.de"
-    uptimekuma_monitor: false
   vaultwarden:
     dmz:
       - "bitwarden.sauna.re"
@@ -506,7 +610,6 @@ endpoints:
   #   prometheus_settings:
   #     metrics_path: "/v1/metrics"
   #     bearer_token: "{{ WATCHTOWER_HTTP_API_TOKEN }}"
-  #   uptimekuma_monitor: false
   wizarr:
     dmz: "setup.sauna.re"
   xbackbone:

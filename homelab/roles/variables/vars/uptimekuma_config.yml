@@ -1,0 +1,66 @@
+---
+# Uptime Kuma API Configuration
+uptime_kuma_api_url: "https://uptime.sauna.re"
+uptime_kuma_username: "{{ UPTIMEKUMA_USER }}"
+uptime_kuma_password: "{{ UPTIMEKUMA_PASSWORD }}"
+
+# General Configuration
+initial_setup: true
+delete_all: false
+debug: true  # Enable debug for troubleshooting
+debug_level: "info" # Level of debug output (info, verbose)
+
+# API and Retry Settings
+retry_attempts: 3
+retry_delay: 5
+api_timeout: 30
+api_wait_events: 5
+api_ssl_verify: true  # Disable SSL verify fore using self-signed cert
+loop_pause: 2  # Configurable pause between loop iterations
+
+# Tag Configuration
+uptime_kuma_tags:
+  - name: "manual"
+    color: "#808080"  # Gray color
+
+# Proxy Configuration
+proxy_defaults:
+  protocol: "socks5h"  # socks5h for DNS resolution through proxy
+  port: "{{ socks5_proxy_port }}"  # Use the port from variables
+  auth: true
+  active: true
+  default: false  # Whether to set as default proxy for new monitors
+  applyExisting: false  # Whether to apply to existing monitors
+  username: "{{ SOCKS5_PROXY_USER }}"
+  password: "{{ SOCKS5_PROXY_PASSWORD }}"
+
+# Subgroup Configuration
+kuma_subgroups:
+  basic: "BASIC"
+  http: "HTTP"
+  containers: "CONTAINERS"
+
+# Notification Configuration
+uptime_kuma_notifications:
+  - name: "Pushover"
+    type: "pushover"
+    settings:
+      pushoveruserkey: "{{ PUSHOVER_UPTIMEKUMA_USER_KEY }}"
+      pushoverapptoken: "{{ PUSHOVER_UPTIMEKUMA_APPLICATION_TOKEN }}"
+      pushovertitle: "Prometheus Offline"
+      pushoverpriority: 2
+      pushoverttl: 60
+      isDefault: false
+  
+  - name: "HomeAssistant"
+    type: "HomeAssistant"
+    settings:
+      homeAssistantUrl: "https://{{ endpoints.homeassistant.dmz }}"
+      longLivedAccessToken: "{{ HOMEASSISTANT_UPTIMEKUMA_LONG_LIVED_ACCESS_TOKEN }}"
+      isDefault: false
+
+# Common notification defaults
+notification_defaults:
+  state: present
+  applyExisting: false
+  isDefault: false

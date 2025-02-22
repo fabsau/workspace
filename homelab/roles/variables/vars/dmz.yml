@@ -37,6 +37,8 @@ docker_networks:
   - obsidian
   - kasm
   - phpmyadmin
+  - actualbudget
+  - donetick
 
 # TRAEFIK
 traefik_oauth_address: http://authelia:9091/api/verify?rd=https%3A%2F%2Fauth.sauna.re%2F
@@ -47,7 +49,7 @@ traefik_domains:
   - main: sauna.re
     sans:
       - "*.sauna.re"
-      - "*.azure.sauna.re"
+      - "*.dmz.sauna.re"
 
 traefik_extra_hosts:
   - host.docker.internal:172.17.0.1
@@ -68,6 +70,9 @@ traefik_extra_servers:
     insecuretransport: false
 
 # traefik_additional_ports:
+
+# CERTDUMPER
+certdumper_restart_containers: plex
 
 
 # DOCKERPROXY_TRAEFIK
