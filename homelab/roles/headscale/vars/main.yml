@@ -7,7 +7,7 @@ services:
     volumes:
       - ./config:/etc/headscale
       - ./data:/var/lib/headscale
-      - ../certdumper/ssl/*.azure.sauna.re:/opt/ssl
+      - ../certdumper/ssl/sauna.re:/opt/ssl
     ports:
       - 9090:9090
       - 3478:3478/udp
