@@ -1,0 +1,49 @@
+# vars/main.yml
+
+services:
+  - name: calibre-web
+    image: lscr.io/linuxserver/calibre-web:latest
+    depends_on:
+      - calibre
+    env_file:
+      - ../common.env
+      - ./calibre-web.env
+    volumes:
+      - ./config/calibre-web:/config
+      - ./data:/data
+      - /0/merged:/0:rshared
+    networks:
+      - calibre
+    traefik:
+      - name: calibre-web
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints.calibre_web[ansible_facts['hostname']] }}`)"
+        middlewares: public-chain@file
+        insecuretransport: false
+        service_port: 8083
+    watchtower: true
+
+  - name: calibre
+    image: lscr.io/linuxserver/calibre:latest
+    env_file:
+      - ../common.env
+    volumes:
+      - ./config/calibre:/config
+      - ./data:/data
+      - /0/merged:/0:rshared
+    networks:
+      - xbackbone
+    traefik:
+      - name: calibre
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+        middlewares: private-chain@file
+        insecuretransport: false
+        service_port: 8080
+    watchtower: true
