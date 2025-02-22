@@ -17,7 +17,7 @@ traefik_default_ports:
 
 services:
   - name: traefik
-    image: traefik:3.2
+    image: traefik:latest
     command:
       - --configFile=/config/traefik.yml
     depends_on:
