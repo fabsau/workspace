@@ -8,11 +8,20 @@ acknowledge_abuse = true
 pacer_min_sleep = 1ms
 pacer_burst = 5000
 team_drive = {{ RCLONE_GDRIVE_0_DRIVE_ID }}
-{% if ansible_hostname == "BLUE" %}
+{% if ansible_hostname == "NAS" %}
+service_account_file = /config/service_accounts/backup98-backup-objgxlrskxo5c8o3x9sm.json
+{% elif ansible_hostname == "BLUE" %}
 service_account_file = /config/service_accounts/backup99-backup-objgxlrskxo5c8o3x9sm.json
 {% elif ansible_hostname == "dmz" %}
 service_account_file = /config/service_accounts/backup100-backup-objgxlrskxo5c8o3x9sm.json
 {% endif %}
+
+[alldebrid]
+type = webdav
+url = https://webdav.debrid.it
+vendor = other
+user = {{ RCLONE_ALLDEBRID_USER }}
+pass = {{ RCLONE_ALLDEBRID_PASSWORD }}
 
 [gdrive_crypt_0]
 type = crypt
@@ -21,7 +30,9 @@ filename_encryption = standard
 directory_name_encryption = true
 password = {{ RCLONE_GDRIVE_0_PASSWORD }}
 password2 = {{ RCLONE_GDRIVE_0_PASSWORD_2 }}
-{% if ansible_hostname == "BLUE" %}
+{% if ansible_hostname == "NAS" %}
+service_account_file = /config/service_accounts/backup98-backup-objgxlrskxo5c8o3x9sm.json
+{% elif ansible_hostname == "BLUE" %}
 service_account_file = /config/service_accounts/backup99-backup-objgxlrskxo5c8o3x9sm.json
 {% elif ansible_hostname == "dmz" %}
 service_account_file = /config/service_accounts/backup100-backup-objgxlrskxo5c8o3x9sm.json
@@ -39,7 +50,7 @@ sha1sum_command = sha1sum
 
 [streaming]
 type = union
-upstreams = gdrive_crypt_0:/:nc /mnt/local
+upstreams = gdrive_crypt_0:/:nc /0/local alldebrid:/
 action_policy = epall
 create_policy = eplfs
 search_policy = ff
@@ -49,13 +60,20 @@ search_policy = ff #}
 
 [brain]
 type = union
-upstreams = blue:/0/local gdrive_crypt_0:/:nc
+upstreams = blue:/0/local gdrive_crypt_0:/:nc alldebrid:/
 action_policy = epall
 create_policy = eplfs
 search_policy = ff
 {# action_policy = ff
 create_policy = eplfs
 search_policy = ff #}
+
+[saunaflix]
+type = union
+upstreams = /0/local gdrive_crypt_0:/:nc alldebrid:/:nc
+action_policy = epall
+create_policy = eplfs
+search_policy = ff
 
 [backupservers]
 type = union

@@ -2,7 +2,7 @@
 
 services:
   - name: rclone
-    image: mumiehub/rclone-mount:latest
+    image: fabsau/rclone-mount:latest
     security_opt:
         - apparmor:unconfined
     devices:
@@ -15,15 +15,15 @@ services:
       - ./rclone.env
     volumes:
       - ./config:/config
-      - /0:/mnt:rshared
-    traefik:
-      - name: rclone
-        protocol: http
-        entrypoint: https
-        http_redirection: true
-        enable_tls: true
-        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
-        middlewares: private-chain@file
-        insecuretransport: false
-        service_port: 5572
+      - /0:/0:rshared
+    # traefik:
+    #   - name: rclone
+    #     protocol: http
+    #     entrypoint: https
+    #     http_redirection: true
+    #     enable_tls: true
+    #     rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
+    #     middlewares: private-chain@file
+    #     insecuretransport: false
+    #     service_port: 5572
     watchtower: true
