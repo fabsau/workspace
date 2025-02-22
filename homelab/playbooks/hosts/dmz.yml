@@ -1,0 +1,85 @@
+- hosts: dmz
+  roles:
+    - variables
+    # - 0host_user_management
+    # - 0docker_setup
+    - role: 0docker_service
+      vars:
+        docker_service_roles:
+          # - donetick
+          # - uptimekuma
+          # - limesurvey
+          # - actualbudget
+          # - plausible
+          # - photoprism
+          # # # - tandoorrecipes
+          # # # - bazarr
+          # - ihatemoney
+          # - xbackbone
+          # # # - calibre
+          # - linkstack
+          # - johanna-liebt-fabio
+          # - tautulli
+          # - autoscan
+          # # # - recyclarr TODO
+          # - sonarr
+          # - radarr
+          # - prowlarr
+          # - flaresolverr
+          # - overseerr
+          # - wizarr
+          # - searxng
+          - ghost
+          # - phpmyadmin
+          # - filebrowser
+          # # # - homer TODO
+          # - headscale
+          # # # - kasm
+          # - sabnzbd
+          # - certdumper
+          # - cloudplow
+          - torrent
+          # # - rclone
+          # # - plex
+          - traefik
+          # - ferdium
+          - librechat
+          # - it-tools
+          # - dockge
+          # - authelia
+          # - librespeed
+          # - portainer_agent
+          - socks5proxy
+          # - dockersocketproxy
+          # - alertmanager
+          # - cadvisor
+          # - nodeexporter
+          # - watchtower
+          # - obsidian
+          # - vaultwarden
+          # - spotify
+
+    - role: ansible-proxmox-backup-client
+      become: true
+      vars:
+        proxmox_backup:
+          server: "{{ pbs_global_server }}"
+          client:
+            archives:
+              - name: docker
+                path: /docker
+                format: .pxar
+              - name: local
+                path: /0/local
+                format: .pxar
+              - name: root-home
+                path: /root
+                format: .pxar
+              - name: home
+                path: /home
+                format: .pxar
+            schedule:
+                calendar: "*-*-* 16:30:00"
+                runifmissed: yes
+            encrypt:
+              enable: false
