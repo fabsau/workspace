@@ -5,9 +5,12 @@ cache: true
 endpoints:
   azureOpenAI:
     titleConvo: true
-    titleModel: "gpt-3.5-turbo"
-    assistants: true
+    titleModel: "gpt-4o-mini"
+    assistants: false # Agents are better
     plugins: true
+    agents:
+      recursionLimit: 50
+      disableBuilder: false
     groups:
 {# - group: "EastUS"
   apiKey: "{{ OPENAI_AZURE_API_KEY_2 }}"
@@ -20,14 +23,21 @@ endpoints:
         apiKey: "{{ OPENAI_AZURE_API_KEY_1 }}"
         instanceName: "{{ OPENAI_AZURE_INSTANCENAME_1 }}"
         version: "{{ OPENAI_AZURE_API_VERSION }}"
-        assistants: true
         models:
           gpt-4o:
-           deploymentName: "gpt-4o"
-          gpt-4-turbo:
-            deploymentName: "gpt-4-turbo"
-          gpt-3.5-turbo:
-            deploymentName: "gpt-35-turbo"
+            deploymentName: "gpt-4o"
+          gpt-4o-mini:
+            deploymentName: "gpt-4o-mini"
+      - group: "Sweden-Reasoning"
+        apiKey: "009bc3df116048fb90aa6793e16bce47"
+        instanceName: "saunachatse"
+        version: "2024-12-01-preview"
+        dropParams: ["stream", "temperature", "top_p", "presence_penalty", "frequency_penalty", "best_of", "max_tokens", "stop"]
+        models:
+          o3-mini:
+            deploymentName: "o3-mini"
+          o1:
+            deploymentName: "o1"   
 {# whisper:
   deploymentName: whisper-01 #}
       {# - group: "llama-70b-chat"
@@ -75,3 +85,38 @@ speech:
       apiVersion: "{{ OPENAI_AZURE_API_VERSION }}"
       model: "tts-hd"
       voices: ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer']
+{# modelSpecs:
+  enforce: false
+  prioritize: false
+  list:
+    - name: "gpt-4o"
+      label: "gpt-4o"
+      preset:
+        endpoint: "azureOpenAI"
+        model: "gpt-4o"
+        temperature: 0.7
+    - name: "o1"
+      label: "o1"
+      preset:
+        endpoint: "azureOpenAI"
+        model: "o1"
+        temperature: 1
+    - name: "o1-mini"
+      label: "o1-mini"
+      preset:
+        endpoint: "azureOpenAI"
+        model: "o1-mini"
+        temperature: 1
+    - name: "gpt-4o-mini"
+      label: "gpt-4o-mini"
+      preset:
+        endpoint: "azureOpenAI"
+        model: "gpt-4o-mini"
+        temperature: 0.7
+
+interface:
+  endpointsMenu: true
+  modelSelect: true
+  parameters: true
+  presets: true #}
+
