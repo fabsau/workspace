@@ -62,6 +62,15 @@ WAF AZURE Container
 Cloudplow Container
 AdguardSync Container
 Certdumper NAS Container
+
+# Fehlende Services
+Calibre #
+Photoprism # Fix Import
+Remote Backups
+UptimeKuma Full Import
+Immich
+Crowdsec
+
 ## Create proper tasks from Linux Documentation
 
 ### Plex optimizations
@@ -70,7 +79,7 @@ echo  fs.inotify.max_user_watches=262144  >> /etc/sysctl.conf
 sysctl -p
 
 ### Wireguard
-sudo nano /etc/systemd/system/wg-quick@.service
+sudo nano /etc/wireguard/wg0.conf
 
 	[Interface]
 	PrivateKey = SECRET
@@ -83,10 +92,10 @@ sudo nano /etc/systemd/system/wg-quick@.service
 	AllowedIPs = 192.168.0.0/16
 	Endpoint = vpn.sauna.re:51820
 
-sudo systemctl daemon-reload
-sudo systemctl enable wg-quick@wg0.service
-sudo systemctl start wg-quick@wg0.service
-sudo systemctl status wg-quick@wg0.service
+sudo chmod 600 /etc/wireguard/wg0.conf
+sudo wg-quick up wg0
+sudo systemctl enable wg-quick@wg0
+
 
 ### Proxmox Backup Client
 wget https://enterprise.proxmox.com/debian/proxmox-release-bullseye.gpg -O /etc/apt/trusted.gpg.d/proxmox-release-bullseye.gpg
@@ -122,3 +131,18 @@ Docker SocketProxy traefik the docker GID differs! 993 for ansible, 999 for dmz
 mkdir /rclone_mount
 ln -s / /rclone_mount/blue
 ln -s / /rclone_mount/dmz
+
+
+# Migration Datapoints
+1. Crontab
+2. Wireguard
+3. SSH Keys/Config
+
+## Install Common Programs
+apt install ncdu htop nload iotop nano cron git nfs-common net-tools dnsutils iputils-ping curl wireguard lsof qemu-guest-agent
+
+## Adguard commands
+sudo systemctl stop systemd-resolved
+sudo systemctl disable systemd-resolved
+sudo rm /etc/resolv.conf
+echo -e "nameserver 192.168.100.20\nnameserver 127.0.0.1\nnameserver 192.168.100.21\n search ." | sudo tee /etc/resolv.conf

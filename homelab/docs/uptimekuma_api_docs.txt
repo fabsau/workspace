@@ -1,0 +1,4160 @@
+:trim:
+lucasheld.uptime_kuma.api_key module -- Manages api keys.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.api_key.
+:local:
+:depth: 1
+Synopsis
+- Manages api keys.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+active
+boolean
+True to activate the api key.
+Choices:
+no
+yes
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+expires
+string
+The expiration date of the api key.
+id
+integer
+The id of the api key.
+Only required if no name specified.
+name
+string
+The name of the api key.
+Only required if no id specified.
+state
+string
+Set to present to create an api key.
+Set to absent to delete an api key.
+Set to enabled to enable an api key.
+Set to disabled to disable an api key.
+Choices:
+present ← (default)
+absent
+enabled
+disabled
+Examples
+- name: Add api key
+lucasheld.uptime_kuma.api_key:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: api key 1
+expires: "2023-03-30 12:20:00"
+active: true
+register: result
+- name: Extract the api key from the result and set it as fact
+set_fact:
+api_key: "{{ result.key }}"
+- name: Enable api key
+lucasheld.uptime_kuma.api_key:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: api key 1
+state: enabled
+- name: Disable api key
+lucasheld.uptime_kuma.api_key:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: api key 1
+state: disabled
+- name: Remove api key
+lucasheld.uptime_kuma.api_key:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: api key 1
+state: absent
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.api_key_info module -- Retrieves facts about api keys.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.api_key_info.
+:local:
+:depth: 1
+Synopsis
+- Retrieves facts about api keys.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+id
+integer
+The id of the api key to inspect.
+Only required if no name specified.
+name
+string
+The name of the api key to inspect.
+Only required if no id specified.
+Examples
+- name: get all api keys
+lucasheld.uptime_kuma.api_key_info:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+register: result
+Return Values
+Key
+Description
+api_keys
+complex
+The api keys as list
+Returned: always
+active
+boolean
+True if the api key is active.
+Returned: always
+Sample: false
+createdDate
+string
+The creation date of the api key.
+Returned: always
+Sample: "2023-03-20 11:15:05"
+expires
+string
+The expiration date of the api key.
+Returned: always
+Sample: "2023-03-30 12:20:00"
+id
+integer
+The id of the api key.
+Returned: always
+Sample: 1
+name
+string
+The name of the api key.
+Returned: always
+Sample: "api key 1"
+status
+string
+The status of the api key.
+Returned: always
+Sample: "inactive"
+userID
+integer
+The user id of the api key.
+Returned: always
+Sample: 1
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.docker_host module -- Manages docker hosts.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.docker_host.
+:local:
+:depth: 1
+Synopsis
+- Manages docker hosts.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+dockerDaemon
+string
+The docker daemon of the docker host.
+dockerType
+string
+The docker type of the docker host.
+Choices:
+socket
+tcp
+id
+integer
+The id of the docker host.
+Only required if no name specified.
+name
+string
+The name of the docker host.
+Only required if no id specified.
+state
+string
+Set to present to create a docker host.
+Set to absent to delete a docker host.
+Choices:
+present ← (default)
+absent
+Examples
+- name: Add docker host
+lucasheld.uptime_kuma.docker_host:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: Docker host 1
+dockerType: socket
+dockerDaemon: /var/run/docker.sock
+- name: Remove docker host
+lucasheld.uptime_kuma.docker_host:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: Docker host 1
+state: absent
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.docker_host_info module -- Retrieves facts about docker hosts.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.docker_host_info.
+:local:
+:depth: 1
+Synopsis
+- Retrieves facts about docker hosts.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+id
+integer
+The id of the docker host to inspect.
+Only required if no name specified.
+name
+string
+The name of the docker host to inspect.
+Only required if no id specified.
+Examples
+- name: get all docker hosts
+lucasheld.uptime_kuma.docker_host_info:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+register: result
+Return Values
+Key
+Description
+docker_hosts
+complex
+The docker hosts as list
+Returned: always
+dockerDaemon
+string
+The docker daemon of the docker host.
+Returned: always
+Sample: "/var/run/docker.sock"
+dockerType
+string
+The docker type of the docker host.
+Returned: always
+Sample: "socket"
+id
+integer
+The id of the docker host.
+Returned: always
+Sample: 1
+name
+string
+The name of the docker host.
+Returned: always
+Sample: "docker host 1"
+userID
+integer
+The user id of the docker host.
+Returned: always
+Sample: 1
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.game_list_info module -- Retrieves facts about the games that are supported by the GameDig monitor type.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.game_list_info.
+:local:
+:depth: 1
+Synopsis
+- Retrieves facts about the games that are supported by the GameDig monitor type.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+Examples
+- name: get game list
+lucasheld.uptime_kuma.game_list_info:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+register: result
+Return Values
+Key
+Description
+game_list
+complex
+The game list
+Returned: always
+extra
+dictionary
+The extra value of the game.
+Returned: always
+Sample: {}
+keys
+list
+/ elements=string
+The keys of the game.
+Returned: always
+Sample: ["7d2d"]
+options
+dictionary
+The options of the game.
+Returned: always
+Sample: {"port": 26900, "port_query_offset": 1, "protocol": "valve"}
+pretty
+string
+The title of the game.
+Returned: always
+Sample: "7 Days to Die (2013)"
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.login module -- Login to Uptime Kuma.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.login.
+:local:
+:depth: 1
+Synopsis
+- Login to Uptime Kuma and returns a token that can be used for future requests.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_2fa
+string
+The Uptime Kuma 2FA token.
+Only required if authentication with 2FA is enabled.
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+Examples
+- name: login
+lucasheld.uptime_kuma.login:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+- name: login with 2fa
+lucasheld.uptime_kuma.login:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+api_2fa: 123456
+Return Values
+Key
+Description
+token
+string
+The login token.
+Returned: always
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.maintenance module -- Manages maintenances.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.maintenance.
+:local:
+:depth: 1
+Synopsis
+- Manages maintenances.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+active
+boolean
+True if the maintenance is active.
+Choices:
+no
+yes
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+cron
+string
+The cron schedule of the maintenance.
+dateRange
+list
+/ elements=string
+The date range of the maintenance.
+daysOfMonth
+list
+/ elements=string
+The weekdays of the maintenance.
+description
+string
+The description of the maintenance.
+durationMinutes
+integer
+The duration (in minutes) of the maintenance.
+id
+integer
+The id of the maintenance.
+Only required if no title specified.
+intervalDay
+integer
+The interval day of the maintenance.
+monitors
+list
+/ elements=string
+The monitors of the maintenance.
+status_pages
+list
+/ elements=string
+The status pages of the maintenance.
+strategy
+string
+The strategy of the maintenance.
+Choices:
+manual
+single
+recurring-interval
+recurring-weekday
+recurring-day-of-month
+cron
+timeRange
+list
+/ elements=string
+The time range of the maintenance.
+timezoneOption
+string
+The timezone of the maintenance.
+title
+string
+The title of the maintenance.
+Only required if no id specified.
+weekdays
+list
+/ elements=integer
+The weekdays of the maintenance.
+Examples
+- name: Add a maintenance
+lucasheld.uptime_kuma.maintenance:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+title: maintenance 1
+description: test
+strategy: single
+active: true
+intervalDay: 1
+dateRange:
+- "2022-12-27 22:36:00"
+- "2022-12-29 22:36:00"
+timeRange:
+- hours: 2
+minutes: 0
+- hours: 3
+minutes: 0
+timezoneOption: "Europe/Berlin"
+monitors:
+- name: monitor 1
+- name: monitor 2
+status_pages:
+- name: status page 1
+- name: status page 2
+state: present
+- name: Edit a maintenance
+lucasheld.uptime_kuma.maintenance:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+title: maintenance 1
+description: test
+strategy: recurring-interval
+active: true
+intervalDay: 1
+dateRange:
+- "2022-12-27 22:37:00"
+- "2022-12-29 22:37:00"
+timeRange:
+- hours: 2
+minutes: 0
+- hours: 3
+minutes: 0
+monitors:
+- id: 1
+status_pages:
+- id: 1
+state: present
+- name: Remove a maintenance
+lucasheld.uptime_kuma.maintenance:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+title: maintenance 1
+state: absent
+- name: Pause a maintenance
+lucasheld.uptime_kuma.maintenance:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+title: maintenance 1
+state: paused
+- name: Resume a maintenance
+lucasheld.uptime_kuma.maintenance:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+title: maintenance 1
+state: resumed
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.maintenance_info module -- Retrieves facts about maintenances.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.maintenance_info.
+:local:
+:depth: 1
+Synopsis
+- Retrieves facts about maintenances.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+id
+integer
+The id of the maintenance to inspect.
+Only required if no title specified.
+title
+string
+The name of the maintenance to inspect.
+Only required if no id specified.
+Examples
+- name: get all maintenances
+lucasheld.uptime_kuma.maintenance_info:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+register: result
+Return Values
+Key
+Description
+maintenances
+complex
+The maintenances as list
+Returned: always
+active
+boolean
+True if the maintenance is active.
+Returned: always
+Sample: true
+cron
+string
+The cron schedule of the maintenance.
+Returned: always
+Sample: "None"
+dateRange
+list
+/ elements=string
+The date range of the maintenance.
+Returned: always
+Sample: ["2022-12-27 15:39:00", "2022-12-30 15:39:00"]
+daysOfMonth
+list
+/ elements=string
+The days of month of the maintenance.
+Returned: always
+Sample: []
+description
+string
+The description of the maintenance.
+Returned: always
+Sample: "description"
+duration
+integer
+The duration (in seconds) of the maintenance.
+Returned: always
+Sample: "None"
+durationMinutes
+integer
+The duration (in minutes) of the maintenance.
+Returned: always
+Sample: 0
+id
+integer
+The id of the maintenance.
+Returned: always
+Sample: 1
+intervalDay
+integer
+The interval day of the maintenance.
+Returned: always
+Sample: 1
+monitors
+list
+/ elements=string
+The monitors of the maintenance.
+Returned: If id or title specified.
+Sample: [{"id": 1}]
+status
+string
+The status of the maintenance.
+Returned: always
+Sample: "under-maintenance"
+status_pages
+list
+/ elements=string
+The status pages of the maintenance.
+Returned: If id or title specified.
+Sample: [{"id": 1, "title": "status page 1"}]
+strategy
+string
+The strategy of the maintenance.
+Returned: always
+Sample: "single"
+timeRange
+list
+/ elements=string
+The time range of the maintenance.
+Returned: always
+Sample: [{"hours": 0, "minutes": 0}, {"hours": 0, "minutes": 0}]
+timeslotList
+list
+/ elements=string
+The timeslot list of the maintenance.
+Returned: always
+Sample: [{"endDate": "2022-12-29 22:36:00", "startDate": "2022-12-27 22:36:00"}]
+timezoneOffset
+string
+The timezone offset of the maintenance.
+Returned: always
+Sample: "+02:00"
+timezoneOption
+string
+The timezone of the maintenance.
+Returned: always
+Sample: "Europe/Berlin"
+title
+string
+The title of the maintenance.
+Returned: always
+Sample: "maintenance 1"
+weekdays
+list
+/ elements=string
+The time range of the maintenance.
+Returned: always
+Sample: []
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.monitor module -- Manages monitors.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.monitor.
+:local:
+:depth: 1
+Synopsis
+- Manages monitors.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+accepted_statuscodes
+list
+/ elements=string
+The accepted status codes of the monitor.
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+authDomain
+string
+The auth domain of the monitor.
+authMethod
+string
+The auth method of the monitor.
+Choices:
+basic
+ntlm
+mtls
+oauth2-cc
+authWorkstation
+string
+The auth workstation of the monitor.
+basic_auth_pass
+string
+The auth pass of the monitor.
+basic_auth_user
+string
+The auth user of the monitor.
+body
+string
+The http body of the monitor.
+databaseConnectionString
+string
+The sqlserver connection string of the monitor.
+databaseQuery
+string
+The sqlserver query of the monitor.
+description
+string
+The description of the monitor.
+dns_resolve_server
+string
+The dns resolve server of the monitor.
+dns_resolve_type
+string
+The dns resolve type of the monitor.
+docker_container
+string
+The docker container of the monitor.
+docker_host
+integer
+The docker host id of the monitor.
+Only required if no docker_host_name specified.
+docker_host_name
+string
+The docker host name of the monitor.
+Only required if no docker_host specified.
+expectedValue
+string
+Expected Value
+expiryNotification
+boolean
+True if certificate expiry notification is enabled.
+Choices:
+no
+yes
+game
+string
+The game of the monitor.
+gamedigGivenPortOnly
+boolean
+Guess Gamedig Port. The port used by Valve Server Query Protocol may be different from the client port. Try this if the monitor cannot connect to your server.
+Choices:
+no
+yes
+grpcBody
+string
+The grpc body of the monitor.
+grpcEnableTls
+boolean
+True to enable grpc tls.
+Choices:
+no
+yes
+grpcMetadata
+string
+The grpc metadata of the monitor.
+grpcMethod
+string
+The grpc method of the monitor.
+grpcProtobuf
+string
+The grpc protobuf of the monitor.
+grpcServiceName
+string
+The grpc service name of the monitor.
+grpcUrl
+string
+The grpc url of the monitor.
+headers
+string
+The http headers of the monitor.
+hostname
+string
+The hostname of the monitor.
+httpBodyEncoding
+string
+The body encoding of the monitor.
+id
+integer
+The id of the monitor.
+Only required if no name specified.
+ignoreTls
+boolean
+True if ignore tls error is enabled.
+Choices:
+no
+yes
+interval
+integer
+The heartbeat interval of the monitor.
+invertKeyword
+boolean
+Invert Keyword. Look for the keyword to be absent rather than present.
+Choices:
+no
+yes
+jsonPath
+string
+Json Query
+kafkaProducerAllowAutoTopicCreation
+boolean
+Enable Kafka Producer Auto Topic Creation
+Choices:
+no
+yes
+kafkaProducerBrokers
+string
+Kafka Broker list
+kafkaProducerMessage
+string
+Kafka Producer Message
+kafkaProducerSaslOptions
+dictionary
+Kafka SASL Options
+kafkaProducerSsl
+boolean
+Enable Kafka SSL
+Choices:
+no
+yes
+kafkaProducerTopic
+string
+Kafka Topic Name
+keyword
+string
+The keyword of the monitor.
+maxredirects
+integer
+The redirects of the monitor.
+maxretries
+integer
+The max retries of the monitor.
+method
+string
+The http method of the monitor.
+mqttPassword
+string
+The mqtt password of the monitor.
+mqttSuccessMessage
+string
+The mqtt success message of the monitor.
+mqttTopic
+string
+The mqtt topic of the monitor.
+mqttUsername
+string
+The mqtt username of the monitor.
+name
+string
+The name of the monitor.
+Only required if no id specified.
+notification_names
+list
+/ elements=string
+The notification names of the monitor.
+Only required if notificationIDList not specified.
+notificationIDList
+list
+/ elements=integer
+The notification ids of the monitor.
+Only required if notification_names not specified.
+oauth_auth_method
+string
+Authentication Method
+oauth_client_id
+string
+Client ID
+oauth_client_secret
+string
+Client Secret
+oauth_scopes
+string
+OAuth Scope
+oauth_token_url
+string
+OAuth Token URL
+packetSize
+integer
+The packet size of the monitor.
+parent
+integer
+Id of the parent monitor.
+Only required if no parent_name specified.
+parent_name
+string
+Name of the parent monitor.
+Only required if no parent specified.
+port
+integer
+The port of the monitor.
+proxy
+dictionary
+The proxy of the monitor.
+Only required if no proxyId specified.
+host
+string
+The host of the proxy.
+Only required if no proxyId specified.
+port
+integer
+The port of the proxy.
+Only required if no proxyId specified.
+proxyId
+integer
+The proxy id of the monitor.
+Only required if no proxy specified.
+radiusCalledStationId
+string
+The radius called station id of the monitor.
+radiusCallingStationId
+string
+The radius calling station id of the monitor.
+radiusPassword
+string
+The radius password of the monitor.
+radiusSecret
+string
+The radius secret of the monitor.
+radiusUsername
+string
+The radius username of the monitor.
+resendInterval
+integer
+The heartbeat resend interval of the monitor.
+retryInterval
+integer
+The heartbeat retry interval of the monitor.
+state
+string
+Set to present to create/update a monitor.
+Set to absent to delete a monitor.
+Set to paused to pause a monitor.
+Set to resumed to resume a monitor.
+Choices:
+present ← (default)
+absent
+paused
+resumed
+timeout
+integer
+Request Timeout
+tlsCa
+string
+The tls ca of the monitor.
+tlsCert
+string
+The tls cert of the monitor.
+tlsKey
+string
+The tls key of the monitor.
+type
+string
+The type of the monitor.
+Choices:
+group
+http
+port
+ping
+keyword
+json-query
+grpc-keyword
+dns
+docker
+real-browser
+push
+steam
+gamedig
+mqtt
+kafka-producer
+sqlserver
+postgres
+mysql
+mongodb
+radius
+redis
+tailscale-ping
+upsideDown
+boolean
+True if upside down mode is enabled.
+Choices:
+no
+yes
+url
+string
+The url of the monitor.
+Examples
+- name: Add a monitor
+lucasheld.uptime_kuma.monitor:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+type: keyword
+name: Monitor 1
+url: http://127.0.0.1
+keyword: healthy
+state: present
+- name: Edit a monitor
+lucasheld.uptime_kuma.monitor:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+type: http
+name: Monitor 1
+url: http://127.0.0.1
+state: present
+- name: Remove a monitor
+lucasheld.uptime_kuma.monitor:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: Monitor 1
+state: absent
+- name: Pause a monitor
+lucasheld.uptime_kuma.monitor:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: Monitor 1
+state: paused
+- name: Resume a monitor
+lucasheld.uptime_kuma.monitor:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: Monitor 1
+state: resumed
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.monitor_info module -- Retrieves facts about monitors.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.monitor_info.
+:local:
+:depth: 1
+Synopsis
+- Retrieves facts about monitors.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+id
+integer
+The id of the monitor to inspect.
+Only required if no name specified.
+name
+string
+The name of the monitor to inspect.
+Only required if no id specified.
+Examples
+- name: get all monitors
+lucasheld.uptime_kuma.monitor_info:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+register: result
+Return Values
+Key
+Description
+monitors
+complex
+The monitors as list
+Returned: always
+accepted_statuscodes
+list
+/ elements=string
+The accepted status codes of the monitor.
+Returned: always
+Sample: ["200-299"]
+active
+boolean
+True if upside down mode is active.
+Returned: always
+Sample: true
+authDomain
+string
+The auth domain of the monitor.
+Returned: always
+Sample: "None"
+authMethod
+string
+The auth method of the monitor.
+Returned: always
+Sample: ""
+authWorkstation
+string
+The auth workstation of the monitor.
+Returned: always
+Sample: "None"
+basic_auth_pass
+string
+The basic auth pass of the monitor.
+Returned: always
+Sample: "None"
+basic_auth_user
+string
+The basic auth user of the monitor.
+Returned: always
+Sample: "None"
+body
+string
+The http body of the monitor.
+Returned: always
+Sample: "None"
+childrenIDs
+list
+/ elements=string
+The children IDs of the monitor group.
+Returned: always
+Sample: []
+databaseConnectionString
+string
+The sqlserver connection string of the monitor.
+Returned: always
+Sample: "Server=\u003chostname\u003e,\u003cport\u003e;Database=\u003cyour database\u003e;User Id=\u003cyour user id\u003e;Password=\u003cyour password\u003e;Encrypt=\u003ctrue/false\u003e;TrustServerCertificate=\u003cYes/No\u003e;Connection Timeout=\u003cint\u003e"
+databaseQuery
+string
+The database query of the monitor.
+Returned: always
+Sample: "None"
+description
+string
+The description of the monitor.
+Returned: always
+Sample: "None"
+dns_last_result
+string
+The dns last result of the monitor.
+Returned: always
+Sample: "None"
+dns_resolve_server
+string
+The dns resolve server of the monitor.
+Returned: always
+Sample: "1.1.1.1"
+dns_resolve_type
+string
+The dns resolve type of the monitor.
+Returned: always
+Sample: "A"
+docker_container
+string
+The docker_container of the monitor.
+Returned: always
+Sample: ""
+docker_host
+integer
+The docker_host of the monitor.
+Returned: always
+Sample: "None"
+expectedValue
+string
+Expected Value
+Returned: always
+Sample: "None"
+expiryNotification
+boolean
+True if certificate expiry notification is enabled.
+Returned: always
+Sample: false
+forceInactive
+boolean
+True if the parent monitor is inactive.
+Returned: always
+Sample: false
+game
+string
+The game of the monitor.
+Returned: always
+Sample: "7d2d"
+gamedigGivenPortOnly
+boolean
+Guess Gamedig Port. The port used by Valve Server Query Protocol may be different from the client port. Try this if the monitor cannot connect to your server.
+Returned: always
+Sample: true
+grpcBody
+string
+The grpc body of the monitor.
+Returned: always
+Sample: "None"
+grpcEnableTls
+boolean
+True if grpc enable tls is enabled.
+Returned: always
+Sample: false
+grpcMetadata
+string
+The grpc metadata of the monitor.
+Returned: always
+Sample: "None"
+grpcMethod
+string
+The grpc method of the monitor.
+Returned: always
+Sample: "None"
+grpcProtobuf
+string
+The grpc protobuf of the monitor.
+Returned: always
+Sample: "None"
+grpcServiceName
+string
+The grpc service name of the monitor.
+Returned: always
+Sample: "None"
+grpcUrl
+string
+The grpc url of the monitor.
+Returned: always
+Sample: "None"
+headers
+string
+The http headers of the monitor.
+Returned: always
+Sample: "None"
+hostname
+string
+The hostname of the monitor.
+Returned: always
+Sample: "None"
+httpBodyEncoding
+string
+The HTTP Body Encoding of the monitor.
+Returned: always
+Sample: "json"
+id
+integer
+The id of the monitor.
+Returned: always
+Sample: 1
+ignoreTls
+boolean
+True if ignore tls error is enabled.
+Returned: always
+Sample: false
+includeSensitiveData
+boolean
+True if includes sensitive data.
+Returned: always
+Sample: true
+interval
+integer
+The heartbeat interval of the monitor.
+Returned: always
+Sample: 60
+invertKeyword
+boolean
+Invert Keyword
+Returned: always
+Sample: false
+jsonPath
+string
+Json Query
+Returned: always
+Sample: "None"
+kafkaProducerAllowAutoTopicCreation
+boolean
+Enable Kafka Producer Auto Topic Creation
+Returned: always
+Sample: false
+kafkaProducerBrokers
+list
+/ elements=string
+Kafka Broker list
+Returned: always
+Sample: "None"
+kafkaProducerMessage
+string
+Kafka Producer Message
+Returned: always
+Sample: "None"
+kafkaProducerSaslOptions
+dictionary
+Kafka SASL Options
+Returned: always
+Sample: "None"
+kafkaProducerSsl
+boolean
+Enable Kafka SSL
+Returned: always
+Sample: false
+kafkaProducerTopic
+string
+Kafka Topic Name
+Returned: always
+Sample: "None"
+keyword
+string
+The keyword of the monitor.
+Returned: always
+Sample: "None"
+maintenance
+boolean
+True if the monitor is under maintenance.
+Returned: always
+Sample: false
+maxredirects
+integer
+The max redirects of the monitor.
+Returned: always
+Sample: 10
+maxretries
+integer
+The retries of the monitor.
+Returned: always
+Sample: 0
+method
+string
+The http method of the monitor.
+Returned: always
+Sample: "GET"
+mqttPassword
+string
+The mqtt password of the monitor.
+Returned: always
+Sample: "None"
+mqttSuccessMessage
+string
+The mqtt success message of the monitor.
+Returned: always
+Sample: "None"
+mqttTopic
+string
+The mqtt topic of the monitor.
+Returned: always
+Sample: "None"
+mqttUsername
+string
+The mqtt username of the monitor.
+Returned: always
+Sample: "None"
+name
+string
+The name of the monitor.
+Returned: always
+Sample: "test"
+notificationIDList
+list
+/ elements=string
+The notification ids of the monitor.
+Returned: always
+Sample: [1, 3]
+oauth_auth_method
+string
+Authentication Method
+Returned: always
+Sample: "None"
+oauth_client_id
+string
+Client ID
+Returned: always
+Sample: "None"
+oauth_client_secret
+string
+Client Secret
+Returned: always
+Sample: "None"
+oauth_scopes
+string
+OAuth Scope
+Returned: always
+Sample: "None"
+oauth_token_url
+string
+OAuth Token URL
+Returned: always
+Sample: "None"
+packetSize
+integer
+The packetSize of the monitor.
+Returned: always
+Sample: 56
+parent
+integer
+Id of the parent monitor.
+Returned: always
+Sample: "None"
+pathName
+string
+The HTTP Body Encoding of the monitor.
+Returned: always
+Sample: "test"
+port
+integer
+The port of the monitor.
+Returned: always
+Sample: 53
+proxyId
+integer
+The proxy id of the monitor.
+Returned: always
+Sample: 1
+pushToken
+string
+The push token of the monitor.
+Returned: always
+Sample: "None"
+radiusCalledStationId
+string
+The radiusCalledStationId of the monitor.
+Returned: always
+Sample: "None"
+radiusCallingStationId
+string
+The radiusCallingStationId of the monitor.
+Returned: always
+Sample: "None"
+radiusPassword
+string
+The radiusPassword of the monitor.
+Returned: always
+Sample: "None"
+radiusSecret
+string
+The radiusSecret of the monitor.
+Returned: always
+Sample: "None"
+radiusUsername
+string
+The radiusUsername of the monitor.
+Returned: always
+Sample: "None"
+resendInterval
+integer
+The resendInterval of the monitor.
+Returned: always
+Sample: 0
+retryInterval
+integer
+The heartbeat retry interval of the monitor.
+Returned: always
+Sample: 60
+screenshot
+string
+Path to the screenshot
+Returned: always
+Sample: "None"
+tags
+list
+/ elements=string
+The tags of the monitor.
+Returned: always
+Sample: []
+timeout
+integer
+Request Timeout
+Returned: always
+Sample: 48
+tlsCa
+string
+The server TLS CA.
+Returned: always
+Sample: "None"
+tlsCert
+string
+The server TLS Cert.
+Returned: always
+Sample: "None"
+tlsKey
+string
+The server TLS Key.
+Returned: always
+Sample: "None"
+type
+string
+The type of the monitor.
+Returned: always
+Sample: "http"
+upsideDown
+boolean
+True if upside down mode is enabled.
+Returned: always
+Sample: false
+url
+string
+The url of the monitor.
+Returned: always
+Sample: "https://google.com"
+weight
+integer
+The weight of the monitor.
+Returned: always
+Sample: 2000
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.monitor_tag module -- Manages monitor tags.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.monitor_tag.
+:local:
+:depth: 1
+Synopsis
+- Manages monitor tags.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+monitor_id
+integer
+The id of the monitor to which the tag should be assigned.
+Only required if no monitor_name specified.
+monitor_name
+string
+The name of the monitor to which the tag should be assigned.
+Only required if no monitor_id specified.
+state
+string
+Set to present to create a monitor tag.
+Set to absent to delete a monitor tag.
+Choices:
+present ← (default)
+absent
+tag_id
+integer
+The id of the tag that should be assigned.
+Only required if no tag_name specified.
+tag_name
+string
+The name of the tag that should be assigned.
+Only required if no tag_id specified.
+value
+string
+The value that should be assigned.
+Examples
+- name: Add a monitor tag
+lucasheld.uptime_kuma.monitor_tag:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+monitor_name: Monitor 1
+tag_name: Tag 1
+value: Tag value
+state: present
+- name: Remove a monitor tag
+lucasheld.uptime_kuma.monitor_tag:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+monitor_name: Monitor 1
+tag_name: Tag 1
+value: Tag Value
+state: absent
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.notification module -- Manages notifications.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.notification.
+:local:
+:depth: 1
+Synopsis
+- Manages notifications.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+applyExisting
+boolean
+True if the notification is applied to all existing monitors.
+Choices:
+no
+yes
+id
+integer
+The id of the notification.
+Only required if no name specified.
+isDefault
+boolean
+True if the notification is the default.
+Choices:
+no
+yes
+name
+string
+The name of the notification.
+Only required if no id specified.
+state
+string
+Set to present to create/update a notification.
+Set to absent to delete a notification.
+Choices:
+present ← (default)
+absent
+Examples
+- name: Add notification
+lucasheld.uptime_kuma.notification:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: Notification 1
+type: telegram
+isDefault: false
+applyExisting: false
+telegramBotToken: 1111
+telegramChatID: 2222
+state: present
+- name: Edit notification
+lucasheld.uptime_kuma.notification:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: Notification 1
+type: telegram
+isDefault: false
+applyExisting: false
+telegramBotToken: 6666
+telegramChatID: 7777
+state: present
+- name: Remove notification
+lucasheld.uptime_kuma.notification:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: Notification 1
+state: absent
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.notification_info module -- Retrieves facts about notifications.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.notification_info.
+:local:
+:depth: 1
+Synopsis
+- Retrieves facts about notifications.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+id
+integer
+The id of the notification to inspect.
+Only required if no name specified.
+name
+string
+The name of the notification to inspect.
+Only required if no id specified.
+Examples
+- name: get all notifications
+lucasheld.uptime_kuma.notification_info:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+register: result
+Return Values
+Key
+Description
+notifications
+complex
+The notifications as list
+Returned: always
+accessKeyId
+string
+AliyunSMS provider option.
+Returned: if type is AliyunSMS
+accessToken
+string
+OneBot provider option.
+Returned: if type is OneBot
+active
+boolean
+Returned: always
+Sample: true
+alertaAlertState
+string
+alerta provider option.
+Returned: if type is alerta
+alertaApiEndpoint
+string
+alerta provider option.
+Returned: if type is alerta
+alertaApiKey
+string
+alerta provider option.
+Returned: if type is alerta
+alertaEnvironment
+string
+alerta provider option.
+Returned: if type is alerta
+alertaRecoverState
+string
+alerta provider option.
+Returned: if type is alerta
+alertNowWebhookURL
+string
+AlertNow provider option.
+Returned: if type is AlertNow
+applyExisting
+boolean
+True if the notification is applied to all existing monitors.
+Returned: always
+appriseURL
+string
+apprise provider option.
+Returned: if type is apprise
+barkEndpoint
+string
+Bark provider option.
+Returned: if type is Bark
+barkGroup
+string
+Bark provider option.
+Returned: if type is Bark
+barkSound
+string
+Bark provider option.
+Returned: if type is Bark
+clicksendsmsLogin
+string
+clicksendsms provider option.
+Returned: if type is clicksendsms
+clicksendsmsPassword
+string
+clicksendsms provider option.
+Returned: if type is clicksendsms
+clicksendsmsSenderName
+string
+clicksendsms provider option.
+Returned: if type is clicksendsms
+clicksendsmsToNumber
+string
+clicksendsms provider option.
+Returned: if type is clicksendsms
+customSubject
+string
+smtp provider option.
+Returned: if type is smtp
+discordPrefixMessage
+string
+discord provider option.
+Returned: if type is discord
+discordUsername
+string
+discord provider option.
+Returned: if type is discord
+discordWebhookUrl
+string
+discord provider option.
+Returned: if type is discord
+feishuWebHookUrl
+string
+Feishu provider option.
+Returned: if type is Feishu
+flashdutyIntegrationKey
+string
+FlashDuty provider option.
+Returned: if type is FlashDuty
+flashdutySeverity
+string
+FlashDuty provider option.
+Returned: if type is FlashDuty
+freemobilePass
+string
+FreeMobile provider option.
+Returned: if type is FreeMobile
+freemobileUser
+string
+FreeMobile provider option.
+Returned: if type is FreeMobile
+goAlertBaseURL
+string
+GoAlert provider option.
+Returned: if type is GoAlert
+goAlertToken
+string
+GoAlert provider option.
+Returned: if type is GoAlert
+googleChatWebhookURL
+string
+GoogleChat provider option.
+Returned: if type is GoogleChat
+gorushDeviceToken
+string
+gorush provider option.
+Returned: if type is gorush
+gorushPlatform
+string
+gorush provider option.
+Returned: if type is gorush
+gorushPriority
+string
+gorush provider option.
+Returned: if type is gorush
+gorushRetry
+integer
+gorush provider option.
+Returned: if type is gorush
+gorushServerURL
+string
+gorush provider option.
+Returned: if type is gorush
+gorushTitle
+string
+gorush provider option.
+Returned: if type is gorush
+gorushTopic
+string
+gorush provider option.
+Returned: if type is gorush
+gotifyapplicationToken
+string
+gotify provider option.
+Returned: if type is gotify
+gotifyPriority
+integer
+gotify provider option.
+Returned: if type is gotify
+gotifyserverurl
+string
+gotify provider option.
+Returned: if type is gotify
+homeAssistantUrl
+string
+HomeAssistant provider option.
+Returned: if type is HomeAssistant
+homeserverUrl
+string
+matrix provider option.
+Returned: if type is matrix
+httpAddr
+string
+OneBot provider option.
+Returned: if type is OneBot
+id
+integer
+The id of the notification.
+Returned: always
+Sample: 1
+internalRoomId
+string
+matrix provider option.
+Returned: if type is matrix
+isDefault
+boolean
+True if the notification is the default.
+Returned: always
+Sample: false
+kookBotToken
+string
+Kook provider option.
+Returned: if type is Kook
+kookGuildID
+string
+Kook provider option.
+Returned: if type is Kook
+lineChannelAccessToken
+string
+line provider option.
+Returned: if type is line
+lineNotifyAccessToken
+string
+LineNotify provider option.
+Returned: if type is LineNotify
+lineUserID
+string
+line provider option.
+Returned: if type is line
+longLivedAccessToken
+string
+HomeAssistant provider option.
+Returned: if type is HomeAssistant
+lunaseaDevice
+string
+lunasea provider option.
+Returned: if type is lunasea
+lunaseaTarget
+string
+lunasea provider option.
+Returned: if type is lunasea
+lunaseaUserID
+string
+lunasea provider option.
+Returned: if type is lunasea
+mattermostchannel
+string
+mattermost provider option.
+Returned: if type is mattermost
+mattermosticonemo
+string
+mattermost provider option.
+Returned: if type is mattermost
+mattermosticonurl
+string
+mattermost provider option.
+Returned: if type is mattermost
+mattermostusername
+string
+mattermost provider option.
+Returned: if type is mattermost
+mattermostWebhookUrl
+string
+mattermost provider option.
+Returned: if type is mattermost
+messageType
+string
+SMSManager provider option.
+Returned: if type is SMSManager
+msgType
+string
+OneBot provider option.
+Returned: if type is OneBot
+name
+string
+The id of the notification.
+Returned: always
+Sample: "My Telegram Alert (1)"
+notificationService
+string
+HomeAssistant provider option.
+Returned: if type is HomeAssistant
+ntfyaccesstoken
+string
+ntfy provider option.
+Returned: if type is ntfy
+ntfyAuthenticationMethod
+string
+ntfy provider option.
+Returned: if type is ntfy
+ntfyIcon
+string
+ntfy provider option.
+Returned: if type is ntfy
+ntfypassword
+string
+ntfy provider option.
+Returned: if type is ntfy
+ntfyPriority
+integer
+ntfy provider option.
+Returned: if type is ntfy
+ntfyserverurl
+string
+ntfy provider option.
+Returned: if type is ntfy
+ntfytopic
+string
+ntfy provider option.
+Returned: if type is ntfy
+ntfyusername
+string
+ntfy provider option.
+Returned: if type is ntfy
+numbers
+string
+SMSManager provider option.
+Returned: if type is SMSManager
+octopushAPIKey
+string
+octopush provider option.
+Returned: if type is octopush
+octopushLogin
+string
+octopush provider option.
+Returned: if type is octopush
+octopushPhoneNumber
+string
+octopush provider option.
+Returned: if type is octopush
+octopushSenderName
+string
+octopush provider option.
+Returned: if type is octopush
+octopushSMSType
+string
+octopush provider option.
+Returned: if type is octopush
+octopushVersion
+string
+octopush provider option.
+Returned: if type is octopush
+opsgenieApiKey
+string
+Opsgenie provider option.
+Returned: if type is Opsgenie
+opsgeniePriority
+integer
+Opsgenie provider option.
+Returned: if type is Opsgenie
+opsgenieRegion
+string
+Opsgenie provider option.
+Returned: if type is Opsgenie
+pagerdutyAutoResolve
+string
+PagerDuty provider option.
+Returned: if type is PagerDuty
+pagerdutyIntegrationKey
+string
+PagerDuty provider option.
+Returned: if type is PagerDuty
+pagerdutyIntegrationUrl
+string
+PagerDuty provider option.
+Returned: if type is PagerDuty
+pagerdutyPriority
+string
+PagerDuty provider option.
+Returned: if type is PagerDuty
+pagertreeAutoResolve
+string
+PagerTree provider option.
+Returned: if type is PagerTree
+pagertreeIntegrationUrl
+string
+PagerTree provider option.
+Returned: if type is PagerTree
+pagertreeUrgency
+string
+PagerTree provider option.
+Returned: if type is PagerTree
+phonenumber
+string
+AliyunSMS provider option.
+Returned: if type is AliyunSMS
+promosmsAllowLongSMS
+boolean
+promosms provider option.
+Returned: if type is promosms
+promosmsLogin
+string
+promosms provider option.
+Returned: if type is promosms
+promosmsPassword
+string
+promosms provider option.
+Returned: if type is promosms
+promosmsPhoneNumber
+string
+promosms provider option.
+Returned: if type is promosms
+promosmsSenderName
+string
+promosms provider option.
+Returned: if type is promosms
+promosmsSMSType
+string
+promosms provider option.
+Returned: if type is promosms
+pushAPIKey
+string
+PushByTechulus provider option.
+Returned: if type is PushByTechulus
+pushbulletAccessToken
+string
+pushbullet provider option.
+Returned: if type is pushbullet
+pushdeerKey
+string
+PushDeer provider option.
+Returned: if type is PushDeer
+pushdeerServer
+string
+PushDeer provider option.
+Returned: if type is PushDeer
+pushoverapptoken
+string
+pushover provider option.
+Returned: if type is pushover
+pushoverdevice
+string
+pushover provider option.
+Returned: if type is pushover
+pushoverpriority
+string
+pushover provider option.
+Returned: if type is pushover
+pushoversounds
+string
+pushover provider option.
+Returned: if type is pushover
+pushovertitle
+string
+pushover provider option.
+Returned: if type is pushover
+pushoverttl
+integer
+pushover provider option.
+Returned: if type is pushover
+pushoveruserkey
+string
+pushover provider option.
+Returned: if type is pushover
+pushyAPIKey
+string
+pushy provider option.
+Returned: if type is pushy
+pushyToken
+string
+pushy provider option.
+Returned: if type is pushy
+recieverId
+string
+OneBot provider option.
+Returned: if type is OneBot
+recipients
+string
+nostr provider option.
+Returned: if type is nostr
+relays
+string
+nostr provider option.
+Returned: if type is nostr
+rocketchannel
+string
+rocket.chat provider option.
+Returned: if type is rocket.chat
+rocketiconemo
+string
+rocket.chat provider option.
+Returned: if type is rocket.chat
+rocketusername
+string
+rocket.chat provider option.
+Returned: if type is rocket.chat
+rocketwebhookURL
+string
+rocket.chat provider option.
+Returned: if type is rocket.chat
+secretAccessKey
+string
+AliyunSMS provider option.
+Returned: if type is AliyunSMS
+secretKey
+string
+DingDing provider option.
+Returned: if type is DingDing
+sender
+string
+nostr provider option.
+Returned: if type is nostr
+serverChanSendKey
+string
+ServerChan provider option.
+Returned: if type is ServerChan
+serwersmsPassword
+string
+serwersms provider option.
+Returned: if type is serwersms
+serwersmsPhoneNumber
+string
+serwersms provider option.
+Returned: if type is serwersms
+serwersmsSenderName
+string
+serwersms provider option.
+Returned: if type is serwersms
+serwersmsUsername
+string
+serwersms provider option.
+Returned: if type is serwersms
+signalNumber
+string
+signal provider option.
+Returned: if type is signal
+signalRecipients
+string
+signal provider option.
+Returned: if type is signal
+signalURL
+string
+signal provider option.
+Returned: if type is signal
+signName
+string
+AliyunSMS provider option.
+Returned: if type is AliyunSMS
+slackchannel
+string
+slack provider option.
+Returned: if type is slack
+slackchannelnotify
+boolean
+slack provider option.
+Returned: if type is slack
+slackiconemo
+string
+slack provider option.
+Returned: if type is slack
+slackusername
+string
+slack provider option.
+Returned: if type is slack
+slackwebhookURL
+string
+slack provider option.
+Returned: if type is slack
+smscLogin
+string
+smsc provider option.
+Returned: if type is smsc
+smscPassword
+string
+smsc provider option.
+Returned: if type is smsc
+smscSenderName
+string
+smsc provider option.
+Returned: if type is smsc
+smscToNumber
+string
+smsc provider option.
+Returned: if type is smsc
+smscTranslit
+string
+smsc provider option.
+Returned: if type is smsc
+smseagleEncoding
+boolean
+SMSEagle provider option.
+Returned: if type is SMSEagle
+smseaglePriority
+integer
+SMSEagle provider option.
+Returned: if type is SMSEagle
+smseagleRecipient
+string
+SMSEagle provider option.
+Returned: if type is SMSEagle
+smseagleRecipientType
+string
+SMSEagle provider option.
+Returned: if type is SMSEagle
+smseagleToken
+string
+SMSEagle provider option.
+Returned: if type is SMSEagle
+smseagleUrl
+string
+SMSEagle provider option.
+Returned: if type is SMSEagle
+smsmanagerApiKey
+string
+SMSManager provider option.
+Returned: if type is SMSManager
+smtpBCC
+string
+smtp provider option.
+Returned: if type is smtp
+smtpCC
+string
+smtp provider option.
+Returned: if type is smtp
+smtpDkimDomain
+string
+smtp provider option.
+Returned: if type is smtp
+smtpDkimHashAlgo
+string
+smtp provider option.
+Returned: if type is smtp
+smtpDkimheaderFieldNames
+string
+smtp provider option.
+Returned: if type is smtp
+smtpDkimKeySelector
+string
+smtp provider option.
+Returned: if type is smtp
+smtpDkimPrivateKey
+string
+smtp provider option.
+Returned: if type is smtp
+smtpDkimskipFields
+string
+smtp provider option.
+Returned: if type is smtp
+smtpFrom
+string
+smtp provider option.
+Returned: if type is smtp
+smtpHost
+string
+smtp provider option.
+Returned: if type is smtp
+smtpIgnoreTLSError
+boolean
+smtp provider option.
+Returned: if type is smtp
+smtpPassword
+string
+smtp provider option.
+Returned: if type is smtp
+smtpPort
+integer
+smtp provider option.
+Returned: if type is smtp
+smtpSecure
+string
+smtp provider option.
+Returned: if type is smtp
+smtpTo
+string
+smtp provider option.
+Returned: if type is smtp
+smtpUsername
+string
+smtp provider option.
+Returned: if type is smtp
+splunkAutoResolve
+string
+Splunk provider option.
+Returned: if type is Splunk
+splunkRestURL
+string
+Splunk provider option.
+Returned: if type is Splunk
+splunkSeverity
+string
+Splunk provider option.
+Returned: if type is Splunk
+squadcastWebhookURL
+string
+squadcast provider option.
+Returned: if type is squadcast
+stackfieldwebhookURL
+string
+stackfield provider option.
+Returned: if type is stackfield
+telegramBotToken
+string
+telegram provider option.
+Returned: if type is telegram
+telegramChatID
+string
+telegram provider option.
+Returned: if type is telegram
+telegramMessageThreadID
+string
+telegram provider option.
+Returned: if type is telegram
+telegramProtectContent
+boolean
+telegram provider option.
+Returned: if type is telegram
+telegramSendSilently
+boolean
+telegram provider option.
+Returned: if type is telegram
+templateCode
+string
+AliyunSMS provider option.
+Returned: if type is AliyunSMS
+title
+string
+apprise provider option.
+Returned: if type is apprise
+twilioAccountSID
+string
+twilio provider option.
+Returned: if type is twilio
+twilioApiKey
+string
+twilio provider option.
+Returned: if type is twilio
+twilioAuthToken
+string
+twilio provider option.
+Returned: if type is twilio
+twilioFromNumber
+string
+twilio provider option.
+Returned: if type is twilio
+twilioToNumber
+string
+twilio provider option.
+Returned: if type is twilio
+type
+string
+Returned: always
+Sample: "telegram"
+userId
+string
+Returned: always
+Sample: 1
+webhookAdditionalHeaders
+string
+webhook provider option.
+Returned: if type is webhook
+webhookContentType
+string
+webhook provider option.
+Returned: if type is webhook
+webhookCustomBody
+string
+webhook provider option.
+Returned: if type is webhook
+webHookUrl
+string
+DingDing provider option.
+Returned: if type is DingDing
+webhookURL
+string
+webhook provider option.
+Returned: if type is webhook
+webhookUrl
+string
+ZohoCliq provider option.
+Returned: if type is ZohoCliq
+weComBotKey
+string
+WeCom provider option.
+Returned: if type is WeCom
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.proxy module -- Manages proxies.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.proxy.
+:local:
+:depth: 1
+Synopsis
+- Manages proxies.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+active
+boolean
+True if the proxy is active.
+Choices:
+no
+yes
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+applyExisting
+boolean
+True if the proxy is applied to existing monitors.
+Choices:
+no
+yes
+auth
+boolean
+True if the authentication is enabled.
+Choices:
+no
+yes
+default
+boolean
+True if the proxy is the default.
+Choices:
+no
+yes
+host
+string
+/ required
+The host of the proxy.
+Only required if no id specified.
+id
+integer
+The id of the proxy.
+Only required if no host, port and protocol specified.
+password
+string
+The password of the proxy.
+port
+integer
+/ required
+The port of the proxy.
+Only required if no id specified.
+protocol
+string
+The protocol of the proxy.
+Choices:
+https
+http
+socks
+socks5
+socks5h
+socks4
+state
+string
+Set to present to create/update a proxy.
+Set to absent to delete a proxy.
+Choices:
+present ← (default)
+absent
+username
+string
+The username of the proxy.
+Examples
+- name: Add proxy
+lucasheld.uptime_kuma.proxy:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+protocol: http
+host: 127.0.0.1
+port: 8080
+state: present
+- name: Edit proxy
+lucasheld.uptime_kuma.proxy:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+host: 127.0.0.1
+port: 8080
+active: false
+state: present
+- name: Remove proxy
+lucasheld.uptime_kuma.proxy:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+host: 127.0.0.1
+port: 8080
+state: absent
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.proxy_info module -- Retrieves facts about proxies.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.proxy_info.
+:local:
+:depth: 1
+Synopsis
+- Retrieves facts about proxies.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+host
+string
+The host of the proxy to inspect.
+Only required if no id specified.
+Only valid in combination with port.
+id
+integer
+The id of the proxy to inspect.
+Only required if no host and port specified.
+port
+integer
+The port of the proxy to inspect.
+Only required if no id specified.
+Only valid in combination with host.
+Examples
+- name: get all proxies
+lucasheld.uptime_kuma.proxy_info:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+register: result
+Return Values
+Key
+Description
+proxies
+complex
+The proxies as list
+Returned: always
+active
+boolean
+True if the proxy is active.
+Returned: always
+Sample: true
+auth
+boolean
+True if authentication is enabled.
+Returned: always
+Sample: false
+createdDate
+string
+The creation date of the proxy.
+Returned: always
+Sample: "2022-08-03T12:43:21"
+default
+boolean
+True if the proxy is the default.
+Returned: always
+Sample: false
+host
+string
+The host of the proxy.
+Returned: always
+Sample: "127.0.0.1"
+id
+integer
+The id of the proxy.
+Returned: always
+Sample: 4
+password
+string
+The authentication password of the proxy.
+Returned: always
+Sample: "None"
+port
+integer
+The port of the proxy.
+Returned: always
+Sample: 8080
+protocol
+string
+The protocol of the proxy.
+Returned: always
+Sample: "http"
+userId
+integer
+The user id of the proxy.
+Returned: always
+Sample: 1
+username
+string
+The authentication username of the proxy.
+Returned: always
+Sample: "None"
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.settings module -- Manages settings.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.settings.
+:local:
+:depth: 1
+Synopsis
+- Manages settings.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+checkBeta
+boolean
+True if update check for beta versions should be enabled.
+Choices:
+no
+yes
+checkUpdate
+boolean
+True if update check should be enabled.
+Choices:
+no
+yes
+chromeExecutable
+string
+Chrome/Chromium Executable
+disableAuth
+boolean
+True if authentication should be disabled.
+Choices:
+no
+yes
+dnsCache
+boolean
+True if dns cache should be enabled.
+Choices:
+no
+yes
+entryPage
+string
+The entry page. The value requires the prefix &quot;statusPage-&quot;. For example, if the slug is &quot;1uhosting&quot;, then the entryPage is &quot;statusPage-1uhosting&quot;.
+keepDataPeriodDays
+integer
+Keep monitor history data for this number of days.
+nscd
+boolean
+Enable NSCD (Name Service Cache Daemon) for caching all DNS requests
+Choices:
+no
+yes
+password
+string
+The Uptime Kuma password.
+Only required if disableAuth is true.
+primaryBaseURL
+string
+The primary base URL.
+searchEngineIndex
+boolean
+True if Uptime Kuma should be indexed by search engines.
+Choices:
+no
+yes
+serverTimezone
+string
+The server timezone.
+steamAPIKey
+string
+The Steam API key for monitoring a Steam game server.
+tlsExpiryNotifyDays
+list
+/ elements=integer
+HTTPS monitors trigger notification when the TLS certificate expires in the specified days.
+trustProxy
+boolean
+True to trust &#x27;X-Forwarded-*&#x27; headers.
+If you want to get the correct client IP and your Uptime Kuma is behind such as Nginx or Apache, you should enable this.
+Choices:
+no
+yes
+Examples
+- name: Enable beta version update check
+lucasheld.uptime_kuma.settings:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+checkBeta: true
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.settings_info module -- Retrieves facts about settings.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.settings_info.
+:local:
+:depth: 1
+Synopsis
+- Retrieves facts about settings.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+Examples
+- name: get settings
+lucasheld.uptime_kuma.settings_info:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+register: result
+Return Values
+Key
+Description
+settings
+complex
+The settings as list
+Returned: always
+checkBeta
+boolean
+Value of the checkBeta setting.
+Returned: always
+Sample: false
+checkUpdate
+boolean
+Value of the checkUpdate setting.
+Returned: always
+Sample: true
+chromeExecutable
+string
+Value of the chromeExecutable setting.
+Returned: always
+Sample: ""
+disableAuth
+boolean
+Value of the disableAuth setting.
+Returned: always
+Sample: false
+dnsCache
+boolean
+Value of the dnsCache setting.
+Returned: always
+Sample: true
+entryPage
+string
+Value of the entryPage setting.
+Returned: always
+Sample: "dashboard"
+keepDataPeriodDays
+integer
+Value of the keepDataPeriodDays setting.
+Returned: always
+Sample: 180
+nscd
+boolean
+Value of the nscd setting.
+Returned: always
+Sample: false
+primaryBaseURL
+string
+Value of the primaryBaseURL setting.
+Returned: always
+searchEngineIndex
+boolean
+Value of the searchEngineIndex setting.
+Returned: always
+Sample: false
+serverTimezone
+string
+Value of the serverTimezone setting.
+Returned: always
+Sample: "Europe/Berlin"
+steamAPIKey
+string
+Value of the steamAPIKey setting.
+Returned: always
+tlsExpiryNotifyDays
+list
+/ elements=string
+Value of the tlsExpiryNotifyDays setting.
+Returned: always
+Sample: [7, 14, 21]
+trustProxy
+boolean
+Value of the trustProxy setting.
+Returned: always
+Sample: false
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.setup module -- Setup the initial username and password.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.setup.
+:local:
+:depth: 1
+Synopsis
+- Setup the initial username and password.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+Examples
+- name: Setup
+lucasheld.uptime_kuma.setup:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.status_page module -- Manages status pages.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.status_page.
+:local:
+:depth: 1
+Synopsis
+- Manages status pages.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+customCSS
+string
+The custom CSS of the status page.
+description
+string
+The description of the status page.
+domainNameList
+list
+/ elements=string
+The domain name list of the status page.
+footerText
+string
+The footer text of the status page.
+googleAnalyticsId
+string
+The Google Analytics ID of the status page.
+icon
+string
+The icon of the status page.
+incident
+dictionary
+The incident of the status page.
+content
+string
+/ required
+The content of the status page.
+style
+string
+The style of the status page.
+Choices:
+info
+warning
+danger
+primary
+light
+dark
+title
+string
+/ required
+The title of the status page.
+publicGroupList
+list
+/ elements=string
+The public group list of the status page.
+monitorList
+list
+/ elements=string
+/ required
+The monitor list of the group.
+id
+integer
+The id of the monitor.
+Only required if no name specified.
+name
+string
+The name of the monitor.
+Only required if no id specified.
+sendUrl
+boolean
+True if the monitor URL is a publicly shown clickable link.
+Choices:
+no
+yes
+name
+string
+/ required
+The name of the group.
+weight
+integer
+The weight of the group.
+published
+boolean
+True if the status page is published.
+Choices:
+no
+yes
+showPoweredBy
+boolean
+True if the powered by is shown.
+Choices:
+no
+yes
+showTags
+boolean
+True if the tags are shown.
+Choices:
+no
+yes
+slug
+string
+/ required
+The slug of the status page.
+state
+string
+Set to present to create/update a status page.
+Set to absent to delete a status page.
+Choices:
+present ← (default)
+absent
+theme
+string
+The theme of the status page.
+Choices:
+auto
+light
+dark
+title
+string
+The title of the status page.
+Examples
+- name: Add status page
+lucasheld.uptime_kuma.status_page:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+slug: testslug
+title: testtitle
+state: present
+- name: Add status page with incident
+lucasheld.uptime_kuma.status_page:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+slug: testslug
+title: newtitle
+incident:
+title: incidenttitle
+content: incidentcontent
+style: info
+state: present
+- name: Add status page with monitor
+lucasheld.uptime_kuma.status_page:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+slug: testslug
+title: testtitle
+publicGroupList:
+- name: Services
+weight: 1
+monitorList:
+- name: Monitor 1
+- name: Remove status page
+lucasheld.uptime_kuma.status_page:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+slug: testslug
+state: absent
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.status_page_info module -- Retrieves facts about status pages.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.status_page_info.
+:local:
+:depth: 1
+Synopsis
+- Retrieves facts about status pages.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+slug
+string
+The slug of the status page to inspect.
+Examples
+- name: get all status_pages
+lucasheld.uptime_kuma.status_page_info:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+register: result
+Return Values
+Key
+Description
+status_pages
+complex
+The status pages as list
+Returned: always
+customCSS
+string
+The custom CSS of the status page.
+Returned: always
+Sample: "None"
+description
+string
+The description of the status page.
+Returned: always
+Sample: "description 1"
+domainNameList
+list
+/ elements=string
+The domain name list of the status page.
+Returned: always
+Sample: []
+footerText
+string
+The footer text of the status page.
+Returned: always
+Sample: "None"
+googleAnalyticsId
+string
+The Google Analytics ID of the status page.
+Returned: always
+Sample: "None"
+icon
+string
+The icon of the status page.
+Returned: always
+Sample: "/icon.svg"
+id
+integer
+The id of the status page.
+Returned: always
+Sample: 4
+incident
+dictionary
+The incident of the status page.
+Returned: always
+Sample: {"content": "sample content", "createdDate": "2022-08-26 12:07:00", "id": 2, "lastUpdatedDate": "None", "pin": 1, "style": "danger", "title": "sample title"}
+maintenanceList
+list
+/ elements=string
+The maintenance list of the status page.
+Returned: always
+Sample: []
+publicGroupList
+list
+/ elements=string
+The public group list of the status page.
+Returned: always
+Sample: [{"id": 5, "monitorList": [{"id": 18, "name": "sample monitor", "type": "http"}], "name": "Services", "weight": 1}]
+published
+boolean
+True if the status page is published.
+Returned: always
+Sample: true
+showCertificateExpiry
+boolean
+Show Certificate Expiry.
+Returned: always
+Sample: false
+showPoweredBy
+boolean
+True if the show powered by is enabled.
+Returned: always
+Sample: false
+showTags
+boolean
+True if the show tags is enabled.
+Returned: always
+Sample: false
+slug
+string
+The slug of the status page.
+Returned: always
+Sample: "slug1"
+theme
+integer
+The theme of the status page.
+Returned: always
+Sample: "auto"
+title
+string
+The title of the status page.
+Returned: always
+Sample: "status page 1"
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.tag module -- Manages tags.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.tag.
+:local:
+:depth: 1
+Synopsis
+- Manages tags.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+color
+string
+The color of the tag.
+id
+integer
+The id of the tag.
+Only required if no name specified.
+name
+string
+The name of the tag.
+Only required if no id specified.
+state
+string
+Set to present to create a tag.
+Set to absent to delete a tag.
+Choices:
+present ← (default)
+absent
+Examples
+- name: Add tag
+lucasheld.uptime_kuma.tag:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: Tag 1
+color: "#ff0000"
+state: present
+- name: Edit tag
+lucasheld.uptime_kuma.tag:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: Tag 1
+color: "#ffffff"
+state: present
+- name: Remove tag
+lucasheld.uptime_kuma.tag:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+name: Tag 1
+state: absent
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
+:trim:
+lucasheld.uptime_kuma.tag_info module -- Retrieves facts about tags.
+This module is part of the lucasheld.uptime_kuma collection _ (version 1.2.0).
+You might already have this collection installed if you are using the `ansible` package.
+It is not included in `ansible-core`.
+To check whether it is installed, run ansible-galaxy collection list.
+To install it, use: ansible-galaxy collection install lucasheld.uptime_kuma.
+To use it in a playbook, specify: lucasheld.uptime_kuma.tag_info.
+:local:
+:depth: 1
+Synopsis
+- Retrieves facts about tags.
+Requirements
+The below requirements are needed on the host that executes this module.
+- uptime-kuma-api
+Parameters
+Parameter
+Comments
+api_headers
+dictionary
+Headers that are passed to the socketio connection.
+api_password
+string
+The Uptime Kuma password.
+Only required if no api_token specified and authentication is enabled.
+api_ssl_verify
+boolean
+true to verify SSL certificates, or false to skip SSL certificate verification,
+allowing connections to servers with self signed certificates.
+Choices:
+no
+yes ← (default)
+api_timeout
+float
+How many seconds the client should wait for the connection, an expected event or a server response.
+Default: 10
+api_token
+string
+The Uptime Kuma login token.
+Only required if no api_username and api_password specified and authentication is enabled.
+api_url
+string
+The Uptime Kuma URL.
+Default: "http://127.0.0.1:3001"
+api_username
+string
+The Uptime Kuma username.
+Only required if no api_token specified and authentication is enabled.
+api_wait_events
+float
+How many seconds the client should wait for the next event of the same type.
+There is no way to determine when the last message of a certain type has arrived. Therefore, a timeout is required.
+If no further message has arrived within this time, it is assumed that it was the last message.
+Default: 0.2
+id
+integer
+The id of the tag to inspect.
+Only required if no name specified.
+name
+string
+The name of the tag to inspect.
+Only required if no id specified.
+Examples
+- name: get all tags
+lucasheld.uptime_kuma.tag_info:
+api_url: http://127.0.0.1:3001
+api_username: admin
+api_password: secret123
+register: result
+Return Values
+Key
+Description
+tags
+complex
+The tags as list
+Returned: always
+color
+string
+The color of the tag.
+Returned: always
+id
+integer
+The id of the tag.
+Returned: always
+Sample: 1
+name
+string
+The name of the tag.
+Returned: always
+Sample: "tag 1"
+Authors
+- Lucas Held (@lucasheld)
+Collection links
+Issue Tracker
+Repository (Sources)
