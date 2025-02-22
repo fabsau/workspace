@@ -1,0 +1,134 @@
+#!/bin/bash
+
+# Configuration
+SOURCE_DIRS=("/etc" "/root")
+BASE_DIR="/mnt/pve/SMB/PVE_Backup"
+DATA_DIR="${BASE_DIR}/data"
+LOG_DIR="${BASE_DIR}/logs"
+BACKUP_PREFIX="backup_"
+LOG_PREFIX="backup_script_"
+BACKUP_NAME="${BACKUP_PREFIX}$(date +%Y%m%d%H%M%S).tar.gz"
+LOG_FILE="${LOG_DIR}/${LOG_PREFIX}$(date +%Y%m%d%H%M%S).log"
+RETENTION_DAYS=14
+LOG_RETENTION_DAYS=14
+PUSHOVER_USER_KEY="{{ ALERTMANAGER_PUSHOVER_USER_KEY }}"
+PUSHOVER_TOKEN="{{ ALERTMANAGER_PUSHOVER_TOKEN }}"
+PUSHOVER_TITLE="PVE Backup Script"
+PUSHOVER_PRIORITY=1
+
+# Initialize success flag and error messages array
+ALL_SUCCESS=true
+ERROR_MESSAGES=()
+
+# Create data and log directories if they don't exist
+mkdir -p "${DATA_DIR}"
+mkdir -p "${LOG_DIR}"
+
+# Function to send Pushover notification
+send_pushover_notification() {
+    local message=$1
+    local response
+    response=$(curl -s -o /dev/null -w "%{http_code}" \
+        --form-string "token=${PUSHOVER_TOKEN}" \
+        --form-string "user=${PUSHOVER_USER_KEY}" \
+        --form-string "title=${PUSHOVER_TITLE}" \
+        --form-string "message=${message}" \
+        --form-string "priority=${PUSHOVER_PRIORITY}" \
+        https://api.pushover.net/1/messages.json)
+    if [ "$response" -ne 200 ]; then
+        log_error "Sending Pushover notification failed with response code: $response"
+    else
+        log_message "Pushover notification sent successfully: ${PUSHOVER_TITLE} - ${message}"
+    fi
+}
+
+# Log function
+log_message() {
+    local message=$1
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - ${message}" >> ${LOG_FILE}
+}
+
+# Combined log and error function
+log_error() {
+    local error_message=$1
+    log_message "${error_message}"
+    ERROR_MESSAGES+=("${error_message}")
+    ALL_SUCCESS=false
+}
+
+# Mark beginning of Script
+log_message "--------------------------------------------------"
+log_message "BACKUP SCRIPT STARTED"
+log_message "--------------------------------------------------"
+
+# Prevent multiple instances of the script from running simultaneously
+LOCK_FILE="/tmp/backup_script.lock"
+if [ -e "${LOCK_FILE}" ] && kill -0 $(cat "${LOCK_FILE}"); then
+    log_error "Script is already running."
+    if [ "${#ERROR_MESSAGES[@]}" -gt 0 ]; then
+        send_pushover_notification "$(printf "%s\n" "${ERROR_MESSAGES[@]}")"
+    fi
+    exit 1
+fi
+
+trap "rm -f ${LOCK_FILE}; exit" INT TERM EXIT
+echo $$ > "${LOCK_FILE}"
+
+# Start Backup
+log_message "Starting backup to ${DATA_DIR}/${BACKUP_NAME}"
+
+if tar -czf "${DATA_DIR}/${BACKUP_NAME}" -C / ${SOURCE_DIRS[@]}; then
+    log_message "Backup of ${SOURCE_DIRS[*]} was successful."
+else
+    log_error "Backup of ${SOURCE_DIRS[*]} failed."
+fi
+
+# Verification Job
+log_message "Verifying backup integrity of ${DATA_DIR}/${BACKUP_NAME}"
+
+if tar -tf "${DATA_DIR}/${BACKUP_NAME}" > /dev/null; then
+    log_message "Verification of backup ${BACKUP_NAME} was successful."
+else
+    log_error "Verification of backup ${BACKUP_NAME} failed."
+fi
+
+# Retention Management
+find "${DATA_DIR}" -type f -name "${BACKUP_PREFIX}*.tar.gz" -mtime +${RETENTION_DAYS} -exec rm -f {} \;
+if [ $? -eq 0 ]; then
+    log_message "Retention management successful."
+else
+    log_error "Retention management failed."
+fi
+
+# Log Management
+find "${LOG_DIR}" -type f -name "${LOG_PREFIX}*.log" -mtime +${LOG_RETENTION_DAYS} -exec rm -f {} \;
+if [ $? -eq 0 ]; then
+    log_message "Log management successful."
+else
+    log_error "Log management failed."
+fi
+
+# Clean up
+if rm -f "${LOCK_FILE}"; then
+    log_message "Lock file removal successful."
+else
+    log_error "Lock file removal failed."
+fi
+
+# Send Pushover notification only if any task failed
+if [ "$ALL_SUCCESS" = false ]; then
+    send_pushover_notification "$(printf "%s\n" "${ERROR_MESSAGES[@]}")"
+    log_message "--------------------------------------------------"
+    log_message "BACKUP SCRIPT FINISHED WITH ERRORS:"
+    for error in "${ERROR_MESSAGES[@]}"; do
+        log_message "$error"
+    done
+    log_message "--------------------------------------------------"
+else
+    log_message "--------------------------------------------------"
+    log_message "BACKUP SCRIPT FINISHED SUCCESSFULLY"
+    log_message "--------------------------------------------------"
+fi
+
+trap - INT TERM EXIT
+exit 0

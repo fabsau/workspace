@@ -3,3 +3,6 @@
 
 - name: Include secrets
   include_vars: "secrets.yml"
+
+- name: Include UptimeKuma Configurable Variables
+  include_vars: "uptimekuma_config.yml"
