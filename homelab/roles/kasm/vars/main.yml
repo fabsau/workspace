@@ -1,0 +1,39 @@
+# vars/main.yml
+
+services:
+  - name: kasm
+    image: lscr.io/linuxserver/kasm:latest
+    privileged: true
+    # security_opt:
+    #   - apparmor:rootlesskit
+    env_file:
+      - ./kasm.env
+      - ../common.env 
+    volumes:
+      - ./data/app:/opt
+      - ./data/profiles:/profiles
+    ports:
+      - "4443:4443"
+      - "3000:3000"
+    networks:
+      - kasm
+    traefik:
+      - name: kasm
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']][0] }}`)"
+        middlewares: public-oauth-chain@file
+        insecuretransport: true
+        service_port: 4443
+      - name: kasm-setup
+        protocol: http
+        entrypoint: https
+        http_redirection: true
+        enable_tls: true
+        rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']][1] }}`)"
+        middlewares: private-oauth-chain@file
+        insecuretransport: true
+        service_port: 3000
+    watchtower: true
