@@ -16,11 +16,12 @@
   file:
     path: "{{ docker_base_path }}"
     state: directory
-    owner: "{{ common_username }}"
-    group: "{{ common_group }}"
+    owner: "{{ common_uid }}"
+    group: "{{ common_gid }}"
     mode: "{{ default_file_permission_mode }}"
 
 - name: Template common.env file
+  become: true
   template:
     src: "{{ ansible_home }}/roles/0docker_setup/templates/common.env.j2"
     dest: "{{ docker_base_path }}/common.env"
