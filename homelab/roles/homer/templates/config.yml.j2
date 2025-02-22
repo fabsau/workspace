@@ -35,7 +35,7 @@ colors:
     text-header: "#ffffff"
     text-title: "#303030"
     text-subtitle: "#424242"
-    card-shadow: rgba(0, 0, 0, 0.1)
+    card-shadow: "rgba(0, 0, 0, 0.1)"
     link-hover: "#363636"
   dark:
     highlight-primary: "#2E3440"
@@ -47,7 +47,7 @@ colors:
     text-header: "#D8DEE9"
     text-title: "#81A1C1"
     text-subtitle: "#81A1C1"
-    card-shadow: rgba(0, 0, 0, 0.4)
+    card-shadow: "rgba(0, 0, 0, 0.4)"
     link-hover: "#BF616A"
         
     # colors from Nord theme: https://github.com/arcticicestudio/nord
@@ -60,8 +60,7 @@ message:
   style: "is-info"
   title: "Searx"
   icon: "fas fa-search"
-  content: '<form method="POST" action="https://searx.sauna.re/search?q=" method="get" target="_top" id="search_form" role="search"> <input type="search" name="q" class="form-control input-lg" id="q" placeholder="Search" autocomplete="on" style="width:97%" max-content" value="">  <button type="submit" class="btn btn-primary input-lg"><i class="fas fa-search"></i></button> </form>'
-
+  content: '<form method="GET" action="https://searx.sauna.re/search?q=" target="_top" id="search_form" role="search"> <input type="search" name="q" class="form-control input-lg" id="q" placeholder="Search" autocomplete="on" style="width:97%" value="">  <button type="submit" class="btn btn-primary input-lg"><i class="fas fa-search"></i></button> </form>'
 links:
   - icon: "fab fa-youtube"
     url: "https://www.youtube.com/feed/subscriptions"
@@ -239,7 +238,7 @@ services:
     items:
       - name: "Traefik"
         logo: "assets/icons/svg/traefik.svg"
-        subtitle: "AZURE01"
+        subtitle: "DMZ"
         url: "https://{{ endpoints.traefik.dmz }}"
         target: '_top'
       - name: "Traefik"
@@ -273,7 +272,7 @@ services:
         target: '_top'
       - name: "DockGE"
         logo: "assets/icons/svg/dockge.svg"
-        subtitle: "DockGE Azure"
+        subtitle: "DockGE DMZ"
         url: "https://{{ endpoints.dockge.dmz }}"
         target: '_top'
       - name: "DockGE"
@@ -355,7 +354,7 @@ services:
         target: '_top'
       - name: "cAdvisor"
         logo: "assets/icons/webp/cadvisor.webp"
-        subtitle: "cAdvisor Azure"
+        subtitle: "cAdvisor DMZ"
         url: "https://{{ endpoints.cadvisor.dmz }}"
         target: '_top'
       - name: "cAdvisor"
@@ -370,7 +369,7 @@ services:
         target: '_top'
       - name: "Node Exporter"
         logo: "assets/icons/svg/prometheus.svg"
-        subtitle: "Node Exporter Azure"
+        subtitle: "Node Exporter DMZ"
         url: "https://{{ endpoints.nodeexporter.dmz }}"
         target: '_top'
       - name: "Node Exporter"
@@ -385,7 +384,7 @@ services:
         target: '_top'
       - name: "Librespeed"
         logo: "assets/icons/svg/librespeed.svg"
-        subtitle: "Speedtest AZURE"
+        subtitle: "Speedtest DMZ"
         url: "https://{{ endpoints.librespeed.dmz }}"
         target: '_top'
       - name: "Librespeed"
