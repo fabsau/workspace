@@ -1,5 +1,5 @@
 # vars/main.yml
-scripts_path: "/docker2/0scripts"
+scripts_path: "/docker/0scripts"
 curl_options: "-fsS -m 10 --retry 5 -o /dev/null"
 cronjobs:
   photoprism_copy:
