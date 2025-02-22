@@ -12,6 +12,8 @@ services:
       - /0/merged/personal/plexdb:/backup
       - /tmp/plex:/transcode
       - /0/merged:/0:rshared
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
     traefik: 
       - name: plex
         protocol: http
@@ -20,6 +22,6 @@ services:
         enable_tls: true
         rule: "Host(`{{ endpoints[role_specific][ansible_facts['hostname']] }}`)"
         middlewares: public-chain@file
-        insecuretransport: false
+        insecuretransport: true
         service_port: 32400
     watchtower: true
