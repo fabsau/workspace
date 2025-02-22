@@ -11,23 +11,24 @@
         "url": "https://user:password@nzbget.domain.com"
     },
     "plex": {
-        "enabled": false,
+        "enabled": true,
         "ignore_local_streams": true,
         "max_streams_before_throttle": 1,
         "notifications": false,
         "poll_interval": 60,
         "rclone": {
             "throttle_speeds": {
-                "1": "50M",
-                "2": "40M",
-                "3": "30M",
-                "4": "20M",
-                "5": "10M"
+                "0": "12M",
+                "1": "9M",
+                "2": "6M",
+                "3": "3M",
+                "4": "2M",
+                "5": "1M"
             },
-            "url": "http://localhost:7949"
+            "url": "https://localhost:7949"
         },
-        "token": "",
-        "url": "https://plex.domain.com"
+        "token": "{{ PLEX_TOKEN }}",
+        "url": "https://watch.sauna.re:32400"
     },
     "remotes": {
         "gdrive_crypt_0": {
@@ -44,7 +45,6 @@
             ],
             "rclone_extras": {
                 "--buffer-size": "16M",
-                "--bwlimit": "100M",
                 "--checkers": 12,
                 "--drive-chunk-size": "64M",
                 "--drive-server-side-across-configs": null,
