@@ -1,7 +1,7 @@
 # vars/main.yml
 
 services:
-  - name: rdtclient
+  - name: torrent
     image: rogerfar/rdtclient:latest
     cpus: 1
     env_file:
@@ -11,7 +11,7 @@ services:
       - ./data:/data/db
       - /0/merged:/0:rshared
     traefik: 
-      - name: rdtclient
+      - name: torrent
         protocol: http
         entrypoint: https
         http_redirection: true
