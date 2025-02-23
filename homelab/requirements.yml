@@ -1,0 +1,14 @@
+---
+- src: geerlingguy.docker
+- src: geerlingguy.pip
+- src: geerlingguy.security
+- src: robertdebock.logrotate
+- src: githubixx.ansible_role_wireguard
+# - src: lucasheld.uptime_kuma
+- src: robertdebock.update
+- src: robertdebock.bootstrap
+- src: robertdebock.locale
+- src: robertdebock.swap
+- src: robertdebock.hostname
+- src: robertdebock.users
+- src: robertdebock.cron

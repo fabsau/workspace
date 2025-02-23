@@ -1,0 +1,18 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  gather_facts: true
+
+  vars_files:
+    ../../vars/main.yml
+
+  tasks:
+    - name: Check if locale has been set
+      ansible.builtin.lineinfile:
+        dest: "{{ locale_configuration_file }}"
+        line: 'LANG=de_AT.UTF-8'
+      check_mode: true
+      register: locale_test_one
+      failed_when:
+        - locale_test_one is changed

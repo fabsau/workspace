@@ -1,0 +1,13 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Check status of /my.swap
+      ansible.builtin.stat:
+        path: /my.swap
+      register: swap_my_swap
+      failed_when:
+        - not swap_my_swap.stat.exists

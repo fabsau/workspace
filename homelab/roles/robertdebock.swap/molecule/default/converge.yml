@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: ansible-role-swap
+      swap_files:
+        - path: /my.swap
+          size: 1024

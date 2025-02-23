@@ -1,0 +1,56 @@
+---
+# tasks file for users
+
+- name: Import assert.yml
+  ansible.builtin.import_tasks:
+    file: assert.yml
+  run_once: true
+  delegate_to: localhost
+
+- name: Install required software
+  ansible.builtin.package:
+    name: "{{ users_requirements }}"
+    state: present
+  when: (users_requirements | length) > 0
+
+- name: Loop over users_groups
+  ansible.builtin.include_tasks:
+    file: group.yml
+  loop: "{{ users_groups }}"
+  loop_control:
+    label: "{{ group.name }}"
+    loop_var: group
+  when:
+    - users_groups is defined
+
+- name: Ensure the /etc/sudoers.d directory is included
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    line: "{{ users_sudo_includedir }}"
+    regexp: "^(@|#)includedir"
+    validate: "visudo --check --file %s"
+
+- name: Loop over users
+  ansible.builtin.include_tasks:
+    file: user.yml
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ user.name }}"
+    loop_var: user
+  when:
+    - users is defined
+
+- name: Manage cron permission
+  ansible.builtin.template:
+    src: cron.allow.j2
+    dest: /etc/cron.allow
+    mode: "0644"
+  when:
+    - users_cron_allow
+
+- name: Check existence of /etc/cron.allow
+  ansible.builtin.file:
+    path: /etc/cron.allow
+    state: absent
+  when:
+    - not users_cron_allow

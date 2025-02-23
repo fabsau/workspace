@@ -1,0 +1,204 @@
+---
+
+- name: assert | Test users_ssh_key_directory
+  ansible.builtin.assert:
+    that:
+      - users_ssh_key_directory is defined
+      - users_ssh_key_directory is string
+      - users_ssh_key_directory is not none
+    quiet: true
+
+- name: assert | Test users_shell
+  ansible.builtin.assert:
+    that:
+      - users_shell is defined
+      - users_shell is string
+      - users_shell is not none
+    quiet: true
+
+- name: assert | Test users_cron_allow
+  ansible.builtin.assert:
+    that:
+      - users_cron_allow is defined
+      - users_cron_allow is boolean
+    quiet: true
+
+- name: assert | Test users_create_home
+  ansible.builtin.assert:
+    that:
+      - users_create_home is defined
+      - users_create_home is boolean
+    quiet: true
+
+- name: assert | Test users_groups
+  ansible.builtin.assert:
+    that:
+      - users_groups is iterable
+    quiet: true
+  when:
+    - users_groups is defined
+
+- name: assert | Test item.name in users_groups
+  ansible.builtin.assert:
+    that:
+      - item.name is defined
+      - item.name is string
+      - item.name is not none
+    quiet: true
+  loop: "{{ users_groups }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - users_groups is defined
+
+- name: assert | Test item.gid in users_groups
+  ansible.builtin.assert:
+    that:
+      - item.gid is defined
+      - item.gid is number
+      - item.gid > 0
+    quiet: true
+  loop: "{{ users_groups }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - users_groups is defined
+    - item.gid is defined
+
+- name: assert | Test item.state in users_groups
+  ansible.builtin.assert:
+    that:
+      - item.state is defined
+      - item.state is string
+      - item.state in [ "absent", "present" ]
+    quiet: true
+  loop: "{{ users_groups }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - users_groups is defined
+    - item.state is defined
+
+- name: assert | Test item.system in users_groups
+  ansible.builtin.assert:
+    that:
+      - item.system is boolean
+    quiet: true
+  loop: "{{ users_groups }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - users_groups is defined
+    - item.system is defined
+
+- name: assert | Test item.name in users
+  ansible.builtin.assert:
+    that:
+      - item.name is defined
+      - item.name is string
+      - item.name is not none
+    quiet: true
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - users is defined
+
+- name: assert | Test item.cron_allow in users
+  ansible.builtin.assert:
+    that:
+      - item.cron_allow is boolean
+    quiet: true
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - users is defined
+    - item.cron_allow is defined
+
+- name: assert | Test item.uid in users
+  ansible.builtin.assert:
+    that:
+      - item.uid is number
+      - item.uid >= 0
+    quiet: true
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - users is defined
+    - item.uid is defined
+
+- name: assert | Test item.authorized_keys in users
+  ansible.builtin.assert:
+    that:
+      - item.authorized_keys is iterable
+    quiet: true
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - users is defined
+    - item.authorized_keys is defined
+
+- name: assert | Test item.manage_ssh_key in users
+  ansible.builtin.assert:
+    that:
+      - item.manage_ssh_key is boolean
+    quiet: true
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - users is defined
+    - item.manage_ssh_key is defined
+
+- name: assert | Test item.update_password in users
+  ansible.builtin.assert:
+    that:
+      - item.update_password in [ "always", "on_create" ]
+    quiet: true
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - users is defined
+    - item.update_password is defined
+
+- name: assert | Test item.exipres in users
+  ansible.builtin.assert:
+    that:
+      - item.expires is number
+      - item.expires >= -1
+    quiet: true
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - users is defined
+    - item.expires is defined
+
+- name: assert | Test item.password_validity_days in users
+  ansible.builtin.assert:
+    that:
+      - item.password_validity_days is number
+      - item.password_validity_days >= -1
+    quiet: true
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - users is defined
+    - item.password_validity_days is defined
+
+- name: assert | Test item.system in users
+  ansible.builtin.assert:
+    that:
+      - item.system is boolean
+    quiet: true
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - users is defined
+    - item.system is defined

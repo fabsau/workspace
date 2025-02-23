@@ -1,0 +1,61 @@
+---
+# tasks file for bootstrap
+
+- name: Import assert.yml
+  ansible.builtin.import_tasks:
+    file: assert.yml
+  run_once: true
+  delegate_to: localhost
+
+- name: Wait for port to be available
+  ansible.builtin.wait_for:
+    port: "{{ ansible_port | default('22') }}"
+    timeout: "{{ bootstrap_timeout }}"
+  become: false
+  when:
+    - ansible_connection is defined
+    - ansible_connection not in [ "container", "docker", "community.docker.docker" ]
+    - ansible_connection is not none
+    - bootstrap_wait_for_host
+
+- name: Prepare system
+  # At this stage, python and/or sudo are not installed, `become` can't be used.
+  # This means this role has to run as root, can't switch user.
+  become: false
+  block:
+    - name: Test connection
+      ansible.builtin.wait_for_connection:
+        timeout: "{{ bootstrap_timeout }}"
+      register: bootstrap_connect
+      changed_when: false
+    - name: Test sudo
+      ansible.builtin.command:
+        cmd: sudo --version
+      changed_when: false
+  rescue:
+    - name: Gather bootstrap facts
+      ansible.builtin.include_tasks:
+        file: gather_facts.yml
+
+    - name: Install bootstrap packages (raw)
+      ansible.builtin.raw: "{{ bootstrap_install.raw }}"
+      args:
+        executable: /bin/sh
+      register: bootstrap_install_packages
+      changed_when:
+        - (bootstrap_install.stdout_regex in bootstrap_install_packages.stdout and
+           bootstrap_os_family in [ "Alpine", "Archlinux", "Gentoo" ]) or
+          (bootstrap_install.stdout_regex not in bootstrap_install_packages.stdout and
+           bootstrap_os_family in [ "Debian", "RedHat", "Rocky", "Suse" ])
+
+- name: Gather ansible facts
+  ansible.builtin.setup:
+  become: false
+
+- name: Install bootstrap packages (package)
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop: "{{ bootstrap_facts_packages.split() }}"
+  become: "{{ bootstrap_become }}"
