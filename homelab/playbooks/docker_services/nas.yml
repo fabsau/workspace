@@ -1,0 +1,67 @@
+# /config/workspace/homelab/playbooks/nas.yml
+
+- hosts: nas
+  roles:
+    - variables
+    # - 0host_user_management
+    # - robertdebock.logrotate
+    # - name: geerlingguy.security
+    #   become: true
+    # - geerlingguy.docker
+    - 0docker_setup
+    - role: 0docker_service
+      vars:
+        docker_networks:
+          monitoring:
+            services:
+              - traefik
+              - prometheus
+              - uptimekuma
+              - exportarrexporter
+              - pbsexporter
+              - nodeexporter
+              - alertmanager
+              - grafana
+              - cadvisor
+              - proxmoxexporter
+              - unifiexporter
+              - plausibleexporter
+              - librespeedexporter
+              - plexexporter
+              - tautulliexporter
+              - qbittorrentexporter
+        docker_service_roles:
+          - traefik
+          - prometheus
+          - rclone # needed for backrest
+          - unifi
+          - uptimekuma
+          - exportarrexporter
+          - pbsexporter
+          - wallos
+          - paperless
+          - nexterm
+          - changedetection
+          - watchtower
+          - portainer
+          - librespeed
+          - dockge
+          - adguardsync
+          - certdumper
+          - nodeexporter
+          - alertmanager
+          - grafana
+          - cadvisor
+          - proxmoxexporter
+          # - adguardexporter kein bock docker image not found
+          - unifiexporter
+          - plausibleexporter
+          - librespeedexporter
+          - plexexporter
+          - tautulliexporter
+          - qbittorrentexporter
+          - valetudo
+          - pyload
+          - czkawka
+          - pairdrop
+          - backrest
