@@ -6,35 +6,6 @@ nfs_needed: true
 security_ssh_port: 22
 security_autoupdate_reboot: "true"
 security_autoupdate_reboot_time: "03:00"
-docker_networks:
-  - traefik
-  - uptimekuma
-  - monitoring
-  - portainer
-  - unifi
-  - adguard
-  - pyload
-  - valetudo
-  - healthcheck
-  - librespeed
-  - czkawka
-  - vscode
-  - dockge
-  - watchtower
-  - adguardsync
-  - changedetection
-  - tandoorrecipes
-  - paperless
-  - librechat
-  - pairdrop
-  - urbackup
-  - inputforms
-  - limesurvey
-  - wallos
-  - nexterm
-  - backrest
-  - syncthing
-  - openvas
 
 # TRAEFIK
 traefik_oauth_address: https://auth.sauna.re/api/verify

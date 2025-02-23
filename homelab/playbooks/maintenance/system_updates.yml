@@ -1,0 +1,78 @@
+---
+- name: Update service hosts
+  hosts: blue
+  become: yes
+  serial: 1
+  vars:
+    update_autoremove: no
+    update_cache: yes
+    update_cache_valid_time: 3600
+    update_reboot: yes
+    update_reboot_timeout: 300
+    update_post_reboot_delay: 60
+    update_only_security: no
+    update_package_state: latest
+  roles:
+    - role: robertdebock.update
+
+# - name: Update DNS servers
+#   hosts: dns
+#   become: yes
+#   vars:
+#     update_autoremove: no
+#     update_cache: yes
+#     update_cache_valid_time: 3600
+#     update_reboot: yes
+#     update_reboot_timeout: 300
+#     update_only_security: no
+#   roles:
+#     - role: robertdebock.update
+
+- name: Update NAS (OpenMediaVault)
+  hosts: nas
+  become: yes
+  vars:
+    update_autoremove: no
+    update_cache: yes
+    update_cache_valid_time: 3600
+    update_reboot: yes
+    update_reboot_timeout: 600
+    update_post_reboot_delay: 120
+    update_only_security: no
+    update_package_state: latest
+  roles:
+    - role: robertdebock.update
+
+# - name: Update OPNsense firewall
+#   hosts: opn
+#   become: yes
+#   tasks:
+#     - name: Update OPNsense packages
+#       shell: |
+#         opnsense-update -c   # Check for updates
+#         opnsense-update -u   # Update base system
+#         pkg update && pkg upgrade -y  # Update packages
+#       register: opn_update_status
+#       changed_when: "'Your system is up to date' not in opn_update_status.stdout"
+
+#     - name: Reboot OPNsense if required
+#       reboot:
+#         reboot_timeout: 600
+#         post_reboot_delay: 180
+#       when: opn_update_status.changed
+
+- name: Update Proxmox hosts
+  hosts: proxmox,proxmox_bak
+  become: yes
+  serial: 1
+  vars:
+    update_autoremove: no
+    update_cache: yes
+    update_cache_valid_time: 3600
+    update_reboot: yes
+    update_reboot_timeout: 900  # Longer timeout for hypervisors
+    update_post_reboot_delay: 180
+    update_only_security: no
+    update_package_state: latest
+  roles:
+    - role: robertdebock.update

@@ -1,7 +1,7 @@
 ---
 - name: Find all host playbooks
   find:
-    paths: "{{ ansible_home }}/playbooks/hosts"
+    paths: "{{ ansible_home }}/playbooks/docker_services"
     patterns: "*.yml"
   register: host_playbooks
 
