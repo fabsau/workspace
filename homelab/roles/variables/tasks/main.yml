@@ -1,8 +1,15 @@
 - name: Include host-specific vars
   include_vars: "{{ ansible_hostname }}.yml"
+  ignore_errors: true
 
 - name: Include secrets
   include_vars: "secrets.yml"
 
 - name: Include UptimeKuma Configurable Variables
   include_vars: "uptimekuma_config.yml"
+
+- name: Include Users
+  include_vars: "users.yml"
+
+- name: Include Host Settings
+  include_vars: "host_settings.yml"

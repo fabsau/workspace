@@ -1,0 +1,46 @@
+---
+# Docker Configuration
+docker_edition: 'ce'
+docker_packages_state: present
+docker_service_state: started
+docker_service_enabled: true
+docker_install_compose_plugin: true
+
+# Docker daemon configuration
+docker_daemon_options:
+  storage-driver: "overlay2"
+  log-opts:
+    max-size: "50m"
+    max-file: "3"
+
+# Python packages required for Docker management
+pip_install_packages:
+  - name: docker
+
+# Package Management Configuration
+install_virtualization_tools: "{{ is_proxmox_vm | default(false) | bool }}"
+
+package_state: present
+base_packages:
+  - wget
+  - git
+  - net-tools
+  - iotop
+  - tree
+  - unzip
+  - tar
+  - ncdu
+  - htop
+  - nload
+  - nano
+  - cron
+  - dnsutils
+  - iputils-ping
+  - curl
+  - nfs-common
+  - jq
+  - logrotate
+
+# Conditional Package Groups
+virtualization_packages:
+  - qemu-guest-agent

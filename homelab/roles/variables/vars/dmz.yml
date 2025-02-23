@@ -1,44 +1,15 @@
 # vars/dmz.yml
-docker_networks:
-  - traefik
-  - mediaserver
-  - portainer
-  - authelia
-  - vaultwarden
-  - ghost
-  - searxng
-  - spotify
-  - plausible
-  - adguard
-  - ihatemoney
-  - filebrowser
-  - librespeed
-  - homer
-  - monitoring
-  - crowdsec
-  - tandoorrecipes
-  - calibre
-  - photoprism
-  - signalproxy
-  - wizarr
-  - xbackbone
-  - dockersocketproxy
-  - headscale
-  - johanna
-  - linkstack
-  - limesurvey
-  - watchtower
-  - librechat
-  - ferdium
-  - dockge
-  - it-tools
-  - urbackup
-  - baikal
-  - obsidian
-  - kasm
-  - phpmyadmin
-  - actualbudget
-  - donetick
+
+# Package Installation
+is_proxmox_vm: true
+nfs_needed: true
+
+# Swap Configuration
+swap_file: /swapfile
+swap_file_size_mb: 4096
+swap_swappiness: 30
+swap_file_state: present
+
 
 # TRAEFIK
 traefik_oauth_address: http://authelia:9091/api/verify?rd=https%3A%2F%2Fauth.sauna.re%2F
@@ -54,7 +25,6 @@ traefik_domains:
 traefik_extra_hosts:
   - host.docker.internal:172.17.0.1
 
-  
 traefik_extra_servers:
   - name: saunaflix_statuspage
     entrypoint: https

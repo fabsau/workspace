@@ -1,0 +1,29 @@
+---
+- name: Setup proper Ansible Start of a new hosts
+  hosts: dmz
+  become: true
+  gather_facts: true
+
+  vars_files:
+    - "../../roles/variables/vars/secrets.yml"
+    - "../../roles/variables/vars/users.yml"
+
+  vars:
+    ansible_user: "{{ fabio_username }}"
+    ansible_ssh_pass: "{{ USER_FABIO_PASSWORD }}"
+    ansible_become_pass: "{{ USER_FABIO_PASSWORD }}"
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+    ansible_system_user: "{{ robertdebock_users | selectattr('name', 'equalto', 'ansible') | list }}"
+    hostname: "dmz"
+    hostname_reboot: false
+
+  roles:
+    - role: variables
+    - role: robertdebock.bootstrap
+    - role: robertdebock.hostname
+    - role: robertdebock.users
+      vars:
+        users_shell: "{{ robertdebock_users_shell }}"
+        users_create_home: "{{ robertdebock_users_create_home }}"
+        users_groups: "{{ robertdebock_users_groups }}"
+        users: "{{ ansible_system_user }}"

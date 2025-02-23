@@ -1,0 +1,65 @@
+---
+- name: First Setup of a new hosts
+  hosts: dmz
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: variables
+    - role: robertdebock.bootstrap
+    - role: robertdebock.locale
+    - role: robertdebock.swap
+    - role: geerlingguy.pip
+    - role: geerlingguy.docker
+    - role: robertdebock.users
+      vars:
+        users_shell: "{{ robertdebock_users_shell }}"
+        users_create_home: "{{ robertdebock_users_create_home }}"
+        users_groups: "{{ robertdebock_users_groups }}"
+        users: "{{ robertdebock_users }}"
+
+  tasks:
+    - name: Install base packages
+      ansible.builtin.package:
+        name: "{{ base_packages }}"
+        state: "{{ package_state }}"
+
+    - name: Install virtualization tools
+      ansible.builtin.package:
+        name: "{{ virtualization_packages }}"
+        state: "{{ package_state }}"
+      when: install_virtualization_tools | bool
+
+    - name: Ensure mount points exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - /nfs/pictures
+        - /0/local
+
+    - name: Configure NFS mounts in fstab
+      ansible.builtin.mount:
+        path: "{{ item.path }}"
+        src: "{{ item.src }}"
+        fstype: nfs4
+        opts: "auto,nofail,noatime,nolock,intr,tcp,actimeo=1800"
+        state: mounted
+      loop:
+        - { path: /nfs/pictures, src: "192.168.100.3:/Multimedia_Pictures" }
+        - { path: /0/local, src: "192.168.100.3:/Saunaflix" }
+
+    - name: Configure cron job for photoprism import
+      ansible.builtin.include_role:
+        name: robertdebock.cron
+      vars:
+        cron_jobs:
+          - name: photoprism_import
+            minute: "0"
+            hour: "9"
+            day: "*"
+            month: "*"
+            weekday: "*"
+            job: "/docker/0scripts/photoprism_import.sh"
+            user: root
