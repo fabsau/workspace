@@ -1,0 +1,8 @@
+---
+#
+# Ansible managed
+#
+repository:
+  description: Install updates on your system.
+  homepage: https://robertdebock.nl/
+  topics: update, security, system, ansible, molecule, tox, playbook
