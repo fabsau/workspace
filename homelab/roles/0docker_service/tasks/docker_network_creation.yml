@@ -77,6 +77,7 @@
     name: "role_{{ item }}_vars"
   ignore_errors: true
   loop: "{{ docker_service_roles }}"
+  when: item != 'traefik'
 
 - name: Debug - Show loaded role vars
   debug:
@@ -143,7 +144,7 @@
 - name: Set desired networks fact
   set_fact:
     desired_networks: >-
-      {%- set networks = [] -%}
+      {%- set networks = ['traefik'] -%}
       {%- for role in docker_service_roles -%}
         {%- if hostvars[inventory_hostname]['role_' + role + '_vars'] is defined -%}
           {%- set role_vars = hostvars[inventory_hostname]['role_' + role + '_vars'] -%}

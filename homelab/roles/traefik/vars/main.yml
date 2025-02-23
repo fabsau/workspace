@@ -32,7 +32,7 @@ services:
       - ../common.env
       - ./traefik.env
     ports: "{{ traefik_default_ports + (traefik_additional_ports | default([])) }}"
-    networks: "{{ traefik_networks | default(['traefik']) }}"
+    networks: "{{ hostvars[inventory_hostname]['desired_networks'] | default(['traefik']) }}"
     traefik_extra_hosts: "{{ traefik_extra_hosts }}"
     volumes:
       - ./config:/config:ro
