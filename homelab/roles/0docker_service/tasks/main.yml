@@ -8,6 +8,15 @@
   include_vars:
     file: "{{ ansible_home }}/roles/variables/vars/{{ ansible_hostname }}.yml"
 
+# Base files setup
+- name: "Setup Docker base files"
+  include_tasks: docker_basefiles.yml
+
+# Network setup
+- name: "Setup Docker networks"
+  include_tasks: docker_network_creation.yml
+
+# Service creation
 - name: "Iterate over docker_service_roles"
   include_tasks: docker_service_creation.yml
   vars:

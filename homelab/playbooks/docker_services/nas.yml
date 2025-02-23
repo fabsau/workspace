@@ -8,32 +8,12 @@
     # - name: geerlingguy.security
     #   become: true
     # - geerlingguy.docker
-    - 0docker_setup
     - role: 0docker_service
       vars:
-        docker_networks:
-          monitoring:
-            services:
-              - traefik
-              - prometheus
-              - uptimekuma
-              - exportarrexporter
-              - pbsexporter
-              - nodeexporter
-              - alertmanager
-              - grafana
-              - cadvisor
-              - proxmoxexporter
-              - unifiexporter
-              - plausibleexporter
-              - librespeedexporter
-              - plexexporter
-              - tautulliexporter
-              - qbittorrentexporter
         docker_service_roles:
           - traefik
           - prometheus
-          - rclone # needed for backrest
+          # - rclone # needed for backrest
           - unifi
           - uptimekuma
           - exportarrexporter
@@ -42,7 +22,7 @@
           - paperless
           - nexterm
           - changedetection
-          - watchtower
+          # # - watchtower
           - portainer
           - librespeed
           - dockge

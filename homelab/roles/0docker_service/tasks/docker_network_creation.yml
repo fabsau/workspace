@@ -1,0 +1,215 @@
+---
+- name: Set debug mode
+  set_fact:
+    docker_setup_debug: "{{ docker_setup_debug | default(true) | bool }}"
+
+- name: Set default docker_roles
+  set_fact:
+    docker_roles: []
+
+- name: Get networks and their configuration on the host
+  shell: "docker network ls -q | xargs docker network inspect"
+  register: network_inspect
+
+- name: Set network info fact
+  set_fact:
+    network_info: "{{ network_inspect.stdout | from_json }}"
+
+- name: Debug - Display on the host configured network information
+  debug:
+    msg: |
+      Network Information:
+      {% for network in network_info %}
+      Network Name: {{ network.Name }}
+      - Driver: {{ network.Driver }}
+      - Subnet: {{ network.IPAM.Config[0].Subnet | default('No subnet') if network.IPAM.Config else 'No IPAM config' }}
+      - Gateway: {{ network.IPAM.Config[0].Gateway | default('No gateway') if network.IPAM.Config else 'No IPAM config' }}
+      - Containers: {{ network.Containers | default({}) | length }}
+      {% endfor %}
+  when: docker_setup_debug | bool
+  tags: ['debug', 'docker_setup_debug']
+
+- name: Debug - Show network names currently on the host active
+  debug:
+    msg: |
+      Networks on host:
+      {{ network_info | map(attribute='Name') | list | sort | join('\n') }}
+  when: docker_setup_debug | bool
+  tags: ['debug', 'docker_setup_debug']
+
+- name: Display current taken subnets on the host
+  debug:
+    msg: |
+      {% set taken = [] %}
+      {% for network in network_info %}
+      {% if network.IPAM.Config and network.IPAM.Config[0].Subnet is regex('^' + docker_network_base_subnet | regex_escape + '\\.(\\d+)\\.0/24$') %}
+      {% set _ = taken.append(network.IPAM.Config[0].Subnet | regex_replace('^.*\\.(\\d+)\\.0/24$', '\\1') | int) %}
+      {% endif %}
+      {% endfor %}
+      Taken subnets: {{ taken | sort }}
+  when: docker_setup_debug | bool
+  tags: ['debug', 'docker_setup_debug']
+
+- name: Calculate available subnets
+  debug:
+    msg: |
+      {% set taken = [] %}
+      {% for network in network_info %}
+      {% if network.IPAM.Config and network.IPAM.Config[0].Subnet is regex('^' + docker_network_base_subnet | regex_escape + '\\.(\\d+)\\.0/24$') %}
+      {% set _ = taken.append(network.IPAM.Config[0].Subnet | regex_replace('^.*\\.(\\d+)\\.0/24$', '\\1') | int) %}
+      {% endif %}
+      {% endfor %}
+      {% set all_subnets = range(1, 256) | list %}
+      {% set available = all_subnets | difference(taken | sort) %}
+      Available subnets: {{ available }}
+      First available subnet: {{ available | first }}
+  when: docker_setup_debug | bool
+  tags: ['debug', 'docker_setup_debug']
+
+- name: Collect network configurations from all roles
+  set_fact:
+    role_networks: {}
+    role_vars_results: []
+
+- name: Load vars from all roles
+  include_vars:
+    file: "{{ ansible_home }}/roles/{{ item }}/vars/main.yml"
+    name: "role_{{ item }}_vars"
+  ignore_errors: true
+  loop: "{{ docker_service_roles }}"
+
+- name: Debug - Show loaded role vars
+  debug:
+    msg: "Role {{ item }} vars: {{ hostvars[inventory_hostname]['role_' + item + '_vars'] | default({}) }}"
+  loop: "{{ docker_service_roles }}"
+  when: docker_setup_debug | bool
+
+- name: Debug - Show all collected networks from the roles (desired networks)
+  debug:
+    msg: |
+      Networks collected from roles:
+      {% for role in docker_service_roles %}
+      {% if hostvars[inventory_hostname]['role_' + role + '_vars'] is defined %}
+      - Role {{ role }}:
+        {% set role_networks = [] %}
+        {% set role_vars = hostvars[inventory_hostname]['role_' + role + '_vars'] %}
+        {% if role_vars.services is defined and role_vars.services is not none %}
+          {% for service in role_vars.services %}
+            {% if service.networks is defined and service.networks is not none %}
+              {% for network in service.networks %}
+                {% set _ = role_networks.append(network) %}
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+          {% if role_networks | length > 0 %}
+          Networks: {{ role_networks | unique | sort | to_nice_yaml(indent=2) | indent(4) }}
+          {% else %}
+          No networks defined
+          {% endif %}
+        {% else %}
+        No services defined
+        {% endif %}
+      {% endif %}
+      {% endfor %}
+  when: docker_setup_debug | bool
+
+- name: Debug - Compare desired networks with existing networks
+  debug:
+    msg: |
+      {% set desired_networks = [] %}
+      {% for role in docker_service_roles %}
+        {% if hostvars[inventory_hostname]['role_' + role + '_vars'] is defined %}
+          {% set role_vars = hostvars[inventory_hostname]['role_' + role + '_vars'] %}
+          {% if role_vars.services is defined and role_vars.services is not none %}
+            {% for service in role_vars.services %}
+              {% if service.networks is defined and service.networks is not none %}
+                {% for network in service.networks %}
+                  {% set _ = desired_networks.append(network) %}
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% set existing_networks = network_info | map(attribute='Name') | list %}
+      {% set missing_networks = desired_networks | unique | difference(existing_networks) %}
+      
+      Summary of networks:
+      - Desired networks: {{ desired_networks | unique | sort | to_nice_yaml(indent=2) }}
+      - Existing networks: {{ existing_networks | sort | to_nice_yaml(indent=2) }}
+      - Missing networks that need to be created: {{ missing_networks | sort | to_nice_yaml(indent=2) }}
+  when: docker_setup_debug | bool
+
+- name: Set desired networks fact
+  set_fact:
+    desired_networks: >-
+      {%- set networks = [] -%}
+      {%- for role in docker_service_roles -%}
+        {%- if hostvars[inventory_hostname]['role_' + role + '_vars'] is defined -%}
+          {%- set role_vars = hostvars[inventory_hostname]['role_' + role + '_vars'] -%}
+          {%- if role_vars.services is defined and role_vars.services is not none -%}
+            {%- for service in role_vars.services -%}
+              {%- if service.networks is defined and service.networks is not none -%}
+                {%- for network in service.networks -%}
+                  {%- set _ = networks.append(network) -%}
+                {%- endfor -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {{ networks | unique | list }}
+
+- name: Debug - Show desired networks
+  debug:
+    var: desired_networks
+  when: docker_setup_debug | bool
+
+- name: Calculate subnet assignments for new networks
+  debug:
+    msg: |
+      {% set taken = [] %}
+      {% for network in network_info %}
+      {% if network.IPAM.Config and network.IPAM.Config[0].Subnet is regex('^' + docker_network_base_subnet | regex_escape + '\\.(\\d+)\\.0/24$') %}
+      {% set _ = taken.append(network.IPAM.Config[0].Subnet | regex_replace('^.*\\.(\\d+)\\.0/24$', '\\1') | int) %}
+      {% endif %}
+      {% endfor %}
+      {% set all_subnets = range(1, 256) | list %}
+      {% set available = all_subnets | difference(taken | sort) %}
+      {% set networks_to_create = desired_networks | difference(network_info | map(attribute='Name') | list) %}
+      
+      Subnet assignments for new networks:
+      {% for network in networks_to_create | sort %}
+      - {{ network }}: {{ docker_network_base_subnet }}.{{ available[loop.index0] }}.0/24
+      {% endfor %}
+  when: docker_setup_debug | bool
+  tags: ['debug', 'docker_setup_debug']
+
+- name: Set subnet calculation facts
+  set_fact:
+    taken_subnets: >-
+      {%- set t = [] -%}
+      {%- for net in network_info -%}
+        {%- if net.IPAM.Config and net.IPAM.Config[0].Subnet is regex('^' + docker_network_base_subnet | regex_escape + '\\.(\\d+)\\.0/24$') -%}
+          {%- set _ = t.append(net.IPAM.Config[0].Subnet | regex_replace('^.*\\.(\\d+)\\.0/24$', '\\1') | int) -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {{ t }}
+
+- name: Set available subnets and networks to create
+  set_fact:
+    available_subnets: "{{ range(1, 256) | list | difference(taken_subnets | sort) }}"
+    networks_to_create: "{{ desired_networks | unique | difference(network_info | map(attribute='Name') | list) }}"
+
+- name: Create required Docker networks
+  docker_network:
+    name: "{{ item }}"
+    driver: bridge
+    ipam_config:
+      - subnet: "{{ docker_network_base_subnet }}.{{ available_subnets[idx] }}.0/24"
+        gateway: "{{ docker_network_base_subnet }}.{{ available_subnets[idx] }}.1"
+  loop: "{{ networks_to_create }}"
+  loop_control:
+    index_var: idx
+    label: "Creating network {{ item }} with subnet {{ docker_network_base_subnet }}.{{ available_subnets[idx] }}.0/24"
+  when: networks_to_create | length > 0
