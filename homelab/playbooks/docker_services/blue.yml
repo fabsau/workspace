@@ -33,17 +33,3 @@
           # - torrent
           # - librespeed
           # - cronjob
-
-    # - role: ansible-proxmox-backup-client
-    #   become: true
-    #   vars:
-    #     proxmox_backup:
-    #       server: "{{ pbs_global_server }}"
-    #       client:
-    #         archives:
-    #           - name: docker2
-    #             path: /docker2
-    #             format: .pxar
-    #         schedule:
-    #             calendar: "*-*-* 17:00:00"
-    #             runifmissed: yes

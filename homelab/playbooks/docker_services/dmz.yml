@@ -58,28 +58,3 @@
           # - obsidian
           # - vaultwarden
           # - spotify
-
-    - role: ansible-proxmox-backup-client
-      become: true
-      vars:
-        proxmox_backup:
-          server: "{{ pbs_global_server }}"
-          client:
-            archives:
-              - name: docker
-                path: /docker
-                format: .pxar
-              - name: local
-                path: /0/local
-                format: .pxar
-              - name: root-home
-                path: /root
-                format: .pxar
-              - name: home
-                path: /home
-                format: .pxar
-            schedule:
-                calendar: "*-*-* 16:30:00"
-                runifmissed: yes
-            encrypt:
-              enable: false
