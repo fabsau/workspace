@@ -40,7 +40,19 @@ base_packages:
   - nfs-common
   - jq
   - logrotate
+  - fail2ban
+  - unattended-upgrades
+  - apt-listchanges
+  - needrestart
 
 # Conditional Package Groups
 virtualization_packages:
   - qemu-guest-agent
+
+# Intel GPU Support
+install_intel_gpu: false
+intel_gpu_packages:
+  - intel-media-va-driver-non-free
+  - vainfo
+  - intel-gpu-tools
+  - i965-va-driver-shaders
