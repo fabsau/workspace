@@ -1,3 +1,7 @@
-# sudo sh
-# echo  fs.inotify.max_user_watches=262144  >> /etc/sysctl.conf
-# sysctl -p
+- name: Increase max_user_watches for Plex
+  sysctl:
+    name: fs.inotify.max_user_watches
+    value: '262144'
+    state: present
+    sysctl_file: /etc/sysctl.conf
+    reload: yes
