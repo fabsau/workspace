@@ -24,8 +24,8 @@
   template:
     src: "{{ item.value.script }}.j2"
     dest: "{{ scripts_path }}/{{ item.value.script }}"
-    owner: {{ common_username }}
-    group: {{ common_group }}
+    owner: {{ common_uid }}
+    group: {{ common_gid }}
     mode: "{{ default_file_permission_mode }}"
   loop: "{{ cronjobs | dict2items }}"
   when: 
