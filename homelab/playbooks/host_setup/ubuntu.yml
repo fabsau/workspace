@@ -12,12 +12,14 @@
     - role: geerlingguy.pip
     - role: geerlingguy.docker
     - role: robertdebock.users
+      become: true
+      become_method: sudo
       vars:
         users_shell: "{{ robertdebock_users_shell }}"
         users_create_home: "{{ robertdebock_users_create_home }}"
         users_groups: "{{ robertdebock_users_groups }}"
         users: "{{ robertdebock_users }}"
-
+    # - role: geerlingguy.security
   tasks:
     - name: Install base packages
       ansible.builtin.package:
@@ -29,6 +31,12 @@
         name: "{{ virtualization_packages }}"
         state: "{{ package_state }}"
       when: install_virtualization_tools | bool
+
+    - name: Install Intel GPU drivers
+      ansible.builtin.package:
+        name: "{{ intel_gpu_packages }}"
+        state: "{{ package_state }}"
+      when: install_intel_gpu | bool
 
     - name: Ensure mount points exist
       ansible.builtin.file:
