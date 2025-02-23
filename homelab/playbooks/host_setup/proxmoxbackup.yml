@@ -1,0 +1,57 @@
+---
+- name: Configure NAS Services and Backup
+  hosts: nas
+  become: true
+  gather_facts: true
+  roles:
+    - variables
+    - role: ansible-proxmox-backup-client
+      vars:
+        proxmox_backup:
+          server: "{{ pbs_global_server }}"
+          client:
+            archives:
+              - name: docker2
+                path: /docker2
+                format: .pxar
+              - name: root-home
+                path: /root
+                format: .pxar
+              - name: home
+                path: /home
+                format: .pxar
+            schedule:
+                calendar: "*-*-* 16:00:00"
+                runifmissed: yes
+            encrypt:
+              enable: false
+
+- name: Configure Proxmox Backup Client for DMZ
+  hosts: dmz
+  become: true
+  gather_facts: true
+  roles:
+    - variables
+    - role: ansible-proxmox-backup-client
+      vars:
+        proxmox_backup:
+          server: "{{ pbs_global_server }}"
+          client:
+            archives:
+              - name: docker
+                path: /docker
+                format: .pxar
+              - name: local
+                path: /0/local
+                format: .pxar
+              - name: root-home
+                path: /root
+                format: .pxar
+              - name: home
+                path: /home
+                format: .pxar
+            schedule:
+              calendar: "*-*-* 16:30:00"
+              runifmissed: yes
+            encrypt:
+              enable: false
