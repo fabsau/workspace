@@ -7,4 +7,4 @@ urbackup_client_authkey: "your-client-authkey"
 backup_dirs:
   - "/home"
   - "/etc"
-urbackup_client_name: "BLUE"
+urbackup_client_name: "dmz"

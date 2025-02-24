@@ -87,7 +87,7 @@ services:
       - name: "Plex"
         logo: "assets/icons/svg/plex.svg"
         subtitle: "Media"
-        url: "https://{{ endpoints.plex.BLUE }}"
+        url: "https://{{ endpoints.plex.dmz }}"
         target: '_top'
       - name: "Overseerr"
         logo: "assets/icons/svg/overseerr.svg"
@@ -127,12 +127,12 @@ services:
       - name: "Sabnzbd"
         logo: "assets/icons/svg/sabnzbd.svg"
         subtitle: "Usenet"
-        url: "https://{{ endpoints.sabnzbd.BLUE }}"
+        url: "https://{{ endpoints.sabnzbd.dmz }}"
         target: '_top'
       - name: "qBittorrent"
         logo: "assets/icons/svg/qbittorrent.svg"
         subtitle: "Torrent"
-        url: "https://{{ endpoints.qbittorrent.BLUE }}"
+        url: "https://{{ endpoints.qbittorrent.dmz }}"
         target: '_top'
       - name: "Pyload"
         logo: "assets/icons/svg/pyload.svg"
@@ -275,11 +275,6 @@ services:
         subtitle: "DockGE DMZ"
         url: "https://{{ endpoints.dockge.dmz }}"
         target: '_top'
-      - name: "DockGE"
-        logo: "assets/icons/svg/dockge.svg"
-        subtitle: "DockGE BLUE"
-        url: "https://{{ endpoints.dockge.BLUE }}"
-        target: '_top'
 
   - name: "IT Tools"
     icon: "fas fa-tools"
@@ -307,11 +302,6 @@ services:
         logo: "assets/icons/svg/adguard-home.svg"
         subtitle: "DMZ"
         url: "https://{{ endpoints.adguard.lxc2 }}"
-        target: '_top'
-      - name: "AdGuard"
-        logo: "assets/icons/svg/adguard-home.svg"
-        subtitle: "BLUE"
-        url: "https://{{ endpoints.adguard.BLUE }}"
         target: '_top'
 
   - name: "Monitoring"
@@ -357,11 +347,6 @@ services:
         subtitle: "cAdvisor DMZ"
         url: "https://{{ endpoints.cadvisor.dmz }}"
         target: '_top'
-      - name: "cAdvisor"
-        logo: "assets/icons/webp/cadvisor.webp"
-        subtitle: "cAdvisor BLUE"
-        url: "https://{{ endpoints.cadvisor.BLUE }}"
-        target: '_top'
       - name: "Node Exporter"
         logo: "assets/icons/svg/prometheus.svg"
         subtitle: "Node Exporter NAS"
@@ -372,11 +357,6 @@ services:
         subtitle: "Node Exporter DMZ"
         url: "https://{{ endpoints.nodeexporter.dmz }}"
         target: '_top'
-      - name: "Node Exporter"
-        logo: "assets/icons/svg/prometheus.svg"
-        subtitle: "Node Exporter BLUE"
-        url: "https://{{ endpoints.nodeexporter.BLUE }}"
-        target: '_top'
       - name: "Librespeed"
         logo: "assets/icons/svg/librespeed.svg"
         subtitle: "Speedtest NAS"
@@ -386,11 +366,6 @@ services:
         logo: "assets/icons/svg/librespeed.svg"
         subtitle: "Speedtest DMZ"
         url: "https://{{ endpoints.librespeed.dmz }}"
-        target: '_top'
-      - name: "Librespeed"
-        logo: "assets/icons/svg/librespeed.svg"
-        subtitle: "Speedtest"
-        url: "https://{{ endpoints.librespeed.BLUE }}"
         target: '_top'
 
   - name: "Apps"

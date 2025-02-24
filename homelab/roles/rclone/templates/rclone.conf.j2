@@ -10,8 +10,6 @@ pacer_burst = 5000
 team_drive = {{ RCLONE_GDRIVE_0_DRIVE_ID }}
 {% if ansible_hostname == "NAS" %}
 service_account_file = /config/service_accounts/backup98-backup-objgxlrskxo5c8o3x9sm.json
-{% elif ansible_hostname == "BLUE" %}
-service_account_file = /config/service_accounts/backup99-backup-objgxlrskxo5c8o3x9sm.json
 {% elif ansible_hostname == "dmz" %}
 service_account_file = /config/service_accounts/backup100-backup-objgxlrskxo5c8o3x9sm.json
 {% endif %}
@@ -32,21 +30,9 @@ password = {{ RCLONE_GDRIVE_0_PASSWORD }}
 password2 = {{ RCLONE_GDRIVE_0_PASSWORD_2 }}
 {% if ansible_hostname == "NAS" %}
 service_account_file = /config/service_accounts/backup98-backup-objgxlrskxo5c8o3x9sm.json
-{% elif ansible_hostname == "BLUE" %}
-service_account_file = /config/service_accounts/backup99-backup-objgxlrskxo5c8o3x9sm.json
 {% elif ansible_hostname == "dmz" %}
 service_account_file = /config/service_accounts/backup100-backup-objgxlrskxo5c8o3x9sm.json
 {% endif %}
-
-[blue]
-type = sftp
-host = blue.sauna.re
-user = {{ common_uid }}
-key_file = /config/key.pem
-key_file_pass = {{ RCLONE_SFTP_KEY_FILE_PASS }}
-shell_type = unix
-md5sum_command = md5sum
-sha1sum_command = sha1sum
 
 [streaming]
 type = union
@@ -60,7 +46,7 @@ search_policy = ff #}
 
 [brain]
 type = union
-upstreams = blue:/0/local gdrive_crypt_0:/:nc alldebrid:/
+upstreams = gdrive_crypt_0:/:nc alldebrid:/
 action_policy = epall
 create_policy = eplfs
 search_policy = ff
@@ -77,7 +63,7 @@ search_policy = ff
 
 [backupservers]
 type = union
-upstreams = blue:/rclone_mount:ro dmz:/rclone_mount:ro
+upstreams = dmz:/rclone_mount:ro
 action_policy = epall
 create_policy = eplfs
 search_policy = ff

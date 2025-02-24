@@ -1,6 +1,6 @@
 ---
 - name: Update service hosts
-  hosts: blue
+  hosts: dmz
   become: yes
   serial: 1
   vars:

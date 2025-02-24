@@ -1,5 +1,0 @@
-# host_vars/blue.yml
-
-proxmox_host: "192.168.100.4"
-uptime_robot_url_proxmox_backup: "https://uptime.oiba.de/api/push/4WRMgOc6k3?status=up&msg=OK&ping="
-backup_path: "docker.pxar:/docker etc.pxar:/etc home.pxar:/home root.pxar:/root"

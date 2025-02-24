@@ -1,5 +1,5 @@
 ---
-- hosts: nas:dmz:blue
+- hosts: nas:dmz
   roles:
     - variables
 

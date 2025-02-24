@@ -17,13 +17,3 @@ cronjobs:
     minute: "*/15"
     hour: "*"
     script: "pushover_api_test.sh"
-  proxmox_backup:
-    hosts: ['nas', 'blue']
-    minute: "30"
-    hour: "18"
-    gap: 1
-  pauseBigDownloads:
-    hosts: ['blue']
-    minute: "*"
-    hour: "*"
-    script: "pauseBigDownloads.py"

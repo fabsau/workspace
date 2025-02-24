@@ -88,28 +88,6 @@ endpoint_hosts:
     uptimekuma_basic_monitoring: true
     uptimekuma_http_monitoring: true
     uptimekuma_container_monitoring: true
-  BLUE:
-    ip:
-      - "192.168.251.4"
-    open_ports:
-      - 22
-      - 80
-      - 443
-      - 1080 # Proxy
-      - 2375 # Dockerproxy
-      - 32400 # Plex
-      - 34400 # Xteve-de
-      - 8080 # Sabnzbd
-      - 8090 # Librespeed
-      - 5572 # Rclone
-      - 9001 # Portainer
-    uptimekuma_basic_monitoring: true
-    uptimekuma_http_monitoring: true
-    uptimekuma_container_monitoring: true
-    docker_connection:
-      type: "tcp"
-      path: "http://100.64.0.1:2375"
-      id: 3
   # azure:
   #   ip:
   #       - "172.187.202.93"
@@ -135,7 +113,6 @@ endpoints:
   adguard:
     lxc1: "dns.oiba.de"
     lxc2: "dns2.oiba.de"
-    BLUE: "dns.blue.sauna.re"
   adguardexporter:
     nas: "adguardexporter.oiba.de"
     prometheus_exporter: true
@@ -156,7 +133,6 @@ endpoints:
   cadvisor:
     nas: "cadvisor.nas.oiba.de"
     dmz: "cadvisor.dmz.sauna.re"
-    BLUE: "cadvisor.blue.sauna.re"
     prometheus_exporter: true
   calibre:
     dmz: "calibre.sauna.re"
@@ -176,7 +152,6 @@ endpoints:
   dockge:
     nas: "dockge.oiba.de"
     dmz: "dockge.dmz.sauna.re"
-    BLUE: "dockge.blue.sauna.re"
   donetick:
     dmz: "todo.sauna.re"
   ferdium:
@@ -312,7 +287,6 @@ endpoints:
   librespeed:
     nas: "speed.nas.oiba.de"
     dmz: "speed.dmz.sauna.re"
-    BLUE: "speed.blue.sauna.re"
   librespeedexporter:
     nas: "librespeedexporter.oiba.de"
     prometheus_exporter: true
@@ -331,7 +305,6 @@ endpoints:
   nodeexporter:
     nas: "node.nas.oiba.de"
     dmz: "node.dmz.sauna.re"
-    BLUE: "node.blue.sauna.re"
     opn: "node.opn.oiba.de"
     home: "node.home.oiba.de"
     prometheus_exporter: true
@@ -359,7 +332,6 @@ endpoints:
     nas: "plausibleexporter.oiba.de"
     prometheus_exporter: true
   plex:
-    blue: "watch.sauna.re"
     dmz: "watch.sauna.re"
   plexexporter:
     nas:
@@ -404,8 +376,6 @@ endpoints:
     dmz: "pma.sauna.re"
   pyload:
     nas: "pyload.oiba.de"
-  qbittorrent:
-    BLUE: "torrent.sauna.re"
   qbittorrentexporter:
     nas: "qbittorrentexporter.oiba.de"
     prometheus_exporter: true
@@ -418,10 +388,8 @@ endpoints:
   #   nas: "rancher.oiba.de"
   # rclone:
   #   nas: "rclone.oiba.de"
-  #   BLUE: "rclone.blue.sauna.re"
   #   dmz: "rclone.azure.sauna.re"
   sabnzbd:
-    BLUE: "usenet.sauna.re"
     dmz: "usenet.sauna.re"
   sabnzbdexporter:
     nas: "sabnzbdexporter.oiba.de"
@@ -453,12 +421,10 @@ endpoints:
     nas: "tautulliexporter.oiba.de"
     prometheus_exporter: true
   torrent:
-    BLUE: "torrent.sauna.re"
     dmz: "torrent.sauna.re"
   traefik:
     nas: "proxy.oiba.de"
     dmz: "proxy.dmz.sauna.re"
-    BLUE: "proxy.blue.sauna.re"
     prometheus_exporter: true
   unifi:
     nas: "unifi.oiba.de"
@@ -494,7 +460,6 @@ endpoints:
   # watchtower:
   #   nas: "watchtower.oiba.de"
   #   dmz: "watchtower.azure.sauna.re"
-  #   BLUE: "watchtower.blue.sauna.re"
   #   prometheus_exporter: true
   #   prometheus_settings:
   #     metrics_path: "/v1/metrics"
@@ -503,8 +468,6 @@ endpoints:
     dmz: "setup.sauna.re"
   xbackbone:
     dmz: "screen.sauna.re"
-  xteve:
-    BLUE: "xteve-de.sauna.re"
 
 # # Base Packages to install
 # base_packages:
