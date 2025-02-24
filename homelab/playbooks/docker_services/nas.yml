@@ -13,16 +13,16 @@
         docker_service_roles:
           - traefik
           - prometheus
-          # - rclone # needed for backrest
+          # # - rclone # needed for backrest broken
           - unifi
           - uptimekuma
           - exportarrexporter
           - pbsexporter
           - wallos
           - paperless
-          - nexterm
+          # # - nexterm broken
           - changedetection
-          # # - watchtower
+          # # - watchtower broken
           - portainer
           - librespeed
           - dockge
@@ -33,14 +33,14 @@
           - grafana
           - cadvisor
           - proxmoxexporter
-          # - adguardexporter kein bock docker image not found
+          # # - adguardeexporter kein bock docker image not found
           - unifiexporter
           - plausibleexporter
           - librespeedexporter
           - plexexporter
           - tautulliexporter
           - qbittorrentexporter
-          - valetudo
+          # # - valetudo not needed anymore?
           - pyload
           - czkawka
           - pairdrop

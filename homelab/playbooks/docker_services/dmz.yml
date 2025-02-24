@@ -6,55 +6,55 @@
     - role: 0docker_service
       vars:
         docker_service_roles:
+          # - traefik
+          - rclone
+          - plex
           # - donetick
-          # - uptimekuma
-          # - limesurvey
-          # - actualbudget
-          # - plausible
-          # - photoprism
-          # # # - tandoorrecipes
-          # # # - bazarr
-          # - ihatemoney
-          # - xbackbone
-          # # # - calibre
-          # - linkstack
+          - uptimekuma
+          - limesurvey
+          - actualbudget
+          - plausible
+          - photoprism
+          # # - tandoorrecipes
+          # # - bazarr
+          - ihatemoney
+          - xbackbone
+          # # - calibre
+          - linkstack
           # - johanna-liebt-fabio
-          # - tautulli
-          # - autoscan
-          # # # - recyclarr TODO
-          # - sonarr
-          # - radarr
-          # - prowlarr
-          # - flaresolverr
-          # - overseerr
-          # - wizarr
-          # - searxng
+          - tautulli
+          - autoscan
+          # # - recyclarr TODO
+          - sonarr
+          - radarr
+          - prowlarr
+          - flaresolverr
+          - overseerr
+          - wizarr
+          - searxng
           - ghost
-          # - phpmyadmin
-          # - filebrowser
-          # # # - homer TODO
-          # - headscale
-          # # # - kasm
-          # - sabnzbd
-          # - certdumper
-          # - cloudplow
+          - phpmyadmin
+          - filebrowser
+          # # - homer TODO
+          - headscale
+          # # - kasm
+          - sabnzbd
+          - certdumper
+          - cloudplow
           - torrent
-          # # - rclone
-          # # - plex
-          - traefik
-          # - ferdium
+          - ferdium
           - librechat
-          # - it-tools
-          # - dockge
-          # - authelia
-          # - librespeed
-          # - portainer_agent
+          - it-tools
+          - dockge
+          - authelia
+          - librespeed
+          - portainer_agent
           - socks5proxy
-          # - dockersocketproxy
-          # - alertmanager
-          # - cadvisor
-          # - nodeexporter
-          # - watchtower
-          # - obsidian
-          # - vaultwarden
-          # - spotify
+          - dockersocketproxy
+          - alertmanager
+          - cadvisor
+          - nodeexporter
+          # # - watchtower
+          - obsidian
+          - vaultwarden
+          - spotify
