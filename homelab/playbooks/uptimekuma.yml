@@ -2,4 +2,4 @@
 - hosts: localhost
   roles:
     - role: variables
-    - role: 0_automated_uptime_kuma
+    - role: 0_uptime_kuma_automated

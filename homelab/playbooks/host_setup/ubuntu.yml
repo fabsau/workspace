@@ -19,6 +19,8 @@
         users_create_home: "{{ robertdebock_users_create_home }}"
         users_groups: "{{ robertdebock_users_groups }}"
         users: "{{ robertdebock_users }}"
+    - role: robertdebock.cis
+      tags: [cis, security]
     # - role: geerlingguy.security
   tasks:
     - name: Install base packages
