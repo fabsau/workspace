@@ -1,21 +1,12 @@
 - name: "[{{ role_specific }}] Include role-specific vars"
   include_vars: "{{ ansible_home }}/roles/{{ role_specific }}/vars/main.yml"
 
-- name: "[{{ role_specific }}] Create role directory"
-  become: true
-  file:
-    path: "{{ docker_base_path }}/{{ role_specific }}"
-    state: directory
-    owner: "{{ common_username }}"
-    group: "{{ common_group_gid }}"
-    mode: "{{ default_file_permission_mode }}"
-
 - name: "[{{ role_specific }}] Template Docker Compose file"
   template:
     src: "{{ ansible_home }}/roles/0docker_service/templates/docker-compose.yml.j2"
     dest: "{{ docker_base_path }}/{{ role_specific }}/docker-compose.yml"
-    owner: "{{ common_username }}"
-    group: "{{ common_group_gid }}"
+    owner: "{{ common_uid }}"
+    group: "{{ common_gid }}"
     mode: "{{ default_file_permission_mode }}"
   become: true
 
@@ -35,8 +26,8 @@
   file:
     path: "{{ docker_base_path }}/{{ role_specific }}"
     state: directory
-    owner: "{{ common_username }}"
-    group: "{{ common_group_gid }}"
+    owner: "{{ common_uid }}"
+    group: "{{ common_gid }}"
     mode: "{{ default_file_permission_mode }}"
   become: true
   when: env_files | length > 0
@@ -45,8 +36,8 @@
   template:
     src: "{{ env_item.path }}"
     dest: "{{ docker_base_path }}/{{ role_specific }}/{{ env_item.path | basename | regex_replace('\\.j2$', '') }}"
-    owner: "{{ common_username }}"
-    group: "{{ common_group_gid }}"
+    owner: "{{ common_uid }}"
+    group: "{{ common_gid }}"
     mode: "{{ default_file_permission_mode }}"
   become: true
   loop: "{{ env_files }}"
@@ -58,8 +49,8 @@
   file:
     path: "{{ docker_base_path }}/{{ role_specific }}/{{ docker_service_volume | default('config') }}"
     state: directory
-    owner: "{{ config_files_settings.role_owner | default(common_username) }}"
-    group: "{{ config_files_settings.role_group | default(common_group_gid) }}"
+    owner: "{{ config_files_settings.role_owner | default(common_uid) }}"
+    group: "{{ config_files_settings.role_group | default(common_gid) }}"
     mode: "{{ config_files_settings.role_folder_permission_mode | default(default_file_permission_mode) }}"
   become: true
   when: config_files | length > 0
@@ -68,8 +59,8 @@
   template:
     src: "{{ config_item.path }}"
     dest: "{{ docker_base_path }}/{{ role_specific }}/{{ docker_service_volume | default('config') }}/{{ config_item.path | basename | regex_replace('\\.j2$', '') }}"
-    owner: "{{ config_files_settings.role_owner | default(common_username) }}"
-    group: "{{ config_files_settings.role_group | default(common_group_gid) }}"
+    owner: "{{ config_files_settings.role_owner | default(common_uid) }}"
+    group: "{{ config_files_settings.role_group | default(common_gid) }}"
     mode: "{{ config_files_settings.role_file_permission_mode | default(default_file_permission_mode) }}"
   become: true
   loop: "{{ config_files }}"

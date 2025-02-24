@@ -1,0 +1,55 @@
+---
+- name: Create base directory
+  become: true
+  file:
+    path: "{{ docker_base_path }}"
+    state: directory
+    owner: "{{ common_uid }}"
+    group: "{{ common_gid }}"
+    mode: "{{ default_file_permission_mode }}"
+
+- name: Template common.env file
+  become: true
+  template:
+    src: "common.env.j2"
+    dest: "{{ docker_base_path }}/common.env"
+
+- name: Set debug mode
+  set_fact:
+    docker_setup_debug: "{{ docker_setup_debug | default(true) | bool }}"
+
+- name: Check existing role directories
+  find:
+    paths: "{{ docker_base_path }}"
+    file_type: directory
+  register: existing_directories
+
+- name: Set facts for directory management
+  set_fact:
+    existing_role_dirs: "{{ existing_directories.files | map(attribute='path') | map('basename') | list }}"
+    missing_role_dirs: "{{ docker_service_roles | difference(existing_directories.files | map(attribute='path') | map('basename') | list) }}"
+
+- name: Debug - Show directory status
+  debug:
+    msg: |
+      Existing role directories: {{ existing_role_dirs | to_nice_yaml }}
+      Missing role directories: {{ missing_role_dirs | to_nice_yaml }}
+  when: docker_setup_debug | bool
+
+- name: Create missing role directories
+  file:
+    path: "{{ docker_base_path }}/{{ item }}"
+    state: directory
+    owner: "{{ common_uid }}"
+    group: "{{ common_gid }}"
+    mode: "{{ default_file_permission_mode }}"
+  become: true
+  loop: "{{ missing_role_dirs }}"
+  loop_control:
+    label: "Creating missing directory for role {{ item }}"
+  when: missing_role_dirs | length > 0
+
+- name: Debug - Show created directories
+  debug:
+    msg: "Created directories for roles: {{ docker_service_roles | join(', ') }}"
+  when: docker_setup_debug | bool

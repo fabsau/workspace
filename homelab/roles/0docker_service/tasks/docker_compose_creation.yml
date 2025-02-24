@@ -1,0 +1,101 @@
+---
+
+# First load variables role vars
+- name: Load variables role vars
+  include_vars:
+    file: "{{ ansible_home }}/roles/variables/vars/main.yml"
+
+- name: Load host-specific variables
+  include_vars:
+    file: "{{ ansible_home }}/roles/variables/vars/{{ ansible_hostname }}.yml"
+  ignore_errors: true
+
+# Then load all service role vars
+- name: Load vars from all roles
+  include_vars:
+    file: "{{ ansible_home }}/roles/{{ item }}/vars/main.yml"
+    name: "role_{{ item }}_vars"
+  ignore_errors: true
+  loop: "{{ docker_service_roles }}"
+
+- name: Debug loaded variables
+  debug:
+    msg: "Role {{ item }} vars loaded: {{ hostvars[inventory_hostname]['role_' + item + '_vars'] | default({}) }}"
+  loop: "{{ docker_service_roles }}"
+
+- name: Initialize processed configurations
+  set_fact:
+    processed_services: {}
+
+- name: Process and store service configurations
+  set_fact:
+    processed_services: "{{ processed_services | default({}) | combine({
+      item: {
+        'role_specific': item,
+        'services': (hostvars[inventory_hostname]['role_' + item + '_vars'].services | default([]) | 
+                    map('combine', {'role_specific': item}) | 
+                    map('combine', {
+                      'ports': (hostvars[inventory_hostname]['role_' + item + '_vars'][item + '_default_ports'] | default([])) +
+                              (hostvars[inventory_hostname]['role_' + item + '_vars'][item + '_additional_ports'] | default([]))
+                    }) |
+                    list),
+        'networks': (hostvars[inventory_hostname]['role_' + item + '_vars'].services | default([]) | 
+                    selectattr('networks', 'defined') | map(attribute='networks') | list | flatten | unique)
+      }
+    }) }}"
+  loop: "{{ docker_service_roles }}"
+  vars:
+    role_specific: "{{ item }}"
+
+- name: Debug processed configurations
+  debug:
+    msg: "{{ item }}: {{ processed_services[item] | to_yaml }}"
+  loop: "{{ processed_services.keys() | list }}"
+  when: processed_services[item] is defined
+
+- name: Load existing local docker-compose files
+  slurp:
+    src: "{{ ansible_home }}/roles/{{ item }}/docker-compose.yml"
+  register: existing_local_compose_files
+  loop: "{{ processed_services.keys() | list }}"
+  ignore_errors: true
+  delegate_to: localhost
+
+- name: Generate new compose content in memory
+  set_fact:
+    new_compose_contents: "{{ new_compose_contents | default({}) | combine({
+      item: lookup('template', 'docker-compose.yml.j2', template_vars=dict(
+        role_specific=item,
+        services=processed_services[item].services
+      ))
+    }) }}"
+  loop: "{{ processed_services.keys() | list }}"
+
+- name: Compare and debug differences
+  debug:
+    msg: |
+      Service: {{ item }}
+      Has changes: {{ (existing_local_compose_files.results | selectattr('item', 'eq', item) | first).content | default('') | b64decode != new_compose_contents[item] }}
+      {% if (existing_local_compose_files.results | selectattr('item', 'eq', item) | first).content | default('') | b64decode != new_compose_contents[item] %}
+      Old content: {{ (existing_local_compose_files.results | selectattr('item', 'eq', item) | first).content | default('') | b64decode }}
+      New content: {{ new_compose_contents[item] }}
+      {% endif %}
+  loop: "{{ processed_services.keys() | list }}"
+
+- name: Write new compose files if different
+  copy:
+    content: "{{ new_compose_contents[item] }}"
+    dest: "{{ ansible_home }}/roles/{{ item }}/compiled/docker-compose.yml"
+  loop: "{{ processed_services.keys() | list }}"
+  when: (existing_local_compose_files.results | selectattr('item', 'eq', item) | first).content | default('') | b64decode != new_compose_contents[item]
+  delegate_to: localhost
+  register: local_compose_changes
+
+- name: Deploy changed docker-compose files
+  copy:
+    src: "{{ ansible_home }}/roles/{{ item }}/compiled/docker-compose.yml"
+    dest: "{{ docker_base_path }}/{{ item }}/docker-compose.yml"
+    mode: '0644'
+  loop: "{{ processed_services.keys() | list }}"
+  when: "item in (local_compose_changes.results | selectattr('changed', 'true') | map(attribute='item') | list)"
+  register: compose_file_status

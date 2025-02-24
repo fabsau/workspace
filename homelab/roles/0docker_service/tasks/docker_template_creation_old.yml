@@ -1,0 +1,139 @@
+---
+
+# First load variables role vars
+- name: Load variables role vars
+  include_vars:
+    file: "{{ ansible_home }}/roles/variables/vars/main.yml"
+
+- name: Load host-specific variables
+  include_vars:
+    file: "{{ ansible_home }}/roles/variables/vars/{{ ansible_hostname }}.yml"
+  ignore_errors: true
+
+# Then load all service role vars
+- name: Load vars from all roles
+  include_vars:
+    file: "{{ ansible_home }}/roles/{{ item }}/vars/main.yml"
+    name: "role_{{ item }}_vars"
+  ignore_errors: true
+  loop: "{{ docker_service_roles }}"
+
+- name: Debug loaded variables
+  debug:
+    msg: "Role {{ item }} vars loaded: {{ hostvars[inventory_hostname]['role_' + item + '_vars'] | default({}) }}"
+  loop: "{{ docker_service_roles }}"
+
+- name: Initialize processed configurations
+  set_fact:
+    processed_services: {}
+    new_template_contents: {}
+    role_templates_by_role: {}
+
+- name: Process and store service configurations
+  set_fact:
+    processed_services: "{{ processed_services | default({}) | combine({
+      item: {
+        'role_specific': item,
+        'services': (hostvars[inventory_hostname]['role_' + item + '_vars'].services | default([]) | 
+                    map('combine', {'role_specific': item}) | 
+                    map('combine', {
+                      'ports': (hostvars[inventory_hostname]['role_' + item + '_vars'][item + '_default_ports'] | default([])) +
+                              (hostvars[inventory_hostname]['role_' + item + '_vars'][item + '_additional_ports'] | default([]))
+                    }) |
+                    list),
+        'networks': (hostvars[inventory_hostname]['role_' + item + '_vars'].services | default([]) | 
+                    selectattr('networks', 'defined') | map(attribute='networks') | list | flatten | unique)
+      }
+    }) }}"
+  loop: "{{ docker_service_roles }}"
+  vars:
+    role_specific: "{{ item }}"
+
+- name: Debug processed configurations
+  debug:
+    msg: "{{ item }}: {{ processed_services[item] | to_yaml }}"
+  loop: "{{ processed_services.keys() | list }}"
+  when: processed_services[item] is defined
+
+- name: "Initialize template processing variables"
+  set_fact:
+    new_template_contents: {}
+    role_templates_by_role: {}
+
+- name: "Find template files for each role"
+  set_fact:
+    role_templates_by_role: "{{ role_templates_by_role | combine({
+      item: lookup('fileglob', ansible_home ~ '/roles/' ~ item ~ '/templates/*.j2', wantlist=True)
+    }) }}"
+  loop: "{{ processed_services.keys() | list }}"
+  register: template_findings
+
+- name: "Debug found templates"
+  debug:
+    msg: "Templates for {{ item.key }}: {{ item.value | to_yaml }}"
+  loop: "{{ role_templates_by_role | dict2items }}"
+
+- name: "Ensure compiled directories exist for each role"
+  become: true
+  file:
+    path: "{{ ansible_home }}/roles/{{ item }}/compiled"
+    state: directory
+    mode: '0755'
+  loop: "{{ docker_service_roles }}"
+
+- name: Process templates for each role and template
+  set_fact:
+    current_templates: "{{ current_templates | default({}) | combine({
+      item.0.key: current_templates[item.0.key] | default({}) | combine({
+        item.1 | basename: lookup('template', item.1, template_vars={
+          'role_specific': item.0.key,
+          'services': processed_services[item.0.key].services,
+          'ansible_facts': ansible_facts,
+          'endpoints': hostvars[inventory_hostname].endpoints | default({})
+        })
+      })
+    }, recursive=True) }}"
+  loop: "{{ role_templates_by_role | dict2items | subelements('value') }}"
+  loop_control:
+    label: "{{ item.0.key }}/{{ item.1 | basename }}"
+  ignore_errors: true
+
+- name: Debug processed templates
+  debug:
+    msg: "Role {{ item.key }} templates:\n{{ item.value | to_nice_yaml }}"
+  loop: "{{ current_templates | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: Store processed templates for later use
+  set_fact:
+    new_template_contents: "{{ current_templates }}"
+
+- name: Set template paths for loading
+  set_fact:
+    template_path: "{{ ansible_home }}/roles/{{ item.0 }}/compiled/{{ (item.1 | basename | regex_replace('\\.j2$', '')) }}"
+  loop: "{{ role_templates_by_role | dict2items | subelements('value') }}"
+  loop_control:
+    label: "{{ item.0 }}/{{ item.1 | basename }}"
+  register: template_paths
+
+- name: Load existing compiled templates
+  set_fact:
+    existing_template_contents: "{{ existing_template_contents | default({}) | combine({
+      item.role_name: {
+        item.template_name: lookup('file', item.template_path, errors='ignore') | default('')
+      }
+    }, recursive=True) }}"
+  vars:
+    formatted_templates: >-
+      {{
+        template_paths.results | map(attribute='item') | 
+        map('combine', {'template_name': '1'}) |
+        map('combine', {'role_name': '0'}) |
+        map('combine', {'template_path': 'ansible_facts.template_path'}) |
+        list
+      }}
+  loop: "{{ formatted_templates }}"
+  loop_control:
+    label: "Loading template {{ item.role_name }}/{{ item.template_name }}"
+  ignore_errors: true

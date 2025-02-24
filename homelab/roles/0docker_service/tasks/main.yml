@@ -10,17 +10,23 @@
 
 # Base files setup
 - name: "Setup Docker base files"
-  include_tasks: docker_basefiles.yml
+  include_tasks: docker_base_structure.yml
 
 # Network setup
 - name: "Setup Docker networks"
   include_tasks: docker_network_creation.yml
 
 # Service creation
-- name: "Iterate over docker_service_roles"
+- name: "Iterate over Docker Service Creation"
   include_tasks: docker_service_creation.yml
   vars:
     role_specific: "{{ item }}"
   loop: "{{ docker_service_roles }}"
   loop_control:
     label: "{{ item }}"
+
+# - name: "Create Docker Compose Files"
+  # include_tasks: docker_compose_creation.yml
+  
+# - name: "Generate Docker Template Files"
+#   include_tasks: docker_template_creation.yml
