@@ -1,5 +1,5 @@
 # Host Settings
-ansible_home: "/root/vscode/workspace/homelab"
+ansible_home: "/root/vscode/homelab"
 host_timezone: Europe/Berlin
 docker_base_path: /docker
 docker_network_base_subnet: "172.30"
